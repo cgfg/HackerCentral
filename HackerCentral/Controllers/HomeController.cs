@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HackerCentral.Accessors;
+using HackerCentral.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,6 +24,17 @@ namespace HackerCentral.Controllers
 
         public ActionResult Dashboard()
         {
+            var pa = new PointAccessor();
+
+            var p = new Point()
+            {
+                parent_id = 0,
+                category = 1,
+                summary = "This is my summary",
+                full_text = "This is added completely through my C# controller"
+            };
+            pa.CreatePoint(p);
+            
             return View("Dashboard");
         }
     }
