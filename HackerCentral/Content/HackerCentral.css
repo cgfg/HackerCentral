@@ -1,0 +1,19 @@
+﻿/* Note: This file defines custom styles for the site.  It overrides any default bootstrap styles. */
+
+#main-content {
+    margin-top: 60px;
+}
+
+#logoutForm {
+    height: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    visibility: hidden;
+    position: absolute;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}

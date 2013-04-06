@@ -2,47 +2,82 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+        <title>@ViewBag.Title - Hacker Central</title>
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <meta name="viewport" content="width=device-width" />
-        @Styles.Render("~/Content/css")
-        @Scripts.Render("~/bundles/modernizr")
-    </head>
-    <body>
-        <header>
-            <div class="content-wrapper">
-                <div class="float-left">
-                    <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
-                </div>
-                <div class="float-right">
-                    <section id="login">
-                        @Html.Partial("_LoginPartial")
-                    </section>
-                    <nav>
-                        <ul id="menu">
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                            <li>@Html.ActionLink("About", "About", "Home")</li>
-                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </header>
-        <div id="body">
-            @RenderSection("featured", required: false)
-            <section class="content-wrapper main-content clear-fix">
-                @RenderBody()
-            </section>
-        </div>
-        <footer>
-            <div class="content-wrapper">
-                <div class="float-left">
-                    <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
-                </div>
-            </div>
-        </footer>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
 
         @Scripts.Render("~/bundles/jquery")
-        @RenderSection("scripts", required: false)
+        @Scripts.Render("~/bundles/modernizr")
+        @Styles.Render("~/Content/bootstrap")
+        @RenderSection("Styles", required: false)
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="@Url.Action("Index", "Home")">Hacker Central</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
+                        </ul>
+                    </div>
+                    @if (Request.IsAuthenticated)
+                    {
+                        @* User is logged in *@
+                        <div class="nav-collapse collapse pull-right">
+
+                            <div class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Welcome, @User.Identity.Name <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Profile", "Manage", "Account")</li>
+                                    <li>@Html.ActionLink("Dashboard", "Dashboard", "Home")</li>
+                                </ul>
+                            </div>
+
+                            <ul class="nav pull-right">
+                                <li class=""><a href="javascript:document.getElementById('logoutForm').submit()">Logout</a></li>
+                            </ul>
+
+
+                             @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+                                @Html.AntiForgeryToken()
+                            }
+                        </div>
+                    } else {
+                        @* User is not logged in *@
+                        <div class="nav-collapse collapse pull-right">
+                            <ul class="nav">
+                                <li class="">@Html.ActionLink("Login", "Login", "Account")</li>
+                                <li class="">@Html.ActionLink("Sign Up", "Register", "Account")</li>
+                            </ul>
+                        </div>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+
+        <div id="main-content" class="container">
+            @RenderSection("featured", required: false)
+            @RenderBody()
+        </div>
+
+        <footer>
+            <div class="container">
+                <p>&copy; @DateTime.Now.Year - HackerCentral</p>
+            </div>
+        </footer>
+        
+
+        
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("Scripts", required: false)
     </body>
 </html>

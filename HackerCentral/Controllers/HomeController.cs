@@ -6,27 +6,22 @@ using System.Web.Mvc;
 
 namespace HackerCentral.Controllers
 {
+
+    [Authorize]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
-
-            return View();
+            if (Request.IsAuthenticated)
+                return Dashboard();
+            else
+                return View("Index");
         }
 
-        public ActionResult About()
+        public ActionResult Dashboard()
         {
-            ViewBag.Message = "Your app description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return View("Dashboard");
         }
     }
 }
