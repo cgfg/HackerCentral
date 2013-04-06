@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -7,7 +8,7 @@ namespace HackerCentral.Models
 {
     public class Point
     {
-        public long? category {get; set;}
+        public Category? category {get; set;}
         public bool? collaboratable {get; set;}
         public long? conversation_depth {get; set;}
         public long? conversation_id {get; set;}
@@ -35,6 +36,11 @@ namespace HackerCentral.Models
         public long? views { get; set; }
 
         public enum Side { pro, con };
+        public enum Category {
+            [Description("Supporting")]
+            SUPPORTING = 1,
+            [Description("Opposing")]
+            OPPOSING = 2 }
     }
 
 }

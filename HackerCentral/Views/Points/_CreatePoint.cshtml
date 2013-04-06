@@ -4,15 +4,18 @@
 {
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Modal header</h3>
+        <h3 id="myModalLabel">Add a Point</h3>
     </div>
     <div class="modal-body">
         <p>
             @Html.TextBoxFor(m => m.summary, new { placeholder = "Title (Summary)" }) <br />
             @Html.TextAreaFor(m => m.full_text, new { placeholder = "Full Text" }) <br />
             @Html.TextBoxFor(m => m.parent_id, new { placeholder = "Parent ID (0 for none)" }) <br />
-            @Html.TextBoxFor(m => m.category, new { value = "1" }) (Category)
-        </p>
+            @Html.DropDownListFor(m => m.category, 
+                new SelectListItem[] { 
+                    new SelectListItem() { Text = "Supporting", Value = "1" }, 
+                    new SelectListItem() { Text = "Opposing", Value = "2" } 
+                } )
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
