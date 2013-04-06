@@ -1,0 +1,22 @@
+﻿@model HackerCentral.Models.Point
+
+@using(Html.BeginForm("Edit", "Points", FormMethod.Post, new {@class=""})) {
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Edit Point #@Model.id: @Model.summary</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            @Html.TextBoxFor(m => m.summary, new { value=Model.summary }) <br />
+            @Html.TextAreaFor(m => m.full_text, new { value=Model.full_text })
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save Changes" />
+    </div>
+
+    @Html.HiddenFor(m => m.id, new { value = Model.id })
+    @Html.HiddenFor(m => m.category, new { value = Model.category })
+}

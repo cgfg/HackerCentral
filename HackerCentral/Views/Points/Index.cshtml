@@ -1,0 +1,77 @@
+﻿@model HackerCentral.ViewModels.PointsViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Points</h2>
+
+@if (ViewBag.Message !="")
+{
+    <div class="alert alert-info">
+        @ViewBag.Message
+    </div>
+}
+
+@foreach (var p in Model.points)
+{
+    <div class="point">
+        <h4>#@p.id: @p.summary</h4>
+        <p>@p.full_text</p>
+        <div class="actions">
+            @Ajax.ActionLink("Edit", "EditForm", new { id = @p.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class="editLink" }) | 
+            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @p.id }, null) </div>
+    </div>
+}
+
+<div id="editModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="editForm"></div>
+</div>
+
+
+<a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>
+ 
+<div id="createModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @Html.Partial("_CreatePoint", @Model.point)
+</div>
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(".editLink").on("click", function () {
+            $('#editModal').modal('show');
+        });
+    </script>
+}
+
+@section Styles {
+    <style type="text/css">
+        .point {
+            border-radius: 5px;
+            background-color: #b9b9b9;
+            width: 400px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+            .point h4 {
+                margin: 0px;
+                padding: 0;
+                font-size: 14px;
+                line-height: 14px;
+            }
+            .point p {
+                margin: 0;
+                padding: 0;
+            }
+            .point .actions {
+                margin-top: 10px;
+            }
+        .nested {
+            margin-left: 15px;
+        }
+    </style>
+}

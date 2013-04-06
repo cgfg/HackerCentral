@@ -1,0 +1,21 @@
+﻿@model HackerCentral.Models.Point
+
+@using(Html.BeginForm("Create", "Points", FormMethod.Post, new{@class=""}))
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Modal header</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            @Html.TextBoxFor(m => m.summary, new { placeholder = "Title (Summary)" }) <br />
+            @Html.TextAreaFor(m => m.full_text, new { placeholder = "Full Text" }) <br />
+            @Html.TextBoxFor(m => m.parent_id, new { placeholder = "Parent ID (0 for none)" }) <br />
+            @Html.TextBoxFor(m => m.category, new { value = "1" }) (Category)
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+    </div>
+}

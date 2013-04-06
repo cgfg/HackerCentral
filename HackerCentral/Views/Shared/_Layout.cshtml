@@ -23,14 +23,17 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="brand" href="@Url.Action("Index", "Home")">Hacker Central</a>
-                    <div class="nav-collapse collapse">
-                        <ul class="nav">
-                            <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
-                        </ul>
-                    </div>
+                    
                     @if (Request.IsAuthenticated)
                     {
                         @* User is logged in *@
+                        <div class="nav-collapse collapse">
+                            <ul class="nav">
+                                <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
+                                <li class="">@Html.ActionLink("Points", "Index", "Points")</li>
+                            </ul>
+                        </div>
+                        
                         <div class="nav-collapse collapse pull-right">
 
                             <div class="btn-group">
@@ -52,6 +55,11 @@
                         </div>
                     } else {
                         @* User is not logged in *@
+                        <div class="nav-collapse collapse">
+                            <ul class="nav">
+                                <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
+                            </ul>
+                        </div>
                         <div class="nav-collapse collapse pull-right">
                             <ul class="nav">
                                 <li class="">@Html.ActionLink("Login", "Login", "Account")</li>

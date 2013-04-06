@@ -20,9 +20,9 @@ namespace HackerCentral.Models
         public bool? is_hidden {get; set;}
         public long? parent_id {get; set;}
         public long? point_version {get; set;}
-        public float? quality {get; set;}
+        public double? quality {get; set;}
         public long? relevance_ratings_count {get; set;}
-        public long? relevance_score {get; set;}
+        public double? relevance_score {get; set;}
         public long? response_count {get; set;}
         public Side? side  {get; set;}
         public bool? spam {get; set;}
@@ -31,7 +31,7 @@ namespace HackerCentral.Models
         public DateTime? updated_at {get; set;}
         public long? user_id {get; set;}
         public long? validity_ratings_count {get; set;}
-        public long? validity_score {get; set;}
+        public double? validity_score {get; set;}
         public long? views { get; set; }
 
         public enum Side { pro, con };
