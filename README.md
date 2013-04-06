@@ -1,8 +1,6 @@
 # Hacker Central
 ## Hacktivism platform for the IDEASPERE Research Project
 
-***
-
 ### Description
 This project offers an interface to edit data on AthenaBridge for the purposes of the IDEASPERE Research project a the University of Nebraska - Lincoln.
 
