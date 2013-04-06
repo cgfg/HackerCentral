@@ -51,5 +51,18 @@ namespace HackerCentral.Accessors
                 }
             }
         }
+
+        public User GetUser(long id)
+        {
+            var users = GetAllUsers();
+            try
+            {
+                return users.SingleOrDefault(m => m.id == id);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 }
