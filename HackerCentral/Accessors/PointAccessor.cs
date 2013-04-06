@@ -38,14 +38,14 @@ namespace HackerCentral.Accessors
                     List<Point> points = JsonConvert.DeserializeObject<List<Point>>(jsonData);
                     if (points.Count > 0)
                         return points;
+                    else
+                        return new List<Poitnt>();
                 }
                 catch (Exception e)
                 {
                     return null;
                 }
             }
-
-            return null;
         }
 
         public Point GetPoint(long id)

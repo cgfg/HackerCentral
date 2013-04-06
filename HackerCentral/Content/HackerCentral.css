@@ -17,3 +17,28 @@ footer {
     text-align: center;
     margin-top: 20px;
 }
+
+.point {
+    border-radius: 5px;
+    background-color: #b9b9b9;
+    width: 500px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+    .point h4 {
+        margin: 0px;
+        padding: 0;
+        font-size: 14px;
+        line-height: 14px;
+    }
+    .point p {
+        margin: 0;
+        padding: 0;
+    }
+    .point .actions {
+        margin-top: 10px;
+    }
+
+.nested {
+    margin-left: 15px;
+}
