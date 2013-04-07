@@ -15,22 +15,13 @@ namespace HackerCentral.Controllers
         public ActionResult Index(string message = "")
         {
             var pa = new PointAccessor();
-            var model = new PointsViewModel()
-            {
-                points = pa.GetAllPoints(),
-                point = new Point()
-                {
-                    id = 0,
-                    summary = "",
-                    full_text = "",
-                    category = 0
-                }
-            };
+            var model = new PointsViewModel(pa.GetAllPoints());
 
             ViewBag.Message = message;
             return View("Index", model);
         }
 
+        [HttpPost]
         public ActionResult Create(Point p)
         {
             var pa = new PointAccessor();
@@ -40,6 +31,7 @@ namespace HackerCentral.Controllers
                 return Index("Point not successfully created");
         }
 
+        [HttpGet]
         public ActionResult Destroy(long id)
         {
             var pa = new PointAccessor();
@@ -49,6 +41,7 @@ namespace HackerCentral.Controllers
                 return Index("Point did not delete successfully");
         }
 
+        [HttpPost]
         public ActionResult Edit(Point p)
         {
             var pa = new PointAccessor();

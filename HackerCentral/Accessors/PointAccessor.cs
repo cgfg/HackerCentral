@@ -39,7 +39,7 @@ namespace HackerCentral.Accessors
                     if (points.Count > 0)
                         return points;
                     else
-                        return new List<Poitnt>();
+                        return new List<Point>();
                 }
                 catch (Exception e)
                 {
@@ -112,7 +112,7 @@ namespace HackerCentral.Accessors
         public bool CreatePoint(Point create)
         {
             string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/create", apiKey, conversationId);
-
+            
             try
             {
                 var client = new RestClient();
@@ -120,7 +120,7 @@ namespace HackerCentral.Accessors
                 request.AddParameter("api_key", apiKey);
                 request.AddParameter("user_ud", userId);
                 request.AddParameter("parent_id", create.parent_id);
-                request.AddParameter("category", create.category);
+                request.AddParameter("category", (int)create.category);
                 request.AddParameter("summary", create.summary);
                 request.AddParameter("full_text", create.full_text);
                 var response = client.Execute(request);

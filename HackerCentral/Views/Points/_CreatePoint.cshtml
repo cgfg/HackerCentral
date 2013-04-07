@@ -1,4 +1,4 @@
-﻿@model HackerCentral.Models.Point
+﻿@model HackerCentral.ViewModels.PointsViewModel
 
 @using(Html.BeginForm("Create", "Points", FormMethod.Post, new{@class=""}))
 {
@@ -8,10 +8,11 @@
     </div>
     <div class="modal-body">
         <p>
-            @Html.TextBoxFor(m => m.summary, new { placeholder = "Title (Summary)" }) <br />
-            @Html.TextAreaFor(m => m.full_text, new { placeholder = "Full Text" }) <br />
-            @Html.TextBoxFor(m => m.parent_id, new { placeholder = "Parent ID (0 for none)" }) <br />
-            @Html.DropDownListFor(m => m.category, 
+            @Html.TextBoxFor(m => m.point.summary, new { placeholder = "Title (Summary)", name="summary" }) <br />
+            @Html.TextAreaFor(m => m.point.full_text, new { placeholder = "Full Text" }) <br />
+            @* @Html.TextBoxFor(m => m.emptyPoint.parent_id, new { placeholder = "Parent ID (0 for none)" }) <br /> *@ 
+            @Html.DropDownListFor(m=>m.point.parent_id, Model.GetParentIDList()) <br />
+            @Html.DropDownListFor(m => m.point.category, 
                 new SelectListItem[] { 
                     new SelectListItem() { Text = "Supporting", Value = "1" }, 
                     new SelectListItem() { Text = "Opposing", Value = "2" } 
@@ -22,3 +23,19 @@
         <button class="btn btn-primary">Save changes</button>
     </div>
 }
+
+
+@*
+    We need to use the PointsViewModel as the model for this partial view so we have access to GetParentIDList()
+    This causes Html.TextBoxFor(...) to set the name field to point_value, when we just need value
+    This javascript hack changes point_summary to just summary, etc., so that we can post directly to
+    the PointsController Create(Point p) action.
+*@
+<script>
+    $(document).ready(function () {
+        $("#point_summary").attr("name", "summary");
+        $("#point_full_text").attr("name", "full_text");
+        $("#point_parent_id").attr("name", "parent_id");
+        $("#point_category").attr("name", "category");
+    });
+</script>
