@@ -33,8 +33,7 @@ namespace HackerCentral.Accessors
                     data = w.DownloadString(api_url);
 
                     // [[64,"Lucas Cioffi",0,3,0,1.0,1.0,0],[3,"Joe Smith",0,1,0,1.0,1.0,0]]
-                    data.Replace("[[", "");
-                    data.Replace("}}", "");
+                    data = data.Replace("[[", "").Replace("]]", "");
                     string[] userData = data.Split(new string[] { "],[" }, StringSplitOptions.RemoveEmptyEntries);
 
                     var users = new List<User>();
