@@ -8,22 +8,36 @@
 
 <a href="#createModal" role="button" class="btn btn-primary pull-right" data-toggle="modal">Add a Point</a>
 
-@if (ViewBag.Message !="")
+@if (ViewBag.Message != "")
 {
     <div class="alert alert-info">
         @ViewBag.Message
     </div>
 }
 
-@foreach (var p in Model.points)
+@foreach (var n in Model.nestedPoints)
+{
+    @PrintNest(n);
+}
+
+@helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest)
 {
     <div class="point">
-        <h4>#@p.id: @p.summary</h4>
-        <p>@p.full_text (@p.category.ToString())</p>
+        <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
+        <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
         <div class="actions">
-            @Ajax.ActionLink("Edit", "EditForm", new { id = @p.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class="editLink" }) | 
-            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @p.id }, null) </div>
+            @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
+            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null) </div>
     </div>
+    if (nest.HasChildren())
+    {
+        <div class="nested">
+            @foreach(var n in nest.Children) 
+            {
+                @PrintNest(n);
+            }
+        </div>
+    }
 }
 
 <div id="editModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -31,7 +45,7 @@
 </div>
 
 <div id="createModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    @Html.Partial("_CreatePoint", @Model.point)
+    @Html.Partial("_CreatePoint", Model)
 </div>
 
 
@@ -42,32 +56,4 @@
             $('#editModal').modal('show');
         });
     </script>
-}
-
-@section Styles {
-    <style type="text/css">
-        .point {
-            border-radius: 5px;
-            background-color: #b9b9b9;
-            width: 500px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-            .point h4 {
-                margin: 0px;
-                padding: 0;
-                font-size: 14px;
-                line-height: 14px;
-            }
-            .point p {
-                margin: 0;
-                padding: 0;
-            }
-            .point .actions {
-                margin-top: 10px;
-            }
-        .nested {
-            margin-left: 15px;
-        }
-    </style>
 }

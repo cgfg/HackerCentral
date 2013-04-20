@@ -38,14 +38,14 @@ namespace HackerCentral.Accessors
                     List<Point> points = JsonConvert.DeserializeObject<List<Point>>(jsonData);
                     if (points.Count > 0)
                         return points;
+                    else
+                        return new List<Point>();
                 }
                 catch (Exception e)
                 {
                     return null;
                 }
             }
-
-            return null;
         }
 
         public Point GetPoint(long id)
@@ -95,8 +95,8 @@ namespace HackerCentral.Accessors
                 var client = new RestClient();
                 var request = new RestRequest(api_url, Method.POST);
                 request.AddParameter("api_key", apiKey);
-                request.AddParameter("user_ud", userId);
-                request.AddParameter("category", update.category);
+                request.AddParameter("user_id", userId);
+                request.AddParameter("category", (int)update.category);
                 request.AddParameter("summary", update.summary);
                 request.AddParameter("full_text", update.full_text);
                 var response = client.Execute(request);
@@ -112,15 +112,15 @@ namespace HackerCentral.Accessors
         public bool CreatePoint(Point create)
         {
             string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/create", apiKey, conversationId);
-
+            
             try
             {
                 var client = new RestClient();
                 var request = new RestRequest(api_url, Method.POST);
                 request.AddParameter("api_key", apiKey);
-                request.AddParameter("user_ud", userId);
+                request.AddParameter("user_id", userId);
                 request.AddParameter("parent_id", create.parent_id);
-                request.AddParameter("category", create.category);
+                request.AddParameter("category", (int)create.category);
                 request.AddParameter("summary", create.summary);
                 request.AddParameter("full_text", create.full_text);
                 var response = client.Execute(request);
