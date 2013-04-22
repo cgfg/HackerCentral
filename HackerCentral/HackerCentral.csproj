@@ -183,7 +183,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Accessors\CommentAccessor.cs" />
+    <Compile Include="Accessors\CommentVersionAccessor.cs" />
     <Compile Include="Accessors\PointAccessor.cs" />
+    <Compile Include="Accessors\PointVersionAccessor.cs" />
     <Compile Include="Accessors\UserAccessor.cs" />
     <Compile Include="App_Start\AuthConfig.cs" />
     <Compile Include="App_Start\BootstrapBundleConfig.cs" />
@@ -202,7 +204,9 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AthenaBridgeAPISettings.cs" />
     <Compile Include="Models\Comment.cs" />
+    <Compile Include="Models\CommentVersion.cs" />
     <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\PointVersion.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRoles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

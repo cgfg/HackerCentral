@@ -32,11 +32,24 @@ namespace HackerCentral.Controllers
         public ActionResult Test()
         {
             var ca = new CommentAccessor();
-            var m = new CommentsViewModel()
-            {
-                Comments = ca.GetAllComments()
-            };
-            return View("Test", m);
+            
+
+            var b5 = ca.GetCommentsByPoint(376);
+
+            var b4 = ca.GetAllComments();
+            long id = (long)b4.First<Comment>().id;
+
+            var x = ca.GetComment(id);
+
+            var y = ca.DestroyComment(id);
+
+            var b6 = ca.GetAllComments();
+
+
+
+
+
+            return View("Test");
         }
     }
 }
