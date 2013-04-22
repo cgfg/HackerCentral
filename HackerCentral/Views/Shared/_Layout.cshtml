@@ -8,8 +8,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery", "~/bundles/modernizr", "~/bundles/bootstrap", "~/bundles/signalr", "~/signalr/hubs")
         @Styles.Render("~/Content/bootstrap")
         @RenderSection("Styles", required: false)
     </head>
@@ -84,8 +83,6 @@
         </footer>
         
 
-        
-        @Scripts.Render("~/bundles/bootstrap")
         @RenderSection("Scripts", required: false)
     </body>
 </html>
