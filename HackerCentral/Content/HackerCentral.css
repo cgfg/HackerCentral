@@ -1,7 +1,7 @@
 ﻿/* Note: This file defines custom styles for the site.  It overrides any default bootstrap styles. */
 
 #main-content {
-    /* margin-top: 60px; */
+    margin-top: 60px;
 }
 
 #logoutForm {

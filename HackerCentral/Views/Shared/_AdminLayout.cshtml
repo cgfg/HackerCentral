@@ -12,6 +12,13 @@
         @Scripts.Render("~/bundles/modernizr")
         @Styles.Render("~/Content/bootstrap")
         @RenderSection("Styles", required: false)
+
+        <style type="text/css">
+            /* Fix because navbar is at the bottom */
+            #main-content {
+                margin-top: 0px;
+            }
+        </style>
     </head>
     <body>
         
