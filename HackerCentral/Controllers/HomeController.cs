@@ -15,24 +15,17 @@ namespace HackerCentral.Controllers
     public class HomeController : Controller
     {
         [AllowAnonymous]
-        public ActionResult Index(bool adminMode = false)
+        public ActionResult Index()
         {
             if (Request.IsAuthenticated)
-                return Embedded(adminMode);
+                return Dashboard();
             else
                 return View("Index");
         }
 
-        public ActionResult Embedded(bool adminMode = false)
+        public ActionResult Dashboard()
         {
-            var m = new EmbeddedViewModel()
-            {
-                adminMode = adminMode,
-                adminTitle = "Admin Mode",
-                normalTitle = "UNL Research"
-            };
-
-            return View("Embedded", m);
+            return View("Dashboard");
         }
 
         [AllowAnonymous]
