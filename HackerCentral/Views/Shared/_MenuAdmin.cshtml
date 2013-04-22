@@ -1,0 +1,18 @@
+﻿<a class="brand" href="@Url.Action("Index", "Home", new { adminMode = true })">Admin Mode</a>
+<div class="nav">
+    <ul class="nav">
+        <li class="">@Html.ActionLink("Discussion Home", "Index", new { controller="Home", adminMode = true })</li>
+        <li class="">@Html.ActionLink("Edit Points", "Index", "Points")</li>
+    </ul>
+</div>
+
+<div class="nav pull-right">
+    <ul class="nav">
+        <li class="">@Html.ActionLink("Exit Admin Mode", "Index")</li>
+        <li class=""><a href="javascript:document.getElementById('logoutForm').submit()">@User.Identity.Name</a></li>
+    </ul>
+</div>
+
+@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+    @Html.AntiForgeryToken()
+}

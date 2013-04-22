@@ -1,5 +1,6 @@
 ﻿using HackerCentral.Accessors;
 using HackerCentral.Models;
+using HackerCentral.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,17 +15,30 @@ namespace HackerCentral.Controllers
     public class HomeController : Controller
     {
         [AllowAnonymous]
-        public ActionResult Index()
+        public ActionResult Index(bool adminMode = false)
         {
             if (Request.IsAuthenticated)
-                return Dashboard();
+                return Embedded(adminMode);
             else
                 return View("Index");
         }
 
-        public ActionResult Dashboard()
+        public ActionResult Embedded(bool adminMode = false)
         {
-            return View("Dashboard");
+            var m = new EmbeddedViewModel()
+            {
+                adminMode = adminMode,
+                adminTitle = "Admin Mode",
+                normalTitle = "UNL Research"
+            };
+
+            return View("Embedded", m);
+        }
+
+        [AllowAnonymous]
+        public ActionResult Test()
+        {
+            return View("Test");
         }
     }
 }

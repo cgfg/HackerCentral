@@ -1,0 +1,60 @@
+﻿@model HackerCentral.ViewModels.EmbeddedViewModel
+
+@{
+    ViewBag.Title = "Embedded";
+    Layout = "~/Views/Shared/_BlankLayout.cshtml";
+}
+
+<iframe id="conversation" src="@Model.GetIFrameURL()"></iframe>
+<footer id="footer" class="navbar navbar-fixed-bottom">
+    <div class="navbar-inner">
+        <div class="container">
+
+            @if (Model.adminMode)
+            {
+                @Html.Partial("~/Views/Shared/_MenuAdmin.cshtml")
+            }
+            else
+            {
+                @Html.Partial("~/Views/Shared/_MenuNormal.cshtml")
+            }
+
+        </div>
+    </div>
+</footer>
+
+@section Styles {
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        iframe {
+            display: block;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+        footer {
+            margin-top: 0px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        var bottomHeight = 40;
+
+        $(document).ready(function () {
+            $(window).resize();
+        });
+
+        $(window).resize(function (event) {
+            // Set the height of the IFRAME to the height of the browser window
+            $("#conversation").css("height", $(window).height() - bottomHeight);
+        });
+    </script>
+}
