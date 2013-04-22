@@ -1,4 +1,5 @@
 # Hacker Central
+
 ## Hacktivism platform for the IDEASPERE Research Project
 
 ### Description
