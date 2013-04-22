@@ -31,7 +31,12 @@ namespace HackerCentral.Controllers
         [AllowAnonymous]
         public ActionResult Test()
         {
-            return View("Test");
+            var ca = new CommentAccessor();
+            var m = new CommentsViewModel()
+            {
+                Comments = ca.GetAllComments()
+            };
+            return View("Test", m);
         }
     }
 }
