@@ -31,23 +31,7 @@ namespace HackerCentral.Controllers
         [AllowAnonymous]
         public ActionResult Test()
         {
-            var ca = new CommentAccessor();
             
-
-            var b5 = ca.GetCommentsByPoint(376);
-
-            var b4 = ca.GetAllComments();
-            long id = (long)b4.First<Comment>().id;
-
-            var x = ca.GetComment(id);
-
-            var y = ca.DestroyComment(id);
-
-            var b6 = ca.GetAllComments();
-
-
-
-
 
             return View("Test");
         }
