@@ -7,6 +7,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using WebMatrix;
+using WebMatrix.WebData;
 
 namespace HackerCentral.Controllers
 {
@@ -25,7 +27,11 @@ namespace HackerCentral.Controllers
 
         public ActionResult Dashboard()
         {
-            return View("Dashboard");
+            var model = new DashboardViewModel()
+            {
+            };
+
+            return View("Dashboard", model);
         }
 
         [AllowAnonymous]
