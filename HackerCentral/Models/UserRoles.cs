@@ -6,10 +6,14 @@ using System.ComponentModel;
 
 namespace HackerCentral.Models
 {
-    public enum UserRole { 
-        [Description("HACKER")]
-        HACKER,
-        [Description("ADMINISTRATOR")]
-        ADMINISTRATOR };
+    public enum UserRole
+    {
+        [Description("User")]
+        User,
+        [Description("Hacker")]
+        Hacker,
+        [Description("Administrator")]
+        Administrator
+    };
 
 }

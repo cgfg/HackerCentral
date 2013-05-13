@@ -1,7 +1,19 @@
 ﻿/* Note: This file defines custom styles for the site.  It overrides any default bootstrap styles. */
 
-#main-content {
-    margin-top: 60px;
+#maincontent {
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    bottom: 41px;
+    width: 100%;
+}
+
+#externalcontent {
+    overflow: auto;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    border: none;
 }
 
 #logoutForm {
@@ -18,6 +30,10 @@ footer {
     margin-top: 20px;
 }
 
+.popover {
+    min-width: 186px;   
+}
+
 .point {
     border-radius: 5px;
     background-color: #b9b9b9;
@@ -25,16 +41,19 @@ footer {
     padding: 10px;
     margin-bottom: 10px;
 }
+
     .point h4 {
         margin: 0px;
         padding: 0;
         font-size: 14px;
         line-height: 14px;
     }
+
     .point p {
         margin: 0;
         padding: 0;
     }
+
     .point .actions {
         margin-top: 10px;
     }

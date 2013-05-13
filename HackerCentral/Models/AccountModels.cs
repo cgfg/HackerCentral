@@ -8,14 +8,26 @@ using System.Web.Security;
 
 namespace HackerCentral.Models
 {
-    public class UsersContext : DbContext
+    public class HackerCentralContext : DbContext
     {
-        public UsersContext()
+        public HackerCentralContext()
             : base("DefaultConnection")
         {
         }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<HackerToken> HackerTokens { get; set; }
+    }
+
+    public enum AuthProvider
+    {
+        Facebook,
+        Google,
+        LinkedIn,
+        Microsoft,
+        Twitter,
+        Yahoo,
+        Local
     }
 
     [Table("UserProfile")]
@@ -25,6 +37,8 @@ namespace HackerCentral.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public string UserName { get; set; }
+        public string FullName { get; set; }
+        public AuthProvider AuthProvider { get; set; }
     }
 
     public class RegisterExternalLoginModel
@@ -94,4 +108,10 @@ namespace HackerCentral.Models
         public string ProviderDisplayName { get; set; }
         public string ProviderUserId { get; set; }
     }
+
+    //public class FacebookLoginModel
+    //{
+    //    public string uid { get; set; }
+    //    public string accessToken { get; set; }
+    //}
 }

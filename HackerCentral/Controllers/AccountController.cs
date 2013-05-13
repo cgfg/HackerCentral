@@ -8,13 +8,15 @@ using System.Web.Security;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
-using HackerCentral.Filters;
+//using HackerCentral.Filters;
 using HackerCentral.Models;
+
+using HackerCentral.Extensions;
 
 namespace HackerCentral.Controllers
 {
     [Authorize]
-    [InitializeSimpleMembership]
+    //[InitializeSimpleMembership]
     public class AccountController : Controller
     {
         //
@@ -44,6 +46,14 @@ namespace HackerCentral.Controllers
             ModelState.AddModelError("", "The user name or password provided is incorrect.");
             return View(model);
         }
+
+        //[HttpPost]
+        //public JsonResult FacebookLogin(FacebookLoginModel model)
+        //{
+        //    Session["uid"] = model.uid;
+        //    Session["accessToken"] = model.accessToken;
+        //    return Json(new { success = true });
+        //}
 
         //
         // POST: /Account/LogOff
@@ -79,8 +89,8 @@ namespace HackerCentral.Controllers
                 // Attempt to register the user
                 try
                 {
-                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
-                    Roles.AddUserToRole(model.UserName, UserRole.HACKER.ToString());
+                    WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { AuthProvider = AuthProvider.Local });
+                    Roles.AddUserToRole(model.UserName, UserRole.Administrator.ToString());
                     WebSecurity.Login(model.UserName, model.Password);
                     return RedirectToAction("Index", "Home");
                 }
@@ -219,6 +229,7 @@ namespace HackerCentral.Controllers
         public ActionResult ExternalLoginCallback(string returnUrl)
         {
             AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication(Url.Action("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
+
             if (!result.IsSuccessful)
             {
                 return RedirectToAction("ExternalLoginFailure");
@@ -237,11 +248,27 @@ namespace HackerCentral.Controllers
             }
             else
             {
+                // User is new, automatically register them
+                // Insert a new user into the database
+                using (HackerCentralContext db = new HackerCentralContext())
+                {
+                    // Insert name into the profile table
+                    AuthProvider authProvider;
+                    db.UserProfiles.Add(new UserProfile { UserName = result.UserName, FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
+                    db.SaveChanges();
+
+                    OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, result.UserName);
+                    Roles.AddUserToRole(result.UserName, UserRole.User.ToString());
+                    OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false);
+
+                    return RedirectToLocal(returnUrl);
+                }
+
                 // User is new, ask for their desired membership name
-                string loginData = OAuthWebSecurity.SerializeProviderUserId(result.Provider, result.ProviderUserId);
-                ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(result.Provider).DisplayName;
-                ViewBag.ReturnUrl = returnUrl;
-                return View("ExternalLoginConfirmation", new RegisterExternalLoginModel { UserName = result.UserName, ExternalLoginData = loginData });
+                //string loginData = OAuthWebSecurity.SerializeProviderUserId(result.Provider, result.ProviderUserId);
+                //ViewBag.ProviderDisplayName = OAuthWebSecurity.GetOAuthClientData(result.Provider).DisplayName;
+                //ViewBag.ReturnUrl = returnUrl;
+                //return View("ExternalLoginConfirmation", new RegisterExternalLoginModel { UserName = result.UserName, ExternalLoginData = loginData });
             }
         }
 
@@ -256,7 +283,8 @@ namespace HackerCentral.Controllers
             string provider = null;
             string providerUserId = null;
 
-            if (User.Identity.IsAuthenticated || !OAuthWebSecurity.TryDeserializeProviderUserId(model.ExternalLoginData, out provider, out providerUserId))
+            if (User.Identity.IsAuthenticated ||
+                !OAuthWebSecurity.TryDeserializeProviderUserId(model.ExternalLoginData, out provider, out providerUserId))
             {
                 return RedirectToAction("Manage");
             }
@@ -264,7 +292,7 @@ namespace HackerCentral.Controllers
             if (ModelState.IsValid)
             {
                 // Insert a new user into the database
-                using (UsersContext db = new UsersContext())
+                using (HackerCentralContext db = new HackerCentralContext())
                 {
                     UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
                     // Check if user already exists

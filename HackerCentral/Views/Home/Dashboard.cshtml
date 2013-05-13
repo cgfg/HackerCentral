@@ -4,4 +4,6 @@
     ViewBag.Title = "Dashboard";
 }
 
-<h2>Dashboard</h2>
+<div id="maincontent">
+    <iframe id="externalcontent" src="@System.Configuration.ConfigurationManager.AppSettings[Model.UserProfile.AuthProvider.ToString()]"></iframe>
+</div>

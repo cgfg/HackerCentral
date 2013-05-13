@@ -1,5 +1,4 @@
-﻿using HackerCentral.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,20 +7,26 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
-using HackerCentral.Models;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using WebMatrix.WebData;
+
+using HackerCentral.Models;
+
 
 namespace HackerCentral
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
-
     public class MvcApplication : System.Web.HttpApplication
     {
+
         protected void Application_Start()
         {
-            WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", true);
+
+            //WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", true);
+            SimpleMembershipInitializer();
 
             AreaRegistration.RegisterAllAreas();
 
@@ -32,14 +37,40 @@ namespace HackerCentral
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-            
-            if (!Roles.RoleExists(UserRole.HACKER.ToString()))
-                Roles.CreateRole(UserRole.HACKER.ToString());
-            
-            if (!Roles.RoleExists(UserRole.ADMINISTRATOR.ToString()))
-                Roles.CreateRole(UserRole.ADMINISTRATOR.ToString());
-             
-            
+
+            // create roles if they do not exist
+            foreach (UserRole userRole in Enum.GetValues(typeof(UserRole)))
+            {
+                if (!Roles.RoleExists(userRole.ToString()))
+                {
+                    Roles.CreateRole(userRole.ToString());
+                }
+            }
+        }
+
+        private void SimpleMembershipInitializer()
+        {
+            Database.SetInitializer<HackerCentralContext>(null);
+
+            try
+            {
+                using (var context = new HackerCentralContext())
+                {
+                    if (!context.Database.Exists())
+                    {
+                        // Create the SimpleMembership database without Entity Framework migration schema
+                        ((IObjectContextAdapter)context).ObjectContext.CreateDatabase();
+                    }
+                }
+
+                // TODO: Make sure that it's okay to not call it here if we've already initialized simple membership
+                if (!WebSecurity.Initialized)
+                    WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("The ASP.NET Simple Membership database could not be initialized. For more information, please see http://go.microsoft.com/fwlink/?LinkId=256588", ex);
+            }
         }
     }
 }

@@ -8,5 +8,6 @@ namespace HackerCentral.ViewModels
 {
     public class DashboardViewModel
     {
+        public Models.UserProfile UserProfile { get; set; }
     }
 }

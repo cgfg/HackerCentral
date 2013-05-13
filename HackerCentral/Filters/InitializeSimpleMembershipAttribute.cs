@@ -25,12 +25,13 @@ namespace HackerCentral.Filters
         {
             public SimpleMembershipInitializer()
             {
-                Database.SetInitializer<UsersContext>(null);
+                Database.SetInitializer<HackerCentralContext>(null);
 
                 try
                 {
-                    using (var context = new UsersContext())
+                    using (var context = new HackerCentralContext())
                     {
+                        System.Diagnostics.Debug.WriteLine("wwwwwwww - exists: {0}", context.Database.Exists());
                         if (!context.Database.Exists())
                         {
                             // Create the SimpleMembership database without Entity Framework migration schema

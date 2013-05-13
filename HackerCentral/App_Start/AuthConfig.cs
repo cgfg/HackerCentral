@@ -22,11 +22,11 @@ namespace HackerCentral
             //    consumerKey: "",
             //    consumerSecret: "");
 
-            //OAuthWebSecurity.RegisterFacebookClient(
-            //    appId: "",
-            //    appSecret: "");
+            OAuthWebSecurity.RegisterFacebookClient(
+                appId: System.Configuration.ConfigurationManager.AppSettings["FacebookAppId"],
+                appSecret: System.Configuration.ConfigurationManager.AppSettings["FacebookAppSecret"]);
 
-            //OAuthWebSecurity.RegisterGoogleClient();
+            OAuthWebSecurity.RegisterGoogleClient();
         }
     }
 }

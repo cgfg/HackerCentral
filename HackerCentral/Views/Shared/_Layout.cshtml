@@ -1,88 +1,253 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var menus = new[] {
+        new { LinkText="Home", ActionName="Index",ControllerName="Home",Roles="All"  },
+        new { LinkText="Edit Points", ActionName="Index",ControllerName="Pionts",Roles=HackerCentral.Models.UserRole.Hacker.ToString()  },
+        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=HackerCentral.Models.UserRole.Hacker.ToString()  },
+        new { LinkText="Hacker Token", ActionName="GenerateHackerToken",ControllerName="HackerToken",Roles=HackerCentral.Models.UserRole.Administrator.ToString()  },
+        new { LinkText="Login", ActionName="Login",ControllerName="Account",Roles="Anonymous"  },
+        new { LinkText="Sign Up", ActionName="Register",ControllerName="Account",Roles="Anonymous"  }
+    };
+}
+
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>@ViewBag.Title - UNL Research</title>
-        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - UNL Research</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        @Scripts.Render("~/bundles/jquery", "~/bundles/modernizr", "~/bundles/bootstrap", "~/bundles/signalr", "~/signalr/hubs")
-        @Styles.Render("~/Content/bootstrap")
-        @RenderSection("Styles", required: false)
-    </head>
-    <body>
-        <div class="navbar navbar-inverse navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="brand" href="@Url.Action("Index", "Home")">UNL Research</a>
-                    
-                    @if (Request.IsAuthenticated)
-                    {
-                        @* User is logged in *@
-                        <div class="nav-collapse collapse">
-                            <ul class="nav">
-                                <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
-                                <li class="">@Html.ActionLink("Edit Points", "Index", "Points")</li>
-                                <li class="">@Html.ActionLink("View Users", "Index", "Users")</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="nav-collapse collapse pull-right">
-
-                            <div class="btn-group">
-                                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Welcome, @User.Identity.Name <span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Profile", "Manage", "Account")</li>
-                                    <li>@Html.ActionLink("Dashboard", "Dashboard", "Home")</li>
-                                </ul>
-                            </div>
-
-                            <ul class="nav pull-right">
-                                <li class=""><a href="javascript:document.getElementById('logoutForm').submit()">Logout</a></li>
-                            </ul>
-
-
-                             @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
-                                @Html.AntiForgeryToken()
-                            }
-                        </div>
-                    } else {
-                        @* User is not logged in *@
-                        <div class="nav-collapse collapse">
-                            <ul class="nav">
-                                <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
-                            </ul>
-                        </div>
-                        <div class="nav-collapse collapse pull-right">
-                            <ul class="nav">
-                                <li class="">@Html.ActionLink("Login", "Login", "Account")</li>
-                                <li class="">@Html.ActionLink("Sign Up", "Register", "Account")</li>
-                            </ul>
-                        </div>
-                    }
-                    
-                </div>
-            </div>
-        </div>
-
-        <div id="main-content" class="container">
-            @RenderBody()
-        </div>
-
-        <footer>
-            <div class="container">
-                <p>&copy; @DateTime.Now.Year - HackerCentral</p>
-            </div>
-        </footer>
+    @if (Request.IsAuthenticated)
+    {
+        @Scripts.Render("~/bundles/jquery")
+        <script>
+            var preempt = false;
+            $(document).on('click.dropdown.data-api', function (event) {
+                if (preempt) {
+                    preempt = false;
+                    event.stopImmediatePropagation();
+                }
+            });
+        </script>
+        @Scripts.Render("~/bundles/modernizr", "~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/signalr", "~/signalr/hubs", "~/bundles/select2")
+        @Styles.Render("~/Content/select2")
         
+        <script>
+            var queryCallback = null;
 
-        @RenderSection("Scripts", required: false)
-    </body>
+            $(function () {
+                $('#msgNavButton').popover({ animation: true, placement: 'top', trigger: 'manual', title: 'Default Title Length', content: 'The default content length should be a short paragraph like this.' });
+                $('#msgNavButton').click(function () {
+                    $('#msgNavButton').popover('hide');
+                });
+
+                // Reference the auto-generated proxy for the hub.  
+                var chat = $.connection.chatHub;
+                // Create a function that the hub can call back to display messages.
+                chat.client.addNewMessageToPage = function (name, message) {
+                    // Add the message to the page. 
+                    $('#msgBoard').append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name
+                        + ': </strong>' + message + '</div>');
+                    if (!$('#msgDropDown').hasClass('open')) {
+                        var preview = $('#msgNavButton').data('popover');
+                        preview.options.title = "Message from " + name + ':';
+                        preview.options.content = message;
+                        $('#msgNavButton').popover('show');
+                    }
+                };
+
+                chat.client.listActiveUsers = function (userListJson) {
+                    userList = JSON.parse(userListJson);
+                    data = { results: [] };
+                    for (var index = 0; index < userList.length; index++) {
+                        data.results.push({ id: userList[index], text: userList[index] });
+                    }
+                    data.results.push({ id: "*", text: "Everyone" });
+                    queryCallback(data);
+                };
+
+                // is called when a user becomes available to chat
+                chat.client.addNewActiveUser = function (name) {
+                    //alert("add " + name);
+                };
+
+                // is called when a previously available user is no longer available to chat
+                chat.client.removeInactiveUser = function (name) {
+                    //alert("remove " + name);
+                };
+
+                // Get the user name and store it to prepend to messages.
+                // Set initial focus to message input box.  
+                $('#msgText').focus();
+
+                // Start the connection.
+                $.connection.hub.start().done(function () {
+                    $('#msgForm').submit(function () {
+                        // Call the Send method on the hub.
+                        var jsonList = JSON.stringify([].concat($('#msgRecipients').val()));
+                        chat.server.send(jsonList, $('#msgText').val());
+                        // Clear text box and reset focus for next comment. 
+                        $('#msgText').val('').focus();
+                        return false;
+                    });
+
+                    $("#msgRecipients").select2({
+                        multiple: true,
+                        closeOnSelect: false,
+                        placeholder: "Recipients",
+                        query: function (parameter) {
+                            queryCallback = parameter.callback;
+                            chat.server.getActiveUsers();
+                        }
+                    });
+
+                    $('#msgRecipients').on("close", function (e) {
+                        preempt = true;
+                    });
+
+                    $('#msgRecipients').on("open", function (e) {
+                        preempt = true;
+                    });
+                });
+            });
+        </script>
+    }
+    else
+    {
+        @Scripts.Render("~/bundles/jquery", "~/bundles/modernizr", "~/bundles/bootstrap")
+    }
+
+    @Styles.Render("~/Content/bootstrap")
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-inverse btn-navbar" data-toggle="collapse" data-target=".nav-collapse" href="#">
+                    <i class="icon-align-justify icon-white"></i>
+                </a>
+                <a class="brand" href="@Url.Action("Index", "Home")">UNL Research</a>
+
+                @if (Request.IsAuthenticated)
+                {
+@* User is logged in *@
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            @{
+                                string[] roles = Roles.GetRolesForUser();
+                                var links = from item in menus
+                                        where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries).Any(x => roles.Contains(x) || x == "All")
+                                        select item;
+                                foreach (var link in links)
+                                {
+                                    @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
+                                }
+                            }
+                            <li class="navbar-text">Welcome, @Roles.GetRolesForUser()[Roles.GetRolesForUser().Length - 1]</li>
+                        </ul>
+                    </div>
+                    
+                                
+                    @*//this is old
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li class="">@Html.ActionLink("Edit Points", "Index", "Points")</li>
+                            <li class="">@Html.ActionLink("View Users", "Index", "Users")</li>
+                        </ul>
+                    </div>*@
+                        
+                    <div class="nav-collapse collapse pull-right">
+                        @*//There is need to access profile and dashboard since they are supported by authenabridge
+                        <div class="btn-group dropup">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Welcome, @User.Identity.Name <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Profile", "Manage", "Account")</li>
+                                <li>@Html.ActionLink("Dashboard", "Dashboard", "Home")</li>
+                            </ul>
+                        </div>*@
+                        
+                        <ul class="nav pull-right">
+                            <li class=""><a href="javascript:document.getElementById('logoutForm').submit()">Logout</a></li>
+                        </ul>
+
+                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                        }
+                    </div>
+
+                    // the chat box is rendered for all users
+                    <div id="msgDropDown" class="nav pull-right dropdown">
+                        <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="icon-comment icon-white"></i>
+                        </a>
+                        <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 300px; width: 300px;">
+                            <form id="msgForm">
+                                <fieldset>
+                                    <legend>Chat</legend>
+                                </fieldset>
+                                <div class="controls">
+                                    <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
+                                </div>
+                                <div class="controls">
+                                    <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
+                                </div>
+                                <div class="controls">
+                                    <button type="submit" class="btn">Send</button>
+                                </div>
+                            </form>
+                            <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+@* User is not logged in *@
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            @{
+                    var links = from item in menus
+                                where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries).Any(x => new String[] { "All", "Anonymous" }.Contains(x))
+                                select item;
+                    foreach (var link in links)
+                    {    
+                                    @:<li>@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                    
+                    @*
+                    // logout is dependent on external authentication service
+                    <div class="nav-collapse collapse pull-right">
+                        <ul class="nav">
+                            <li class="">@Html.ActionLink("Login", "Login", "Account")</li>
+                            <li class="">@Html.ActionLink("Sign Up", "Register", "Account")</li>
+                        </ul>
+                    </div>
+                    *@
+                }
+            </div>
+        </div>
+    </div>
+
+
+    @RenderBody()
+
+
+    @*<div id="fb-root"></div>
+    <script src="@Url.Content("~/Scripts/facebook.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            InitializeFacebook(@System.Configuration.ConfigurationManager.AppSettings["FacebookAppId"]);
+        });
+    </script>*@
+
+    @RenderSection("Scripts", required: false)
+</body>
 </html>

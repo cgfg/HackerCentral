@@ -16,6 +16,7 @@ namespace HackerCentral.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        
         [AllowAnonymous]
         public ActionResult Index()
         {
@@ -27,18 +28,18 @@ namespace HackerCentral.Controllers
 
         public ActionResult Dashboard()
         {
-            var model = new DashboardViewModel()
+            DashboardViewModel model = null;
+            using (var context = new HackerCentralContext())
             {
-            };
-
+                model = new DashboardViewModel { UserProfile = context.UserProfiles.Find(WebSecurity.CurrentUserId) };
+            }
+             
             return View("Dashboard", model);
         }
 
         [AllowAnonymous]
         public ActionResult Test()
         {
-            
-
             return View("Test");
         }
     }
