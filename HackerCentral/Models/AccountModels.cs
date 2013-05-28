@@ -2,45 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
 using System.Globalization;
 using System.Web.Security;
+using System.Linq;
+using System.Data;
+using WebMatrix.WebData;
 
 namespace HackerCentral.Models
 {
-    public class HackerCentralContext : DbContext
-    {
-        public HackerCentralContext()
-            : base("DefaultConnection")
-        {
-        }
-
-        public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<HackerToken> HackerTokens { get; set; }
-    }
-
-    public enum AuthProvider
-    {
-        Facebook,
-        Google,
-        LinkedIn,
-        Microsoft,
-        Twitter,
-        Yahoo,
-        Local
-    }
-
-    [Table("UserProfile")]
-    public class UserProfile
-    {
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
-        public string UserName { get; set; }
-        public string FullName { get; set; }
-        public AuthProvider AuthProvider { get; set; }
-    }
-
     public class RegisterExternalLoginModel
     {
         [Required]

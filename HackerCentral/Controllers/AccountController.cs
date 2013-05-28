@@ -8,16 +8,16 @@ using System.Web.Security;
 using DotNetOpenAuth.AspNet;
 using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
-//using HackerCentral.Filters;
 using HackerCentral.Models;
+using HackerCentral.Filters;
 
 using HackerCentral.Extensions;
 
 namespace HackerCentral.Controllers
 {
-    [Authorize]
+    [HackerCentral.Filters.Authorize]
     //[InitializeSimpleMembership]
-    public class AccountController : Controller
+    public class AccountController : TrackedController
     {
         //
         // GET: /Account/Login
@@ -250,19 +250,19 @@ namespace HackerCentral.Controllers
             {
                 // User is new, automatically register them
                 // Insert a new user into the database
-                using (HackerCentralContext db = new HackerCentralContext())
+                using (HackerCentralContext context = new HackerCentralContext(this))
                 {
                     // Insert name into the profile table
                     AuthProvider authProvider;
-                    db.UserProfiles.Add(new UserProfile { UserName = result.UserName, FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
-                    db.SaveChanges();
-
-                    OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, result.UserName);
-                    Roles.AddUserToRole(result.UserName, UserRole.User.ToString());
-                    OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false);
-
-                    return RedirectToLocal(returnUrl);
+                    context.UserProfiles.Add(new UserProfile { UserName = result.UserName, FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
+                    context.SaveChanges();
                 }
+
+                OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, result.UserName);
+                Roles.AddUserToRole(result.UserName, UserRole.User.ToString());
+                OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false);
+
+                return RedirectToLocal(returnUrl);
 
                 // User is new, ask for their desired membership name
                 //string loginData = OAuthWebSecurity.SerializeProviderUserId(result.Provider, result.ProviderUserId);
@@ -292,7 +292,7 @@ namespace HackerCentral.Controllers
             if (ModelState.IsValid)
             {
                 // Insert a new user into the database
-                using (HackerCentralContext db = new HackerCentralContext())
+                using (HackerCentralContext db = new HackerCentralContext(this))
                 {
                     UserProfile user = db.UserProfiles.FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
                     // Check if user already exists

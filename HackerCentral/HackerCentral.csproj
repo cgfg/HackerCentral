@@ -210,11 +210,17 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\HackerTokenController.cs" />
+    <Compile Include="Controllers\AdministrationController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\TokenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PointsController.cs" />
+    <Compile Include="Controllers\TrackedController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
+    <Compile Include="Extensions\AuthenticationExtensions.cs" />
+    <Compile Include="Extensions\UserRoleHelper.cs" />
+    <Compile Include="Filters\AuthorizeAttribute.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -224,15 +230,16 @@
     <Compile Include="Models\AthenaBridgeAPISettings.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\CommentVersion.cs" />
-    <Compile Include="Models\HackerToken.cs" />
+    <Compile Include="Models\Entities.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Models\PointVersion.cs" />
-    <Compile Include="Models\RegisterTokenModel.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserRoles.cs" />
+    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\ErrorModels.cs" />
     <Compile Include="ViewModels\CommentsViewModel.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
+    <Compile Include="ViewModels\InternalUserViewModel.cs" />
     <Compile Include="ViewModels\PointsViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
   </ItemGroup>
@@ -308,6 +315,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <None Include="Properties\PublishProfiles\FirstTime.pubxml" />
     <None Include="Scripts\jquery-1.9.1\jquery-1.9.1.intellisense.js" />
     <Content Include="Content\select2-spinner.gif" />
     <Content Include="Content\select2.png" />
@@ -381,11 +389,20 @@
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Views\Shared\_MainMenu.cshtml" />
-    <Content Include="Views\HackerToken\GenerateHackerToken.cshtml" />
-    <Content Include="Views\HackerToken\Register.cshtml" />
+    <Content Include="Views\Token\GenerateToken.cshtml" />
+    <Content Include="Views\Token\Register.cshtml" />
+    <Content Include="Views\Token\DepletedTokenError.cshtml" />
+    <Content Include="Views\Token\RegistrationSuccess.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Token\InvalidTokenError.cshtml" />
+    <Content Include="Views\Administration\ManageUsers.cshtml" />
+    <Content Include="Views\Administration\_EditUserForm.cshtml" />
+    <Content Include="Views\Administration\_Error.cshtml" />
+    <Content Include="Views\Error\Blocked.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Infrastructure\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

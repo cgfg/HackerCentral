@@ -26,7 +26,7 @@ namespace HackerCentral
                 appId: System.Configuration.ConfigurationManager.AppSettings["FacebookAppId"],
                 appSecret: System.Configuration.ConfigurationManager.AppSettings["FacebookAppSecret"]);
 
-            OAuthWebSecurity.RegisterGoogleClient();
+            //OAuthWebSecurity.RegisterGoogleClient();
         }
     }
 }

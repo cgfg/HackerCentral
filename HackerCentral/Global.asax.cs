@@ -24,7 +24,6 @@ namespace HackerCentral
 
         protected void Application_Start()
         {
-
             //WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", true);
             SimpleMembershipInitializer();
 
@@ -37,7 +36,6 @@ namespace HackerCentral
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-
             // create roles if they do not exist
             foreach (UserRole userRole in Enum.GetValues(typeof(UserRole)))
             {
@@ -46,15 +44,39 @@ namespace HackerCentral
                     Roles.CreateRole(userRole.ToString());
                 }
             }
+
+            // seed administrator
+            if (!WebSecurity.UserExists(UserRole.Administrator.ToString()))
+            {
+                using (var context = new HackerCentralContext(null))
+                {
+                    context.UserProfiles.Add(new UserProfile
+                    {
+                        AuthProvider = AuthProvider.Local,
+                        FullName = "Peter Griffin",
+                        UserName = UserRole.Administrator.ToString()
+                    });
+                    context.SaveChanges();
+                }
+                WebSecurity.CreateAccount(UserRole.Administrator.ToString(), "secret");
+                //WebSecurity.CreateUserAndAccount(UserRole.Administrator.ToString(), "secret");
+                //WebSecurity.CreateUserAndAccount(UserRole.Administrator.ToString(), "secret", new { AuthProvider = AuthProvider.Local });
+            }
+            
+            if (!Roles.GetRolesForUser(UserRole.Administrator.ToString()).Contains(UserRole.Administrator.ToString()))
+            {
+                Roles.AddUsersToRoles(new[] { UserRole.Administrator.ToString() }, new[] { UserRole.Administrator.ToString() });
+            }
         }
 
         private void SimpleMembershipInitializer()
         {
-            Database.SetInitializer<HackerCentralContext>(null);
-
+            System.Diagnostics.Debug.WriteLine("SimpleMembershipInitializer()");
+            Database.SetInitializer<SimpleContext>(null);
+            
             try
             {
-                using (var context = new HackerCentralContext())
+                using (var context = new SimpleContext())
                 {
                     if (!context.Database.Exists())
                     {

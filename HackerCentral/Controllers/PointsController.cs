@@ -1,6 +1,7 @@
 ﻿using HackerCentral.Accessors;
 using HackerCentral.Models;
 using HackerCentral.ViewModels;
+using HackerCentral.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ using System.Web.Mvc;
 
 namespace HackerCentral.Controllers
 {
-    [Authorize]
-    public class PointsController : Controller
+    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator })]
+    public class PointsController : TrackedController
     {
         public ActionResult Index(string message = "")
         {
@@ -57,6 +58,4 @@ namespace HackerCentral.Controllers
             return PartialView("_EditPoint", pa.GetPoint(id));
         }
     }
-
-
 }

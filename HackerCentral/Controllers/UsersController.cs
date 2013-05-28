@@ -1,4 +1,5 @@
 ﻿using HackerCentral.Accessors;
+using HackerCentral.Models;
 using HackerCentral.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,8 @@ using System.Web.Mvc;
 
 namespace HackerCentral.Controllers
 {
-    public class UsersController : Controller
+    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator })]
+    public class UsersController : TrackedController
     {
         //
         // GET: /Users/

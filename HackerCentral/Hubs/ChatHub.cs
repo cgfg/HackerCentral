@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using HackerCentral.Models;
+using WebMatrix.WebData;
+using System.Data.Entity;
 
 namespace SignalRChat
 {
@@ -28,6 +31,19 @@ namespace SignalRChat
             if (isNew)
             {
                 Clients.All.addNewActiveUser(Context.User.Identity.Name);
+
+                using (var context = new HackerCentralContext(null))
+                {
+                    foreach (Delivery delivery in context.Deliveries.Include(d => d.Message).Include(d => d.Message.Sender).Where(d => d.TimeDelivered == null).OrderBy(d => d.Message.TimeStamp))
+                    {
+                        delivery.TimeDelivered = DateTime.UtcNow;
+                        foreach (string connection in connections)
+                        {
+                            Clients.Client(connection).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
+                        }
+                    }
+                    context.SaveChanges();
+                }
             }
 
             return base.OnConnected();
@@ -84,19 +100,64 @@ namespace SignalRChat
         //    return Clients.Group("foo").addMessage(message);
         //}
 
-        public void Send(string userListJson, string message)
+        public void Send(string userListJson, string text)
         {
-            HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson));
-            if (userSet.Any(u => u.ToLower() == "all" || u.ToLower() == "*"))
+            lock (ActiveUsers)
             {
-                Clients.All.addNewMessageToPage(Context.User.Identity.Name, message);
-            }
-            else
-            {
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson));
                 userSet.Add(Context.User.Identity.Name);
-
-                lock (ActiveUsers)
+                using (var context = new HackerCentralContext(null))
                 {
+                    if (userSet.Any(u => u.ToLower() == "*"))
+                    {
+                        userSet.Remove("*");
+                        foreach (UserProfile user in context.UserProfiles)
+                        {
+                            userSet.Add(user.UserName);
+                        }
+                    }
+                    else
+                    {
+                        if (userSet.Any(u => u.ToLower() == "!"))
+                        {
+                            userSet.Remove("!");
+                            foreach (string userName in ActiveUsers.Keys)
+                            {
+                                userSet.Add(userName);
+                            }
+                        }
+                        if (userSet.Any(u => u.ToLower() == "@"))
+                        {
+                            userSet.Remove("@");
+                            foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
+                            {
+                                userSet.Add(userName);
+                            }
+                        }
+                    }
+
+                    Message message = new Message
+                    {
+                        TimeStamp = DateTime.UtcNow,
+                        Sender = context.UserProfiles.Find(WebSecurity.CurrentUserId),
+                        Text = text,
+                        Deliveries = new List<Delivery>()
+
+                    };
+
+                    foreach (UserProfile user in context.UserProfiles.Where(u => userSet.Contains(u.UserName)))
+                    {
+                        message.Deliveries.Add(new Delivery
+                            {
+                                Message = message,
+                                TimeDelivered = ActiveUsers.ContainsKey(user.UserName) ? new Nullable<DateTime>(DateTime.UtcNow) : null,
+                                Reciever = user
+                            });
+                    }
+
+                    context.Messages.Add(message);
+                    context.SaveChanges();
+
                     HashSet<string> connections;
                     foreach (string username in userSet)
                     {
@@ -106,7 +167,7 @@ namespace SignalRChat
                         {
                             foreach (string connection in connections)
                             {
-                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, message);
+                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
                             }
                         }
                     }
@@ -114,9 +175,12 @@ namespace SignalRChat
             }
         }
 
-        public void GetActiveUsers()
+        public void GetUserList()
         {
-            Clients.Client(Context.ConnectionId).listActiveUsers(JsonConvert.SerializeObject(ActiveUsers.Keys.Where(u => u != Context.User.Identity.Name).ToArray()));
+            using (var context = new SimpleContext())
+            {
+                Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Where(u => u.UserName != Context.User.Identity.Name).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
+            }
         }
     }
 }

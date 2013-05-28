@@ -1,11 +1,13 @@
-﻿@{
+﻿@using HackerCentral.Models
+@{
     var menus = new[] {
-        new { LinkText="Home", ActionName="Index",ControllerName="Home",Roles="All"  },
-        new { LinkText="Edit Points", ActionName="Index",ControllerName="Pionts",Roles=HackerCentral.Models.UserRole.Hacker.ToString()  },
-        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=HackerCentral.Models.UserRole.Hacker.ToString()  },
-        new { LinkText="Hacker Token", ActionName="GenerateHackerToken",ControllerName="HackerToken",Roles=HackerCentral.Models.UserRole.Administrator.ToString()  },
-        new { LinkText="Login", ActionName="Login",ControllerName="Account",Roles="Anonymous"  },
-        new { LinkText="Sign Up", ActionName="Register",ControllerName="Account",Roles="Anonymous"  }
+        new { LinkText="Home", ActionName="Index",ControllerName="Home",Roles="All" },
+        new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
+        new { LinkText="Edit Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
+        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
+        new { LinkText="Generate Token", ActionName="GenerateToken",ControllerName="Token",Roles=UserRole.Administrator.ToString() },
+        new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
+        //new { LinkText="Sign Up", ActionName="Register",ControllerName="Account",Roles="Anonymous" }
     };
 }
 
@@ -59,13 +61,15 @@
                     }
                 };
 
-                chat.client.listActiveUsers = function (userListJson) {
+                chat.client.listUsers = function (userListJson) {
                     userList = JSON.parse(userListJson);
                     data = { results: [] };
                     for (var index = 0; index < userList.length; index++) {
-                        data.results.push({ id: userList[index], text: userList[index] });
+                        data.results.push({ id: userList[index].userName, text: userList[index].userName, isOnline: userList[index].isOnline });
                     }
-                    data.results.push({ id: "*", text: "Everyone" });
+                    data.results.push({ id: "*", text: "Everyone", isOnline: true });
+                    data.results.push({ id: "!", text: "Everyone Online", isOnline: true });
+                    data.results.push({ id: "@("@")", text: "Everyone Offline", isOnline: false });
                     queryCallback(data);
                 };
 
@@ -100,8 +104,23 @@
                         placeholder: "Recipients",
                         query: function (parameter) {
                             queryCallback = parameter.callback;
-                            chat.server.getActiveUsers();
-                        }
+                            chat.server.getUserList();
+                        },
+                        formatResult: function (state) {
+                            if (state.isOnline) {
+                                return "<span class=\"badge badge-important\">&zwnj;</span>  " + state.text;
+                            } else {
+                                return "<span class=\"badge\">&zwnj;</span>  " + state.text;
+                            }
+                        },
+                        formatSelection: function (state) {
+                            if (state.isOnline) {
+                                return "<span>" + state.text + "</span>"
+                            } else {
+                                return "<span class=\"muted\">" + state.text + "</span>";
+                            }
+                        },
+                        escapeMarkup: function (m) { return m; }
                     });
 
                     $('#msgRecipients').on("close", function (e) {
@@ -138,21 +157,20 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             @{
-                                string[] roles = Roles.GetRolesForUser();
-                                var links = from item in menus
-                                        where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries).Any(x => roles.Contains(x) || x == "All")
-                                        select item;
-                                foreach (var link in links)
-                                {
-                                    @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
+                    string[] roles = Roles.GetRolesForUser();
+                    var links = from item in menus
+                                where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries).Any(x => roles.Contains(x) || x == "All")
+                                select item;
+                    foreach (var link in links)
+                    {
+                                @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
                             }
-                            <li class="navbar-text">Welcome, @Roles.GetRolesForUser()[Roles.GetRolesForUser().Length - 1]</li>
                         </ul>
                     </div>
                     
                                 
-                    @*//this is old
+@*//this is old
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li class="">@Html.ActionLink("Home", "Index", "Home")</li>
@@ -170,39 +188,41 @@
                                 <li>@Html.ActionLink("Dashboard", "Dashboard", "Home")</li>
                             </ul>
                         </div>*@
-                        
+
                         <ul class="nav pull-right">
-                            <li class=""><a href="javascript:document.getElementById('logoutForm').submit()">Logout</a></li>
+                            <li class=""><p class="navbar-text">Welcome, @User.Identity.Name</p></li>
+                            <li class="">
+                                @* the chat box is rendered for all users *@
+                                <div id="msgDropDown" class="pull-right dropdown">
+                                    <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
+                                        <i class="icon-comment icon-white"></i>
+                                    </a>
+                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 300px; width: 300px;">
+                                        <form id="msgForm">
+                                            <fieldset>
+                                                <legend>Chat</legend>
+                                            </fieldset>
+                                            <div class="controls">
+                                                <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
+                                            </div>
+                                            <div class="controls">
+                                                <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
+                                            </div>
+                                            <div class="controls">
+                                                <button type="submit" class="btn">Send</button>
+                                            </div>
+                                        </form>
+                                        <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout</a></li>
                         </ul>
 
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
                         {
                             @Html.AntiForgeryToken()
                         }
-                    </div>
-
-                    // the chat box is rendered for all users
-                    <div id="msgDropDown" class="nav pull-right dropdown">
-                        <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="icon-comment icon-white"></i>
-                        </a>
-                        <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 300px; width: 300px;">
-                            <form id="msgForm">
-                                <fieldset>
-                                    <legend>Chat</legend>
-                                </fieldset>
-                                <div class="controls">
-                                    <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
-                                </div>
-                                <div class="controls">
-                                    <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
-                                </div>
-                                <div class="controls">
-                                    <button type="submit" class="btn">Send</button>
-                                </div>
-                            </form>
-                            <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
-                        </div>
                     </div>
                 }
                 else
@@ -216,13 +236,13 @@
                                 select item;
                     foreach (var link in links)
                     {    
-                                    @:<li>@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
+                                @:<li>@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
                             }
                         </ul>
                     </div>
                     
-                    @*
+@*
                     // logout is dependent on external authentication service
                     <div class="nav-collapse collapse pull-right">
                         <ul class="nav">

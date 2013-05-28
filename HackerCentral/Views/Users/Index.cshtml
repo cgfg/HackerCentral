@@ -3,9 +3,11 @@
     ViewBag.Title = "Users";
 }
 
-<h2>Users</h2>
+<div class="container">
+    <h2>Users</h2>
 
-@foreach (var u in Model.Users)
-{
-    <div>@u.username (@u.id)</div>
-}
+    @foreach (var u in Model.Users)
+    {
+        <div>@u.username (@u.id)</div>
+    }
+</div>

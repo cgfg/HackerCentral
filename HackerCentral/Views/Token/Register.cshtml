@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Register";
+}
+
+
+<div class="container">
+    <div class="hero-unit">
+        <h2>Register Secret Token</h2>
+        <p>
+            You must have a valid token to proceed; suspicious activity is monitored.
+        </p>
+        @using (Html.BeginForm("Register", "Token", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            <div class="control-group">
+                <label class="control-label" for="inputToken">Token</label>
+                <div class="controls">
+                    @Html.TextBox("token", null, new { id = "inputToken", type = "text", placeholder = "Token" })
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn">Register</button>
+                </div>
+            </div>           
+        }
+    </div>
+</div>

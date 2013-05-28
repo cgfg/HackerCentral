@@ -1,6 +1,7 @@
 ﻿using HackerCentral.Accessors;
 using HackerCentral.Models;
 using HackerCentral.ViewModels;
+using HackerCentral.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,8 @@ using WebMatrix.WebData;
 namespace HackerCentral.Controllers
 {
 
-    [Authorize]
-    public class HomeController : Controller
+    [HackerCentral.Filters.Authorize]
+    public class HomeController : TrackedController
     {
         
         [AllowAnonymous]
@@ -29,7 +30,7 @@ namespace HackerCentral.Controllers
         public ActionResult Dashboard()
         {
             DashboardViewModel model = null;
-            using (var context = new HackerCentralContext())
+            using (var context = new HackerCentralContext(this))
             {
                 model = new DashboardViewModel { UserProfile = context.UserProfiles.Find(WebSecurity.CurrentUserId) };
             }
