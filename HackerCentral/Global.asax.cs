@@ -46,7 +46,7 @@ namespace HackerCentral
             }
 
             // seed administrator
-            if (!WebSecurity.UserExists(UserRole.Administrator.ToString()))
+            if (!WebSecurity.UserExists(UserRole.Administrator.ToString().ToLowerInvariant()))
             {
                 using (var context = new HackerCentralContext(null))
                 {
@@ -54,18 +54,18 @@ namespace HackerCentral
                     {
                         AuthProvider = AuthProvider.Local,
                         FullName = "Peter Griffin",
-                        UserName = UserRole.Administrator.ToString()
+                        UserName = UserRole.Administrator.ToString().ToLowerInvariant()
                     });
                     context.SaveChanges();
                 }
-                WebSecurity.CreateAccount(UserRole.Administrator.ToString(), "secret");
+                WebSecurity.CreateAccount(UserRole.Administrator.ToString().ToLowerInvariant(), "secret");
                 //WebSecurity.CreateUserAndAccount(UserRole.Administrator.ToString(), "secret");
                 //WebSecurity.CreateUserAndAccount(UserRole.Administrator.ToString(), "secret", new { AuthProvider = AuthProvider.Local });
             }
             
-            if (!Roles.GetRolesForUser(UserRole.Administrator.ToString()).Contains(UserRole.Administrator.ToString()))
+            if (!Roles.GetRolesForUser(UserRole.Administrator.ToString().ToLowerInvariant()).Contains(UserRole.Administrator.ToString()))
             {
-                Roles.AddUsersToRoles(new[] { UserRole.Administrator.ToString() }, new[] { UserRole.Administrator.ToString() });
+                Roles.AddUsersToRoles(new[] { UserRole.Administrator.ToString().ToLowerInvariant() }, new[] { UserRole.Administrator.ToString() });
             }
         }
 

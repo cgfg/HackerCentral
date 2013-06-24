@@ -1,23 +1,30 @@
-﻿@model HackerCentral.Models.LocalPasswordModel
+﻿@using HackerCentral.Models
+@model HackerCentral.Models.LocalPasswordModel
 @{
     ViewBag.Title = "Manage Account";
 }
 
-<h1>@ViewBag.Title</h1>
+<div class="well well-large offset4 span4">
+    @if (!string.IsNullOrWhiteSpace(ViewBag.StatusMessage))
+    {
+        <div class="alert alert-success">
+            @ViewBag.StatusMessage
+        </div>
+    }
 
-@if(ViewBag.StatusMessage != "") {
-    <div class="alert alert-success">
-        @ViewBag.StatusMessage
-    </div>
-}
+    @if (ViewBag.HasLocalPassword)
+    {
+        @Html.Partial("_ChangePasswordPartial")
+    }
+    else
+    {
+        //@Html.Partial("_SetPasswordPartial")
+        using (var context = new HackerCentralContext(null))
+        {
+        <div class="alert alert-info">
+            You do not have a local password for this site. You must change your password on @context.UserProfiles.Find(WebSecurity.CurrentUserId).AuthProvider.ToString()
+        </div>               
+        }
 
-<p>You're logged in as <strong>@User.Identity.Name</strong>.</p>
-
-@if (ViewBag.HasLocalPassword)
-{
-    @Html.Partial("_ChangePasswordPartial")
-}
-else
-{ 
-    @Html.Partial("_SetPasswordPartial")
-}
+    }
+</div>

@@ -27,10 +27,10 @@
         <script>
             var preempt = false;
             $(document).on('click.dropdown.data-api', function (event) {
-                if (preempt) {
-                    preempt = false;
-                    event.stopImmediatePropagation();
-                }
+                //if (preempt) {
+                //    preempt = false;
+                event.stopImmediatePropagation();
+                //}
             });
         </script>
         @Scripts.Render("~/bundles/modernizr", "~/bundles/bootstrap")
@@ -41,6 +41,13 @@
             var queryCallback = null;
 
             $(function () {
+                //$('.dropdown-menu').click(function (event) {
+                //    alert("Hello");
+                //    event.stopPropagation();
+                //    event.stopImmediatePropagation();
+                //    return false;
+                //});
+
                 $('#msgNavButton').popover({ animation: true, placement: 'top', trigger: 'manual', title: 'Default Title Length', content: 'The default content length should be a short paragraph like this.' });
                 $('#msgNavButton').click(function () {
                     $('#msgNavButton').popover('hide');
@@ -122,14 +129,6 @@
                         },
                         escapeMarkup: function (m) { return m; }
                     });
-
-                    $('#msgRecipients').on("close", function (e) {
-                        preempt = true;
-                    });
-
-                    $('#msgRecipients').on("open", function (e) {
-                        preempt = true;
-                    });
                 });
             });
         </script>
@@ -165,6 +164,14 @@
                     {
                                 @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
+
+                    using (var context = new HackerCentralContext(null))
+                    {
+                        if (context.UserProfiles.Find(WebSecurity.CurrentUserId).AuthProvider == AuthProvider.Local)
+                        {
+                                @:<li class="">@Html.ActionLink("Change Password", "Manage", "Account")</li>
+                                    }
+                    }
                             }
                         </ul>
                     </div>
@@ -190,7 +197,9 @@
                         </div>*@
 
                         <ul class="nav pull-right">
-                            <li class=""><p class="navbar-text">Welcome, @User.Identity.Name</p></li>
+                            <li class="">
+                                <p class="navbar-text">Welcome, @User.Identity.Name</p>
+                            </li>
                             <li class="">
                                 @* the chat box is rendered for all users *@
                                 <div id="msgDropDown" class="pull-right dropdown">

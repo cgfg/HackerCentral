@@ -117,7 +117,7 @@ namespace HackerCentral.Models
 
                     var names = entry.Entity.GetType().GetProperties().Where(p => p.PropertyType.GUID == typeof(ICollection<>).GUID).Select(p => p.Name);
 
-                    System.Diagnostics.Debug.WriteLine("[{0}], [{1}]", string.Join(",", names), string.Join(",", names.Where(n => entry.Collection(n).CurrentValue != null).Select(n => entry.Collection(n).CurrentValue.GetType().Name)));
+                    //System.Diagnostics.Debug.WriteLine("[{0}], [{1}]", string.Join(",", names), string.Join(",", names.Where(n => entry.Collection(n).CurrentValue != null).Select(n => entry.Collection(n).CurrentValue.GetType().Name)));
 
                     EntityTrack entityTrack = null;
                     switch (entry.State)

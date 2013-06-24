@@ -53,7 +53,7 @@ namespace HackerCentral.Controllers
                         Roles.AddUserToRole(user.UserName, model.Role.ToString());
                     }
 
-                    System.Diagnostics.Debug.WriteLine("db: {0}, model: {1}", UserRoleHelper.IsUserBlocked(user.UserName), model.IsBlocked);
+                    //System.Diagnostics.Debug.WriteLine("db: {0}, model: {1}", UserRoleHelper.IsUserBlocked(user.UserName), model.IsBlocked);
 
                     if (UserRoleHelper.IsUserBlocked(user.UserName) != model.IsBlocked)
                     {

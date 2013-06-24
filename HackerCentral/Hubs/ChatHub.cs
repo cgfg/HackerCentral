@@ -20,27 +20,51 @@ namespace SignalRChat
 
         public override Task OnConnected()
         {
-            bool isNew = !ActiveUsers.ContainsKey(Context.User.Identity.Name);
-
+            //bool isNewActiveUser = !ActiveUsers.ContainsKey(Context.User.Identity.Name);
+            bool isNewConnection = false;
             HashSet<string> connections = ActiveUsers.GetOrAdd(Context.User.Identity.Name, new HashSet<string>());
             lock (connections)
             {
-                connections.Add(Context.ConnectionId);
+                isNewConnection = connections.Add(Context.ConnectionId);
             }
-
-            if (isNew)
+            System.Diagnostics.Debug.WriteLine("OnConnected() - {0}, isNewCon: {1}", Context.User.Identity.Name, isNewConnection);
+            if (isNewConnection)
             {
                 Clients.All.addNewActiveUser(Context.User.Identity.Name);
 
                 using (var context = new HackerCentralContext(null))
                 {
-                    foreach (Delivery delivery in context.Deliveries.Include(d => d.Message).Include(d => d.Message.Sender).Where(d => d.TimeDelivered == null).OrderBy(d => d.Message.TimeStamp))
+                    var allDeliveries = context.Deliveries
+                        .Include(d => d.Message)
+                        .Include(d => d.Message.Sender)
+                        .Include(d => d.Reciever)
+                        .Where(d => d.Reciever.UserName.Equals(Context.User.Identity.Name))
+                        .OrderByDescending(d => d.Message.TimeStamp)
+                        .ToArray();
+
+                    long tickStamp = DateTime.UtcNow.Ticks;
+                    long initialTickSpan = TimeSpan.FromMinutes(15).Ticks;
+
+                    var recentDeliveries = allDeliveries
+                        .TakeWhile(d =>
+                        {
+                            if (tickStamp - d.Message.TimeStamp.Ticks < initialTickSpan)
+                            {
+                                tickStamp = d.Message.TimeStamp.Ticks;
+                                return true;
+                            }
+                            else return false;
+                        });
+
+                    var undelievered = allDeliveries.Where(d => d.TimeDelivered == null);
+
+                    foreach (Delivery delivery in recentDeliveries.Concat(undelievered).OrderBy(d => d.Message.TimeStamp))
                     {
                         delivery.TimeDelivered = DateTime.UtcNow;
-                        foreach (string connection in connections)
-                        {
-                            Clients.Client(connection).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
-                        }
+                        //foreach (string connection in connections)
+                        //{
+                            Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
+                        //}
                     }
                     context.SaveChanges();
                 }
@@ -104,11 +128,11 @@ namespace SignalRChat
         {
             lock (ActiveUsers)
             {
-                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson));
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
                 userSet.Add(Context.User.Identity.Name);
                 using (var context = new HackerCentralContext(null))
                 {
-                    if (userSet.Any(u => u.ToLower() == "*"))
+                    if (userSet.Any(u => u.Equals("*")))
                     {
                         userSet.Remove("*");
                         foreach (UserProfile user in context.UserProfiles)
@@ -118,7 +142,7 @@ namespace SignalRChat
                     }
                     else
                     {
-                        if (userSet.Any(u => u.ToLower() == "!"))
+                        if (userSet.Any(u => u.Equals("!")))
                         {
                             userSet.Remove("!");
                             foreach (string userName in ActiveUsers.Keys)
@@ -126,7 +150,7 @@ namespace SignalRChat
                                 userSet.Add(userName);
                             }
                         }
-                        if (userSet.Any(u => u.ToLower() == "@"))
+                        if (userSet.Any(u => u.Equals("@")))
                         {
                             userSet.Remove("@");
                             foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
@@ -145,6 +169,9 @@ namespace SignalRChat
 
                     };
 
+                    System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), text);
+
+                    HashSet<string> connections;
                     foreach (UserProfile user in context.UserProfiles.Where(u => userSet.Contains(u.UserName)))
                     {
                         message.Deliveries.Add(new Delivery
@@ -153,16 +180,12 @@ namespace SignalRChat
                                 TimeDelivered = ActiveUsers.ContainsKey(user.UserName) ? new Nullable<DateTime>(DateTime.UtcNow) : null,
                                 Reciever = user
                             });
-                    }
-
-                    context.Messages.Add(message);
-                    context.SaveChanges();
-
-                    HashSet<string> connections;
-                    foreach (string username in userSet)
-                    {
+                        
                         connections = null;
-                        ActiveUsers.TryGetValue(username, out connections);
+                        ActiveUsers.TryGetValue(user.UserName, out connections);
+
+                        System.Diagnostics.Debug.WriteLine("sender: {0}, rec: {1}, con: [{2}]", Context.User.Identity.Name, user.UserName, connections == null ? "null" : string.Join(",", connections));
+
                         if (connections != null)
                         {
                             foreach (string connection in connections)
@@ -171,6 +194,9 @@ namespace SignalRChat
                             }
                         }
                     }
+
+                    context.Messages.Add(message);
+                    context.SaveChanges();
                 }
             }
         }
@@ -179,7 +205,7 @@ namespace SignalRChat
         {
             using (var context = new SimpleContext())
             {
-                Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Where(u => u.UserName != Context.User.Identity.Name).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
+                Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Where(u => !u.UserName.Equals(Context.User.Identity.Name)).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
             }
         }
     }

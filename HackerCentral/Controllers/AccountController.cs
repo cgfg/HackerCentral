@@ -107,31 +107,31 @@ namespace HackerCentral.Controllers
         //
         // POST: /Account/Disassociate
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Disassociate(string provider, string providerUserId)
-        {
-            string ownerAccount = OAuthWebSecurity.GetUserName(provider, providerUserId);
-            ManageMessageId? message = null;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Disassociate(string provider, string providerUserId)
+        //{
+        //    string ownerAccount = OAuthWebSecurity.GetUserName(provider, providerUserId);
+        //    ManageMessageId? message = null;
 
-            // Only disassociate the account if the currently logged in user is the owner
-            if (ownerAccount == User.Identity.Name)
-            {
-                // Use a transaction to prevent the user from deleting their last login credential
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
-                {
-                    bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-                    if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
-                    {
-                        OAuthWebSecurity.DeleteAccount(provider, providerUserId);
-                        scope.Complete();
-                        message = ManageMessageId.RemoveLoginSuccess;
-                    }
-                }
-            }
+        //    // Only disassociate the account if the currently logged in user is the owner
+        //    if (ownerAccount == User.Identity.Name)
+        //    {
+        //        // Use a transaction to prevent the user from deleting their last login credential
+        //        using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.Serializable }))
+        //        {
+        //            bool hasLocalAccount = OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
+        //            if (hasLocalAccount || OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name).Count > 1)
+        //            {
+        //                OAuthWebSecurity.DeleteAccount(provider, providerUserId);
+        //                scope.Complete();
+        //                message = ManageMessageId.RemoveLoginSuccess;
+        //            }
+        //        }
+        //    }
 
-            return RedirectToAction("Manage", new { Message = message });
-        }
+        //    return RedirectToAction("Manage", new { Message = message });
+        //}
 
         //
         // GET: /Account/Manage
@@ -254,12 +254,12 @@ namespace HackerCentral.Controllers
                 {
                     // Insert name into the profile table
                     AuthProvider authProvider;
-                    context.UserProfiles.Add(new UserProfile { UserName = result.UserName, FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
+                    context.UserProfiles.Add(new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
                     context.SaveChanges();
                 }
 
-                OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, result.UserName);
-                Roles.AddUserToRole(result.UserName, UserRole.User.ToString());
+                OAuthWebSecurity.CreateOrUpdateAccount(result.Provider, result.ProviderUserId, result.UserName.ToLowerInvariant());
+                Roles.AddUserToRole(result.UserName.ToLowerInvariant(), UserRole.User.ToString());
                 OAuthWebSecurity.Login(result.Provider, result.ProviderUserId, createPersistentCookie: false);
 
                 return RedirectToLocal(returnUrl);
@@ -336,26 +336,26 @@ namespace HackerCentral.Controllers
             return PartialView("_ExternalLoginsListPartial", OAuthWebSecurity.RegisteredClientData);
         }
 
-        [ChildActionOnly]
-        public ActionResult RemoveExternalLogins()
-        {
-            ICollection<OAuthAccount> accounts = OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name);
-            List<ExternalLogin> externalLogins = new List<ExternalLogin>();
-            foreach (OAuthAccount account in accounts)
-            {
-                AuthenticationClientData clientData = OAuthWebSecurity.GetOAuthClientData(account.Provider);
+        //[ChildActionOnly]
+        //public ActionResult RemoveExternalLogins()
+        //{
+        //    ICollection<OAuthAccount> accounts = OAuthWebSecurity.GetAccountsFromUserName(User.Identity.Name);
+        //    List<ExternalLogin> externalLogins = new List<ExternalLogin>();
+        //    foreach (OAuthAccount account in accounts)
+        //    {
+        //        AuthenticationClientData clientData = OAuthWebSecurity.GetOAuthClientData(account.Provider);
 
-                externalLogins.Add(new ExternalLogin
-                {
-                    Provider = account.Provider,
-                    ProviderDisplayName = clientData.DisplayName,
-                    ProviderUserId = account.ProviderUserId,
-                });
-            }
+        //        externalLogins.Add(new ExternalLogin
+        //        {
+        //            Provider = account.Provider,
+        //            ProviderDisplayName = clientData.DisplayName,
+        //            ProviderUserId = account.ProviderUserId,
+        //        });
+        //    }
 
-            ViewBag.ShowRemoveButton = externalLogins.Count > 1 || OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
-            return PartialView("_RemoveExternalLoginsPartial", externalLogins);
-        }
+        //    ViewBag.ShowRemoveButton = externalLogins.Count > 1 || OAuthWebSecurity.HasLocalAccount(WebSecurity.GetUserId(User.Identity.Name));
+        //    return PartialView("_RemoveExternalLoginsPartial", externalLogins);
+        //}
 
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
