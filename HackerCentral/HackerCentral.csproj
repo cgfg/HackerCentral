@@ -399,6 +399,7 @@
     <Content Include="Views\Administration\_EditUserForm.cshtml" />
     <Content Include="Views\Administration\_Error.cshtml" />
     <Content Include="Views\Error\Blocked.cshtml" />
+    <Content Include="Views\Home\Discussion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -423,7 +424,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>56222</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:60632/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
