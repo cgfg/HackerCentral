@@ -22,7 +22,7 @@
 
     @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest)
 {
-        <div class="point">
+        <div class="point" style="background: @nest.Parent.category.ToString() == "supporting" ? #4800ff>
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
             <div class="actions">

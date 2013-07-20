@@ -1,7 +1,7 @@
 ﻿@using HackerCentral.Models
 @{
     var menus = new[] {
-        new { LinkText="Home", ActionName="Index",ControllerName="Home",Roles="All" },
+        new { LinkText="Discussion", ActionName="Discussion",ControllerName="Home",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString()  },
         new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Edit Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
         new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
@@ -57,6 +57,11 @@
                 var chat = $.connection.chatHub;
                 // Create a function that the hub can call back to display messages.
                 chat.client.addNewMessageToPage = function (name, message) {
+                    //if ($('#msgRecipients').val()) {
+                    //} else {
+                    //    //alert("false");
+                    //    $('#msgRecipients').val(name);
+                    //}
                     // Add the message to the page. 
                     $('#msgBoard').append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name
                         + ': </strong>' + message + '</div>');

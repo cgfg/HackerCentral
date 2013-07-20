@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix;
 using WebMatrix.WebData;
+using System.Configuration;
 
 namespace HackerCentral.Controllers
 {
@@ -38,10 +39,10 @@ namespace HackerCentral.Controllers
             return View("Dashboard", model);
         }
 
-        [AllowAnonymous]
-        public ActionResult Test()
+        public ActionResult Discussion()
         {
-            return View("Test");
+            ViewBag.IFrame = string.Format("http://athenabridge.com/{0}", ConfigurationManager.AppSettings["ConversationId"]);
+            return View("Discussion");
         }
     }
 }
