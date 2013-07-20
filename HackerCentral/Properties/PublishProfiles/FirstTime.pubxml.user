@@ -60,7 +60,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2013 19:26:45</publishTime>
     </File>
     <File Include="bin/HackerCentral.dll">
-      <publishTime>06/24/2013 03:40:48</publishTime>
+      <publishTime>07/16/2013 07:00:05</publishTime>
     </File>
     <File Include="bin/it/Microsoft.Data.Edm.resources.dll">
       <publishTime>05/07/2013 19:26:42</publishTime>
@@ -581,6 +581,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Home/Dashboard.cshtml">
       <publishTime>05/12/2013 08:49:39</publishTime>
     </File>
+    <File Include="Views/Home/Discussion.cshtml">
+      <publishTime>07/16/2013 06:43:17</publishTime>
+    </File>
     <File Include="Views/Home/Index.cshtml">
       <publishTime>05/16/2013 11:41:32</publishTime>
     </File>
@@ -603,7 +606,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2013 19:26:40</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>06/24/2013 03:07:53</publishTime>
+      <publishTime>07/16/2013 06:54:31</publishTime>
     </File>
     <File Include="Views/Shared/_MainMenu.cshtml">
       <publishTime>05/13/2013 08:13:55</publishTime>
@@ -633,7 +636,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/07/2013 19:26:40</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>05/28/2013 06:56:58</publishTime>
+      <publishTime>07/16/2013 07:00:06</publishTime>
     </File>
   </ItemGroup>
 </Project>

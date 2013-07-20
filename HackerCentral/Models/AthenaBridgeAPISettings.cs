@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Configuration;
 
 namespace HackerCentral.Models
 {
     public static class AthenaBridgeAPISettings
     {
-        public const string API_KEY = "test";
-        public const int CONVERSATION_ID = 62;
-        public const int USER_ID = 122;
+        public static readonly string API_KEY = ConfigurationManager.AppSettings["ApiKey"];
+        public static readonly int CONVERSATION_ID = int.Parse(ConfigurationManager.AppSettings["ConversationId"]);
+        public static readonly int USER_ID = int.Parse(ConfigurationManager.AppSettings["UserId"]);
     }
 }

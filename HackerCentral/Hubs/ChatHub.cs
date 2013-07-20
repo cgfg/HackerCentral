@@ -63,7 +63,7 @@ namespace SignalRChat
                         delivery.TimeDelivered = DateTime.UtcNow;
                         //foreach (string connection in connections)
                         //{
-                            Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
+                        Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
                         //}
                     }
                     context.SaveChanges();
@@ -166,13 +166,14 @@ namespace SignalRChat
                         Sender = context.UserProfiles.Find(WebSecurity.CurrentUserId),
                         Text = text,
                         Deliveries = new List<Delivery>()
-
                     };
 
                     System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), text);
 
                     HashSet<string> connections;
-                    foreach (UserProfile user in context.UserProfiles.Where(u => userSet.Contains(u.UserName)))
+                    var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
+                    string[] usernameList = userList.Select(u => u.UserName).ToArray();
+                    foreach (UserProfile user in userList)
                     {
                         message.Deliveries.Add(new Delivery
                             {
@@ -180,7 +181,7 @@ namespace SignalRChat
                                 TimeDelivered = ActiveUsers.ContainsKey(user.UserName) ? new Nullable<DateTime>(DateTime.UtcNow) : null,
                                 Reciever = user
                             });
-                        
+
                         connections = null;
                         ActiveUsers.TryGetValue(user.UserName, out connections);
 
@@ -190,6 +191,7 @@ namespace SignalRChat
                         {
                             foreach (string connection in connections)
                             {
+                                //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, userList, text);
                                 Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
                             }
                         }
