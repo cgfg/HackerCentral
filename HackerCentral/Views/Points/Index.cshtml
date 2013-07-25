@@ -22,7 +22,10 @@
 
     @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest)
 {
-        <div class="point" style="background: @nest.Parent.category.ToString() == "supporting" ? #4800ff>
+    string color;
+    color = (nest.Parent.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
+    
+        <div class="point" style="background: @color ">
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
             <div class="actions">

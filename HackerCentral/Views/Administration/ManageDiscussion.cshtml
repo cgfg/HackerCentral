@@ -1,0 +1,47 @@
+﻿@model IEnumerable<HackerCentral.ViewModels.DiscussionEditViewModel>
+@{
+    ViewBag.Title = "Discussions User Management";
+}
+
+<div class="container">
+    @if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+    {
+        <div class="alert @(string.IsNullOrWhiteSpace(ViewBag.Style) ? "alert-info" : ViewBag.Style)">
+            @ViewBag.Message
+        </div>
+    }
+    <h2>Users Role Management</h2>
+    <table class="table table-bordered table-striped table-hover">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>            
+            <th>Role</th>     
+            <th>Action</th>
+        </tr>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.FullName</td>      
+                <td>@user.Role</td>                
+                <td>@Ajax.ActionLink("Edit", "DiscussionEditForm",
+                new { id = @user.UserId },
+                new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editDiscussionForm" },
+                new { @class = "btn btn-link edit-user-link" }) </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div id="editUserModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="editUserForm"></div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(".edit-user-link").on("click", function () {
+            $('#editUserModal').modal('show');
+        });
+    </script>
+}

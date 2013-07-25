@@ -54,7 +54,8 @@ namespace HackerCentral
                     {
                         AuthProvider = AuthProvider.Local,
                         FullName = "Peter Griffin",
-                        UserName = UserRole.Administrator.ToString().ToLowerInvariant()
+                        UserName = UserRole.Administrator.ToString().ToLowerInvariant(),
+                        UserDiscussion = new HashSet<UserProfileDiscussions>()
                     });
                     context.SaveChanges();
                 }
@@ -67,7 +68,30 @@ namespace HackerCentral
             {
                 Roles.AddUsersToRoles(new[] { UserRole.Administrator.ToString().ToLowerInvariant() }, new[] { UserRole.Administrator.ToString() });
             }
+            //add default discussion
+            //mark
+            using (var context = new HackerCentralContext(null)) 
+            { 
+               if(!context.Discussions.Any(u => u.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID)){
+                   Discussion newDiscussion = new Discussion
+                       {
+                           ConversationId = AthenaBridgeAPISettings.CONVERSATION_ID,
+                           ApiKey = AthenaBridgeAPISettings.API_KEY,
+                           UserId = AthenaBridgeAPISettings.USER_ID,
+                           UserDiscussion = new HashSet<UserProfileDiscussions>()
+                       };
+                   UserProfile admin = context.UserProfiles.SingleOrDefault(u => u.UserName == "administrator");
+                   UserProfileDiscussions newRelation = new UserProfileDiscussions { UserId = admin.UserId, DiscussionId = newDiscussion.DiscussionId, User = admin, RegisteredDiscussion = newDiscussion, BelongTo = Team.Obs };
+                   admin.UserDiscussion = admin.UserDiscussion == null ? new HashSet<UserProfileDiscussions>() : admin.UserDiscussion;
+                   admin.UserDiscussion.Add(newRelation);
+                   newDiscussion.UserDiscussion.Add(newRelation);
+                   context.Discussions.Add(newDiscussion);
+                   context.UserProfileDiscussions.Add(newRelation);
+                   context.SaveChanges();
+               }
+            }
         }
+
 
         private void SimpleMembershipInitializer()
         {

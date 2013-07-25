@@ -1,0 +1,39 @@
+﻿@using HackerCentral.Models
+@model HackerCentral.ViewModels.DiscussionEditViewModel
+
+@using (Html.BeginForm("EditDiscussion", "Administration", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Edit User: @Model.UserName</h3>
+    </div>
+    <div class="modal-body">
+
+        <div class="control-group">
+            <label class="control-label" for="inputFullName">Full Name:</label>
+            <div class="controls">
+                @Html.TextBoxFor(m => m.FullName, new { id = "inputFullName", type = "text", placeholder = "Full Name", value = Model.FullName })
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputRole">Role:</label>
+            <div class="controls">
+                @Html.DropDownListFor(m => m.Role, new SelectList(Enum.GetNames(typeof(PrimaryUserRole)), Model.Role.ToString()), new { id = "inputRole" })
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputIsBlocked">Blocked:</label>
+            <div class="controls">
+                @Html.CheckBoxFor(m => m.IsBlocked, new { id = "inputIsBlocked", @checked = Model.IsBlocked })
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save Changes" />
+    </div>
+    
+    @Html.HiddenFor(m => m.AuthProvider, new { value = Model.AuthProvider }) 
+    @Html.HiddenFor(m => m.UserId, new { value = Model.UserId }) 
+    @Html.HiddenFor(m => m.UserName, new { value = Model.UserName }) 
+}

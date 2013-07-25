@@ -2,6 +2,7 @@
 @{
     var menus = new[] {
         new { LinkText="Discussion", ActionName="Discussion",ControllerName="Home",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString()  },
+        new { LinkText="Manage Discussions", ActionName="ManageDiscussion",ControllerName="Administration",Roles=UserRole.Administrator.ToString()  },
         new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Edit Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
         new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },

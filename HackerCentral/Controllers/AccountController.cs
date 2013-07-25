@@ -250,11 +250,18 @@ namespace HackerCentral.Controllers
             {
                 // User is new, automatically register them
                 // Insert a new user into the database
+                //mark
                 using (HackerCentralContext context = new HackerCentralContext(this))
                 {
                     // Insert name into the profile table
                     AuthProvider authProvider;
-                    context.UserProfiles.Add(new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) });
+                    UserProfile newUser = new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) , UserDiscussion = new HashSet<UserProfileDiscussions>()};
+                    Discussion defaultDiscussion = context.Discussions.SingleOrDefault(d => d.ConversationId == 77);
+                    UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { UserId = newUser.UserId, DiscussionId = defaultDiscussion.DiscussionId, User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Obs};
+                    newUser.UserDiscussion.Add(newUserDiscussionRelation);
+                    defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);
+                    context.UserProfiles.Add(newUser);
+                    context.UserProfileDiscussions.Add(newUserDiscussionRelation);
                     context.SaveChanges();
                 }
 

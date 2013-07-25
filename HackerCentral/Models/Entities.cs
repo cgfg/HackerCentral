@@ -32,12 +32,14 @@ namespace HackerCentral.Models
         public DbSet<HackerToken> HackerTokens { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Delivery> Deliveries { get; set; }
-
+        public DbSet<Discussion> Discussions { get; set; }
+        public DbSet<UserProfileDiscussions> UserProfileDiscussions { get; set; }
         public DbSet<ActionTrack> ActionTracks { get; set; }
         public DbSet<SaveTrack> SaveTracks { get; set; }
         public DbSet<EntityTrack> EntityTracks { get; set; }
         public DbSet<FieldTrack> FieldTracks { get; set; }
     }
+       
 
     public class HackerCentralContext : SimpleContext
     {
@@ -248,9 +250,35 @@ namespace HackerCentral.Models
         public string UserName { get; set; }
         public string FullName { get; set; }
         public AuthProvider AuthProvider { get; set; }
-
+        public ICollection<UserProfileDiscussions> UserDiscussion { get; set; }
         public ICollection<HackerToken> RegisteredTokens { get; set; }
+
     }
+
+    [Table("Discussion")]
+    public class Discussion
+    {
+        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int DiscussionId { get; set; }
+        public int ConversationId { get; set; }
+        public string ApiKey { get; set; }
+        public int UserId { get; set; }
+        public ICollection<UserProfileDiscussions> UserDiscussion { get; set; }
+    }
+
+    [Table("UserProfileDiscussions")]
+    public class UserProfileDiscussions
+    {
+        [Key, Column(Order = 0)]
+        public int UserId { get; set; }
+        [Key, Column(Order = 1)]
+        public int DiscussionId { get; set; }
+        public UserProfile User {get; set;}
+        public Discussion RegisteredDiscussion { get; set; } 
+        public Team BelongTo { get; set; }
+    }
+
 
     [Table("HackerToken")]
     public class HackerToken
@@ -354,5 +382,12 @@ namespace HackerCentral.Models
         Twitter,
         Yahoo,
         Local
+    }
+
+    public enum Team
+    {
+        Pro,
+        Con,
+        Obs // observe
     }
 }
