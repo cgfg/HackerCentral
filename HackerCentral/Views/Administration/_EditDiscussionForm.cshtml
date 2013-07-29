@@ -1,0 +1,27 @@
+﻿@using HackerCentral.Models
+@model HackerCentral.ViewModels.DiscussionEditViewModel
+
+@using (Html.BeginForm("EditDiscussion", "Administration", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Edit Discussion Role: @Model.FullName</h3>
+    </div>
+    <div class="modal-body">
+
+        <div class="control-group">
+            <label class="control-label" for="inputRole">Role:</label>
+            <div class="controls">
+                @Html.DropDownListFor(m => m.Role, new SelectList(Enum.GetNames(typeof(Team)), Model.Role.ToString()), new { id = "inputRole" })
+            </div>
+        </div>     
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <input type="submit" class="btn btn-primary" value="Save Changes" />
+    </div>
+    
+    @Html.HiddenFor(m => m.UserDiscussionId, new { value = Model.UserDiscussionId }) 
+    @Html.HiddenFor(m => m.FullName, new { value = Model.FullName }) 
+   
+}

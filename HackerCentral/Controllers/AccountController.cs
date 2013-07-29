@@ -257,7 +257,7 @@ namespace HackerCentral.Controllers
                     AuthProvider authProvider;
                     UserProfile newUser = new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) , UserDiscussion = new HashSet<UserProfileDiscussions>()};
                     Discussion defaultDiscussion = context.Discussions.SingleOrDefault(d => d.ConversationId == 77);
-                    UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { UserId = newUser.UserId, DiscussionId = defaultDiscussion.DiscussionId, User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Obs};
+                    UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Observer };
                     newUser.UserDiscussion.Add(newUserDiscussionRelation);
                     defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);
                     context.UserProfiles.Add(newUser);

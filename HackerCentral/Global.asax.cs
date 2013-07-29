@@ -81,7 +81,7 @@ namespace HackerCentral
                            UserDiscussion = new HashSet<UserProfileDiscussions>()
                        };
                    UserProfile admin = context.UserProfiles.SingleOrDefault(u => u.UserName == "administrator");
-                   UserProfileDiscussions newRelation = new UserProfileDiscussions { UserId = admin.UserId, DiscussionId = newDiscussion.DiscussionId, User = admin, RegisteredDiscussion = newDiscussion, BelongTo = Team.Obs };
+                   UserProfileDiscussions newRelation = new UserProfileDiscussions { User = admin, RegisteredDiscussion = newDiscussion, BelongTo = Team.Observer };
                    admin.UserDiscussion = admin.UserDiscussion == null ? new HashSet<UserProfileDiscussions>() : admin.UserDiscussion;
                    admin.UserDiscussion.Add(newRelation);
                    newDiscussion.UserDiscussion.Add(newRelation);

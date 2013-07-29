@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Data.Entity;
 using Newtonsoft.Json;
 using System.Data;
@@ -270,10 +271,16 @@ namespace HackerCentral.Models
     [Table("UserProfileDiscussions")]
     public class UserProfileDiscussions
     {
-        [Key, Column(Order = 0)]
-        public int UserId { get; set; }
-        [Key, Column(Order = 1)]
-        public int DiscussionId { get; set; }
+        [Key]
+        [Column("UserId", Order = 0)]
+        [ForeignKey("User")]
+        public int userProfileId { get; set; }
+
+        [Key]
+        [Column("DiscussionId", Order = 1)]
+        [ForeignKey("RegisteredDiscussion")]
+        public int discussionId { get; set; }
+
         public UserProfile User {get; set;}
         public Discussion RegisteredDiscussion { get; set; } 
         public Team BelongTo { get; set; }
@@ -388,6 +395,6 @@ namespace HackerCentral.Models
     {
         Pro,
         Con,
-        Obs // observe
+        Observer // observe
     }
 }

@@ -125,34 +125,29 @@ namespace HackerCentral.Controllers
         {
             using (var context = new HackerCentralContext(this))
             {
-                UserProfile user = context.UserProfiles.Find(model.UserId);
-                if (user == null)
+                
+                UserProfileDiscussions userDiscussion = context.UserProfileDiscussions.Find(model.UserId, model.DiscussionId);
+                if (userDiscussion == null)
                 {
                     ViewBag.Style = "alert-error";
-                    ViewBag.Message = string.Format("Modifications failed. The username: {0} does not exist.", model.UserName);
+                    ViewBag.Message = string.Format("Modifications failed. The Discussion does not exist.");
                     return View("ManageDiscussion", createDiscussionEditList(context, model.DiscussionId));
                 }
                 else
-                {
-                    if (user.FullName != model.UserName)
+                {                             
+                    if(userDiscussion.BelongTo != model.Role)
                     {
-                        user.FullName = model.FullName;
-                        context.SaveChanges();
-                    }
-                   
-                    if(user.UserDiscussion.SingleOrDefault(u => u.DiscussionId == model.DiscussionId).BelongTo != model.Role)
-                    {
-                        user.UserDiscussion.SingleOrDefault(u => u.DiscussionId == model.DiscussionId).BelongTo = model.Role;
+                        userDiscussion.BelongTo = model.Role;
                         context.SaveChanges();
                     }
                     ViewBag.Style = "alert-success";
-                    ViewBag.Message = string.Format("Modifications to {0} succeeded.", user.UserName);
-                    return View("ManageUsers", createUserEditList(context));
+                    ViewBag.Message = string.Format("{0} is now enrolled as a {1}.", model.FullName, model.Role.ToString());
+                    return View("ManageDiscussion", createDiscussionEditList(context, model.DiscussionId));
                 }
             }
         }
 
-        public PartialViewResult UserDiscussionForm(int userId, int discussionId)
+        public PartialViewResult EditDiscussionForm(int userId, int discussionId)
         {
             using (var context = new HackerCentralContext(this))
             {
@@ -167,12 +162,11 @@ namespace HackerCentral.Controllers
                     DiscussionEditViewModel model = new DiscussionEditViewModel
                     {
                         FullName = user.FullName,
-                        Role = user.UserDiscussion.SingleOrDefault(u => u.DiscussionId == discussionId).BelongTo,
-                        UserId = user.UserId,
-                        UserName = user.UserName,
+                        Role = user.UserDiscussion.SingleOrDefault(u => u.RegisteredDiscussion.DiscussionId == discussionId).BelongTo,                  
+                        UserId = userId,
                         DiscussionId = discussionId
                     };
-                    return PartialView("_EditUserForm", model);
+                    return PartialView("_EditDiscussionForm", model);
                 }
             }
         }
@@ -192,15 +186,14 @@ namespace HackerCentral.Controllers
                 }).ToList();
         }
 
-        private IEnumerable<DiscussionEditViewModel> createDiscussionEditList(HackerCentralContext context,int discussionId)
+        private IEnumerable<DiscussionEditViewModel> createDiscussionEditList(HackerCentralContext context, int discussionId)
         {
-            return context.UserProfiles.Include(u => u.UserDiscussion).AsEnumerable().Select(
-                u => new DiscussionEditViewModel
-                {
-                    FullName = u.FullName,
-                    UserId = u.UserId,
-                    UserName = u.UserName,
-                    Role = u.UserDiscussion.SingleOrDefault(d => d.DiscussionId == discussionId).BelongTo,
+            return context.UserProfileDiscussions.Where(ud => ud.discussionId == discussionId).Include(ud => ud.User).Select(
+                ud => new DiscussionEditViewModel
+                {   
+                    FullName = ud.User.FullName,          
+                    Role = ud.BelongTo,
+                    UserId = ud.userProfileId,
                     DiscussionId = discussionId
                 }).ToList();
         }

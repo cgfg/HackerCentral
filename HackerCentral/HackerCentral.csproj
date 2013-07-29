@@ -403,7 +403,7 @@
     <Content Include="Views\Error\Blocked.cshtml" />
     <Content Include="Views\Home\Discussion.cshtml" />
     <Content Include="Views\Administration\ManageDiscussion.cshtml" />
-    <Content Include="Views\Administration\EditDiscussionForm.cshtml" />
+    <Content Include="Views\Administration\_EditDiscussionForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
