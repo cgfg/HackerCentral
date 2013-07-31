@@ -66,6 +66,8 @@
                     // Add the message to the page. 
                     $('#msgBoard').append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name
                         + ': </strong>' + message + '</div>');
+                    $('#msgBoard').scrollTop($('#msgBoard')[0].scrollHeight);
+
                     if (!$('#msgDropDown').hasClass('open')) {
                         var preview = $('#msgNavButton').data('popover');
                         preview.options.title = "Message from " + name + ':';
@@ -212,10 +214,10 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 300px; width: 300px;">
+                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 500px; width: 300px;">
                                         <form id="msgForm">
                                             <fieldset>
-                                                <legend>Chat</legend>
+                                                <legend>Chat<a class="btn btn-mini btn-inverse dropdown-toggle pull-right" data-toggle="dropdown" href="#"><B>x</B></a></legend>
                                             </fieldset>
                                             <div class="controls">
                                                 <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
