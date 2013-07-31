@@ -21,7 +21,8 @@
         <input type="submit" class="btn btn-primary" value="Save Changes" />
     </div>
     
-    @Html.HiddenFor(m => m.UserDiscussionId, new { value = Model.UserDiscussionId }) 
+    @Html.HiddenFor(m => m.DiscussionId, new { value = Model.DiscussionId }) 
     @Html.HiddenFor(m => m.FullName, new { value = Model.FullName }) 
+    @Html.HiddenFor(m => m.UserId, new { value = Model.UserId }) 
    
 }

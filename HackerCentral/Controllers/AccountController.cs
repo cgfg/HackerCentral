@@ -10,6 +10,7 @@ using Microsoft.Web.WebPages.OAuth;
 using WebMatrix.WebData;
 using HackerCentral.Models;
 using HackerCentral.Filters;
+using System.Data.Entity;
 
 using HackerCentral.Extensions;
 
@@ -256,7 +257,7 @@ namespace HackerCentral.Controllers
                     // Insert name into the profile table
                     AuthProvider authProvider;
                     UserProfile newUser = new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) , UserDiscussion = new HashSet<UserProfileDiscussions>()};
-                    Discussion defaultDiscussion = context.Discussions.SingleOrDefault(d => d.ConversationId == 77);
+                    Discussion defaultDiscussion = context.Discussions.Include(d => d.UserDiscussion).SingleOrDefault(d => d.ConversationId == 77);
                     UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Observer };
                     newUser.UserDiscussion.Add(newUserDiscussionRelation);
                     defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);

@@ -147,11 +147,12 @@ namespace HackerCentral.Controllers
             }
         }
 
-        public PartialViewResult EditDiscussionForm(int userId, int discussionId)
+        public PartialViewResult DiscussionEditForm(int userId, int discussionId)
         {
             using (var context = new HackerCentralContext(this))
             {
-                UserProfile user = context.UserProfiles.Find(userId);
+                UserProfile user = context.UserProfiles.Include(u => u.UserDiscussion).SingleOrDefault(u => u.UserId == userId);
+           
                 if (user == null)
                 {
                     ViewBag.Message = string.Format("The user with id: {0} does not exist.", userId);
@@ -162,7 +163,7 @@ namespace HackerCentral.Controllers
                     DiscussionEditViewModel model = new DiscussionEditViewModel
                     {
                         FullName = user.FullName,
-                        Role = user.UserDiscussion.SingleOrDefault(u => u.RegisteredDiscussion.DiscussionId == discussionId).BelongTo,                  
+                        Role = user.UserDiscussion.SingleOrDefault(u => u.discussionId == discussionId).BelongTo,                  
                         UserId = userId,
                         DiscussionId = discussionId
                     };
