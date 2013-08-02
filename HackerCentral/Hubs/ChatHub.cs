@@ -60,10 +60,14 @@ namespace SignalRChat
 
                     foreach (Delivery delivery in recentDeliveries.Concat(undelievered).OrderBy(d => d.Message.TimeStamp))
                     {
+                        string[] usernameList = context.Deliveries.Include(d => d.Message).Include(d => d.Reciever).Where(d => d.Message.Id == delivery.Message.Id).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
+                        //string[] usernameList = delivery.Message.Deliveries.Where(d => d.Reciever.UserId != delivery.Reciever.UserId).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
+                        System.Diagnostics.Debug.WriteLine(string.Join(", ", usernameList));
+                        //string usernameListJson = JsonConvert.SerializeObject(usernameList);
                         delivery.TimeDelivered = DateTime.UtcNow;
                         //foreach (string connection in connections)
                         //{
-                        Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, delivery.Message.Text);
+                        Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, usernameList, delivery.Message.Text);
                         //}
                     }
                     context.SaveChanges();
@@ -172,7 +176,8 @@ namespace SignalRChat
 
                     HashSet<string> connections;
                     var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
-                    string[] usernameList = userList.Select(u => u.UserName).ToArray();
+                    string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
+                    //string usernameListJson = JsonConvert.SerializeObject(usernameList);
                     foreach (UserProfile user in userList)
                     {
                         message.Deliveries.Add(new Delivery
@@ -191,8 +196,8 @@ namespace SignalRChat
                         {
                             foreach (string connection in connections)
                             {
-                                //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, userList, text);
-                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
+                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text);
+                                //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
                             }
                         }
                     }

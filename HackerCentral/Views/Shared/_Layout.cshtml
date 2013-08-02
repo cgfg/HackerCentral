@@ -41,6 +41,29 @@
         <script>
             var queryCallback = null;
 
+            function closeTab(groupId) {
+                var key = tabKeys[groupId];
+                $('#msgTabs #' + key + tabLabelToken).remove();
+                $('#msgTabContent #' + key + tabContentToken).remove();
+                delete tabKeys[groupId];
+                $('#msgTabs #startNewChatTab').find("a[data-toggle='tab']").tab('show');
+            }
+
+            function createKey() {
+                return "l" + ('xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                }));
+            }
+
+            var tabContentToken = createKey();
+            var tabLabelToken = createKey();
+
+            //var tabContentToken = "50335ad734ab42fe87cb9dd71c940b83";
+            //var tabLabelToken = "0ebd4ec0a19d43c39ceb67282e07f12c";
+
+            var tabKeys = { };
+
             $(function () {
                 //$('.dropdown-menu').click(function (event) {
                 //    alert("Hello");
@@ -57,16 +80,70 @@
                 // Reference the auto-generated proxy for the hub.  
                 var chat = $.connection.chatHub;
                 // Create a function that the hub can call back to display messages.
-                chat.client.addNewMessageToPage = function (name, message) {
+                chat.client.addNewMessageToPage = function (name, list, message) {
                     //if ($('#msgRecipients').val()) {
                     //} else {
                     //    //alert("false");
                     //    $('#msgRecipients').val(name);
                     //}
-                    // Add the message to the page. 
-                    $('#msgBoard').append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name
-                        + ': </strong>' + message + '</div>');
-                    $('#msgBoard').scrollTop($('#msgBoard')[0].scrollHeight);
+
+                    var groupId = list.join(", ");
+                    if (groupId in tabKeys) {
+                        var key = tabKeys[groupId];
+                        var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
+                        element.append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name + ': </strong>' + message + '</div>');
+                        element.scrollTop(element[0].scrollHeight);
+                        //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
+                        $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
+                    } else {
+                        var key = createKey();
+                        tabKeys[groupId] = key;
+
+                        var userFrd = "";
+                        if (groupId.length > 15) {
+                            for (i = 0; i < list.length; i++) {
+                                userFrd += list[i].substr(0, 5) + ", ";
+                            }
+                            userFrd = userFrd.substr(0, 12) + "...";
+                        } else {
+                            userFrd = groupId;
+                        }
+
+                        $('#msgTabs').append('<li id="' + key + tabLabelToken + '">'
+                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab">' + userFrd
+                                                    + '<button class="close" '
+                                                            + 'style="margin-left: 10px;font-size: 11px;" '
+                                                            + 'onClick="closeTab(&quot;' + groupId + '&quot;)">'
+                                                        + '<b>x</b>'
+                                                    + '</button>'
+                                                + '</a>'
+                                            + '</li>');
+
+                        $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
+                                                + '<form id="msgForm">'
+                                                    + '<p>Recipients: ' + groupId + '<\p>'
+                                                    + '<div class="controls">'
+                                                        + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>'
+                                                    + '</div>'
+                                                    + '<div class="controls">'
+                                                        + '<button type="submit" class="btn">Send</button>'
+                                                    + '</div>'
+                                                + '</form>'
+                                                + '<div id="msgBoard" style="max-height: 200px; overflow-y: auto;">'
+                                                    + '<div class="alert alert-info" style="word-wrap:break-word;">'
+                                                        + '<strong>' + name + ': </strong>' + message
+                                                    + '</div>'
+                                                + '</div>'
+                                            + '</div>');
+                        $('#msgTabContent #' + key + tabContentToken + ' #msgForm').submit(function () {
+                            // Call the Send method on the hub.
+                            var jsonList = JSON.stringify(list);
+                            chat.server.send(jsonList, $('#msgTabContent #' + key + tabContentToken + ' #msgForm #msgText').val());
+                            // Clear text box and reset focus for next comment. 
+                            $('#msgTabContent #' + key + tabContentToken + ' #msgForm #msgText').val('').focus();
+                            return false;
+                        });
+                    }
 
                     if (!$('#msgDropDown').hasClass('open')) {
                         var preview = $('#msgNavButton').data('popover');
@@ -214,22 +291,33 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 500px; width: 300px;">
-                                        <form id="msgForm">
-                                            <fieldset>
-                                                <legend>Chat<a class="btn btn-mini btn-inverse dropdown-toggle pull-right" data-toggle="dropdown" href="#"><B>x</B></a></legend>
-                                            </fieldset>
-                                            <div class="controls">
-                                                <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
+                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 500px; width: 500px;">
+                                        <a class="btn btn-mini btn-inverse dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b>x</b></a>
+
+                                        <div id="msgTabContent" class="tab-content">
+                                            <ul id="msgTabs" class="nav nav-tabs">
+                                                <li id="startNewChatTab" class="active"><a href="#startNewChatContent" data-toggle="tab"><b>+</b></a></li>
+                                            </ul>
+                                            <div style="min-height:50px">
                                             </div>
-                                            <div class="controls">
-                                                <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
+                                            <div class="tab-pane active" id="startNewChatContent">
+                                                <div class="content">
+                                                    <form id="msgForm">
+                                                        <div class="controls">
+                                                            <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
+                                                        </div>
+                                                        <div style="min-height:10px"></div>
+                                                        <div class="controls">
+                                                            <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
+                                                        </div>
+                                                        <div class="controls">
+                                                            <button type="submit" class="btn">Send</button>
+                                                        </div>
+                                                    </form>
+                                                    <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                                </div>
                                             </div>
-                                            <div class="controls">
-                                                <button type="submit" class="btn">Send</button>
-                                            </div>
-                                        </form>
-                                        <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
