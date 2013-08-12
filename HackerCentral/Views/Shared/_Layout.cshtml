@@ -112,9 +112,9 @@
                         $('#msgTabs').append('<li id="' + key + tabLabelToken + '">'
                                                 + '<a href="#' + key + tabContentToken + '" data-toggle="tab">' + userFrd
                                                     + '<button class="close" '
-                                                            + 'style="margin-left: 10px;font-size: 11px;" '
-                                                            + 'onClick="closeTab(&quot;' + groupId + '&quot;)">'
-                                                        + '<b>x</b>'
+                                                            + 'style="margin-left: 10px;font-size: 11px;float:none;" '
+                                                            + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'                                                      
+                                                            + '<b>x</b>'
                                                     + '</button>'
                                                 + '</a>'
                                             + '</li>');
@@ -123,7 +123,7 @@
                                                 + '<form id="msgForm">'
                                                     + '<p>Recipients: ' + groupId + '<\p>'
                                                     + '<div class="controls">'
-                                                        + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>'
+                                                        + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 470px; max-width: 470px; resize: vertical;"></textarea>'
                                                     + '</div>'
                                                     + '<div class="controls">'
                                                         + '<button type="submit" class="btn">Send</button>'
@@ -291,7 +291,7 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width: 500px; width: 500px;">
+                                    <div class="dropdown-menu" style="padding: 10px; padding-bottom: 10px; max-width:520px; width: 520px;">
                                         <a class="btn btn-mini btn-inverse dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b>x</b></a>
 
                                         <div id="msgTabContent" class="tab-content">
@@ -304,11 +304,11 @@
                                                 <div class="content">
                                                     <form id="msgForm">
                                                         <div class="controls">
-                                                            <input id="msgRecipients" type="hidden" style="width: 300px; max-width: 300px;" />
+                                                            <input id="msgRecipients" type="hidden" style="width: 470px; max-width: 470px;" />
                                                         </div>
                                                         <div style="min-height:10px"></div>
                                                         <div class="controls">
-                                                            <textarea id="msgText" placeholder="Message" rows="3" style="width: 286px; max-width: 286px; resize: vertical;"></textarea>
+                                                            <textarea id="msgText" placeholder="Message" rows="3" style="width: 470px; max-width: 470px; resize: vertical;"></textarea>
                                                         </div>
                                                         <div class="controls">
                                                             <button type="submit" class="btn">Send</button>
