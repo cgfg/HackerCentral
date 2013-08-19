@@ -48,6 +48,10 @@ namespace SignalRChat
                     var recentDeliveries = allDeliveries
                         .TakeWhile(d =>
                         {
+                            if (d.TimeDelivered == null)
+                            {
+                                return true;
+                            }
                             if (tickStamp - d.Message.TimeStamp.Ticks < initialTickSpan)
                             {
                                 tickStamp = d.Message.TimeStamp.Ticks;
@@ -56,9 +60,9 @@ namespace SignalRChat
                             else return false;
                         });
 
-                    var undelievered = allDeliveries.Where(d => d.TimeDelivered == null);
-
-                    foreach (Delivery delivery in recentDeliveries.Concat(undelievered).OrderBy(d => d.Message.TimeStamp))
+                    //var undelievered = allDeliveries.Where(d => d.TimeDelivered == null);
+                    //foreach (Delivery delivery in recentDeliveries.Concat(undelievered).OrderBy(d => d.Message.TimeStamp))
+                    foreach (Delivery delivery in recentDeliveries.OrderBy(d => d.Message.TimeStamp))
                     {
                         string[] usernameList = context.Deliveries.Include(d => d.Message).Include(d => d.Reciever).Where(d => d.Message.Id == delivery.Message.Id).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
                         //string[] usernameList = delivery.Message.Deliveries.Where(d => d.Reciever.UserId != delivery.Reciever.UserId).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
