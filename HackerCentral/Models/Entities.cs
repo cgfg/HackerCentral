@@ -395,6 +395,7 @@ namespace HackerCentral.Models
     {
         Pro,
         Con,
-        Observer // observe
+        Neutral,
+        Observer
     }
 }

@@ -9,7 +9,12 @@
     <div class="modal-body"  >
         <p>
             @Html.TextBoxFor(m => m.summary, new { value=Model.summary }) <br />
+        </P>
+        <p>  
             @Html.TextAreaFor(m => m.full_text, new { value=Model.full_text })
+        </p>
+        <p>
+             @Html.DropDownListFor(m => m.category, new SelectList(Enum.GetNames(typeof(HackerCentral.Models.Point.Category)), Model.category.ToString()), new { id = "inputRole" })
         </p>
     </div>
     <div class="modal-footer">
@@ -18,5 +23,5 @@
     </div>
 
     @Html.HiddenFor(m => m.id, new { value = Model.id })
-    @Html.HiddenFor(m => m.category, new { value = Model.category })
+    //@Html.HiddenFor(m => m.category, new { value = Model.category })
 }
