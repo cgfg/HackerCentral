@@ -41,14 +41,40 @@ namespace HackerCentral.Models
         public DbSet<FieldTrack> FieldTracks { get; set; }
     }
        
-
+    /// <summary>
+    /// The <c>HackerCentralContext</c> is a specialized <c>dbcontext</c> which automatically 
+    /// tracks any modification made to the database through its instances.
+    /// </summary>
+    /// <remarks>
+    /// There is a lot of infrastructure to generalize
+    /// the context implementation and make it work by addorning entities and their properties by
+    /// attributes; however, work in this area was stopped since it bares no benifit but to reduce
+    /// manual coding labor.
+    /// 
+    /// In some cases it may be desirable to store tracking data using customized code in which 
+    /// case using this context will store tracking information about the tracking infomation or
+    /// potentially even fail. In such a case please use the <c>SimpleContext</c> class instead.
+    /// 
+    /// The <c>HackerCentralContext</c> should only be used in controllers; as such, the context
+    /// will know which action caused the dabase. It is still possible to use the context outside
+    /// of a controller in which case the source of the database changes cannot be 
+    /// tracked/identified.
+    /// </remarks>
     public class HackerCentralContext : SimpleContext
     {
         private static readonly EntityState ChangedState = EntityState.Added | EntityState.Deleted | EntityState.Modified;
 
+        /// <summary>
+        /// The controller associated with the context.
+        /// </summary>
         private TrackedController controller;
         //private readonly ObjectContext objectContext;
 
+        /// <summary>
+        /// Creates a new instance of the context which has knowledge of the <c>controller</c>
+        /// using the context. The action id
+        /// </summary>
+        /// <param name="controller"></param>
         public HackerCentralContext(TrackedController controller) 
         {
             // If using the dbcontext has too much overhead or costs to much dev time
@@ -64,6 +90,11 @@ namespace HackerCentral.Models
         }
 
         #region Helper methods
+        /// <summary>
+        /// Finds the track id associated with the provided entry entity.
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
         private string FindEntityTrackId(DbEntityEntry entry)
         {
             return string.Join(",", entry.Entity.GetType().GetProperties()
@@ -72,6 +103,13 @@ namespace HackerCentral.Models
                 .Select(p => entry.OriginalValues[p.Name].ToString()).ToArray());
         }
 
+        /// <summary>
+        /// Finds the actial entity track associated with the provided entry entity using the 
+        /// provided simple context (context which has not tracking ability).
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="entry"></param>
+        /// <returns></returns>
         private EntityTrack FindEntityTrack(SimpleContext context, DbEntityEntry entry)
         {
             string entityId = FindEntityTrackId(entry);
