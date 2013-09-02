@@ -22,6 +22,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+
     @if (Request.IsAuthenticated)
     {
         @Scripts.Render("~/bundles/jquery")
@@ -63,6 +64,7 @@
             //var tabLabelToken = "0ebd4ec0a19d43c39ceb67282e07f12c";
 
             var tabKeys = {};
+            var count = 0;
 
             $(function () {
                 //$('.dropdown-menu').click(function (event) {
@@ -86,19 +88,19 @@
                     //    //alert("false");
                     //    $('#msgRecipients').val(name);
                     //}
-
+                   
                     var groupId = list.join(", ");
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-                        element.append('<div class="alert alert-info" style="word-wrap:break-word;"><strong>' + name + ': </strong>' + message + '</div>');
+                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-15px;"><strong>' + name + ': </strong>' + message + '</div>');
                         element.scrollTop(element[0].scrollHeight);
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
                         $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
                     } else {
                         var key = createKey();
                         tabKeys[groupId] = key;
-
+                        count++;
                         var userFrd = "";
                         if (groupId.length > 15) {
                             for (i = 0; i < list.length; i++) {
@@ -110,7 +112,7 @@
                         }
 
                         $('#msgTabs').append('<li id="' + key + tabLabelToken + '">'
-                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #86D0F7">' + userFrd
+                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #86D0F7">' + "Chat " + count
                                                     + '<button class="close" '
                                                             + 'style="margin-left: 10px;font-size: 11px;float:none;" '
                                                             + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'
@@ -158,6 +160,7 @@
                 chat.client.listUsers = function (userListJson) {
                     userList = JSON.parse(userListJson);
                     data = { results: [] };
+                    data.results.push({ id: "+", text: "My Team", isOnline: true });
                     for (var index = 0; index < userList.length; index++) {
                         data.results.push({ id: userList[index].userName, text: userList[index].userName, isOnline: userList[index].isOnline });
                     }

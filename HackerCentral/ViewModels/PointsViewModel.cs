@@ -12,11 +12,14 @@ namespace HackerCentral.ViewModels
         public List<Point> points;
         public Point point; // Passed to _CreatePoint partial view so validation works
         public List<NestItem> nestedPoints;
+        public List<Point> visiblePoints;
+        public List<Point> topPoints;
 
         public PointsViewModel(List<Point> points)
         {
+            visiblePoints = new List<Point>();
             this.points = points.OrderBy(p => p.id).ToList();
-
+            //this.topPoints = points.Where(p => p.).OrderByDescending(p => p.quality).Take(10).ToList();
             // Create a blank (but not null) point
             point = new Point()
             {
@@ -32,14 +35,16 @@ namespace HackerCentral.ViewModels
             // Find all points with parent id of 0 and make a nest item.  For each, recursively add children that match
             foreach(var top in points.Where(p=>p.parent_id == 0) )
             {
+                visiblePoints.Add(top);
                 nestedPoints.Add(new NestItem()
                 {
                     Parent = top,
-                    Children = GetChildren(top, points)
+                    Children = GetChildren(top, points)               
                 });
             }
 
             nestedPoints = nestedPoints.OrderBy(n => n.Parent.id).ToList();
+            topPoints = visiblePoints.OrderByDescending(p => p.quality).Take(10).ToList();
         }
 
         private List<NestItem> GetChildren(Point parent, List<Point> allPoints)
@@ -53,13 +58,14 @@ namespace HackerCentral.ViewModels
 
             foreach (var top in allPoints.Where(p => p.parent_id == parent.id))
             {
+                visiblePoints.Add(top);
                 nestList.Add(new NestItem()
                 {
                     Parent = top,
                     Children = GetChildren(top, allPoints)
                 });
             }
-
+           
             return nestList;
         }
 

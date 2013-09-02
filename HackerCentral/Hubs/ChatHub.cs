@@ -139,7 +139,7 @@ namespace SignalRChat
                 HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
                 userSet.Add(Context.User.Identity.Name);
                 using (var context = new HackerCentralContext(null))
-                {
+                { 
                     if (userSet.Any(u => u.Equals("*")))
                     {
                         userSet.Remove("*");
@@ -150,6 +150,15 @@ namespace SignalRChat
                     }
                     else
                     {
+                        if (userSet.Any(u => u.Equals("+")))
+                        {
+                            userSet.Remove("+");
+                            Team role = context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.User.UserName == Context.User.Identity.Name).Single().BelongTo;
+                            foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
+                            {
+                                userSet.Add(user.UserName);
+                            }
+                        }
                         if (userSet.Any(u => u.Equals("!")))
                         {
                             userSet.Remove("!");
