@@ -1,5 +1,4 @@
 ﻿@model HackerCentral.ViewModels.PointsViewModel
-
 @{
     ViewBag.Title = "Index";
 }
@@ -13,7 +12,10 @@
             @ViewBag.Message
         </div>
     }
-
+    @if (Request.IsAuthenticated)
+    {
+        string[] roles = Roles.GetRolesForUser();
+        Boolean isAdminRole = roles.Any(u => u.Equals("Administrator") || u.Equals("Hacker"));
     <h2> </h2>
     <div class ="tabbable tabs-left">
         <ul class ="nav nav-tabs">
@@ -25,7 +27,7 @@
                 <a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>
                 @foreach (var n in Model.nestedPoints)
                 {
-                    @PrintNest(n);
+                    @PrintNest(n, isAdminRole);
                 }
             </div>
             <div class ="tab-pane" id ="tab2">
@@ -36,11 +38,11 @@
             </div>
         </div>
     </div>
-
+    }
 
    
 
-    @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest)
+    @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest, Boolean isAdminRole)
 {
     string color;
     color = (nest.Parent.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
@@ -48,17 +50,20 @@
         <div class="point" style="background: @color ">
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
-            <div class="actions">
+
+            @if(isAdminRole){
+                 <div class="actions">
                 @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
             @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null)
             </div>
+            }          
         </div>
     if (nest.HasChildren())
     {
         <div class="nested">
             @foreach (var n in nest.Children)
             {
-                @PrintNest(n);
+                @PrintNest(n, isAdminRole);
             }
         </div>
     }
@@ -96,3 +101,5 @@
             </div>*@
         </div>
 }
+
+

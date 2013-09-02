@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace HackerCentral.Controllers
 {
-    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator })]
+    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator, UserRole.User })]
     public class PointsController : TrackedController
     {
         public ActionResult Index(string message = "")
@@ -22,6 +22,7 @@ namespace HackerCentral.Controllers
             return View("Index", model);
         }
 
+        [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator})]
         [HttpPost]
         public ActionResult Create(Point p)
         {
@@ -32,6 +33,7 @@ namespace HackerCentral.Controllers
                 return Index("Point not successfully created");
         }
 
+        [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator })]
         [HttpGet]
         public ActionResult Destroy(long id)
         {
@@ -52,6 +54,7 @@ namespace HackerCentral.Controllers
                 return Index("Point was not successfully updated");
         }
 
+        [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator })]
         public PartialViewResult EditForm(long id)
         {
             var pa = new PointAccessor();
