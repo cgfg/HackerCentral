@@ -87,6 +87,16 @@ namespace HackerCentral.Models
     /// will know which action caused the dabase. It is still possible to use the context outside
     /// of a controller in which case the source of the database changes cannot be 
     /// tracked/identified.
+    ///
+    /// If you want to "roll back" the state of an entity to see what it was like at a
+    /// given point in time, take these steps:
+    /// 1. Start with the most recent <c>EntityTrack</c> and <c>FieldTrack</c> for the
+    /// entity to see its current state.
+    /// 2. Begin going backwards chronologically through the <c>FieldTrack</c>s associated
+    /// with the entity, rolling back each change that the <c>FieldTrack</c>s indicate.
+    /// 3. Stop when you've passed a <c>FieldTrack</c> with a time stamp past the date
+    /// you're looking for.
+    /// A good TODO is to implement these steps in a single method.
     /// </remarks>
     public class HackerCentralContext : SimpleContext
     {
