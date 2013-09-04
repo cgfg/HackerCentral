@@ -44,6 +44,34 @@ namespace HackerCentral.Models
     /// <summary>
     /// The <c>HackerCentralContext</c> is a specialized <c>dbcontext</c> which automatically 
     /// tracks any modification made to the database through its instances.
+    /// 
+    /// The <c>HackerCentralContext</c> use four main tables in the database to keep track of
+    /// the data that is tracked:
+    /// - The ActionTrack table and its associated class, <c>ActionTrack</c>, record every single
+    ///   HTTP request that the server receives. They record the controller and action that handled
+    ///   the request, as well as all of the entities that were modified as a result of the request.
+    /// - The SaveTrack table and its associated class, <c>SaveTrack</c>, keep track of a single
+    ///   transaction to the database that updated, created, or deleted entries in the database.
+    ///   They keep track of which entities were changed during the transaction as well as what
+    ///   values those entities had after the save. They also keep track of the user who sent the
+    ///   request that resulted in the database transaction.
+    /// - The <c>EntityTrack</c> table and class keep track of entities in the database. They provide
+    ///   enough information to uniquely look up any entity in the entire database. If the entity was
+    ///   deleted, they will indicate when it was deleted. They don't let you look up a previous state
+    ///   of an entity, though - they only point to the most recent state of the entity.
+    /// - The <c>FieldTrack</c> table and class keep track of changes to entities' attributes. Every time
+    ///   any entity has one of its values change, the <c>FieldTrack</c> keeps track of a key/value pair
+    ///   allowing the change to be identified and, if necessary, rolled back. The values are stored as
+    ///   JSON strings.
+    ///
+    /// - An <c>ActionTrack</c> has many <c>SaveTrack</c>s.
+    /// - A <c>SaveTrack</c> belongs to one <c>ActionTrack</c>.
+    /// - A <c>SaveTrack</c> has many <c>EntityTrack</c>s, including one special <c>EntityTrack</c> for the user
+    ///   who made the request that resulted in the database transaction.
+    /// - A <c>SaveTrack</c> has many <c>FieldTrack</c>s.
+    /// - A <c>FieldTrack</c> belongs to one <c>SaveTrack</c>.
+    /// - A <c>FieldTrack</c> has one <c>EntityTrack</c>.
+    /// - An <c>EntityTrack</c> belongs to one <c>FieldTrack</c> and to one <c>SaveTrack</c>.
     /// </summary>
     /// <remarks>
     /// There is a lot of infrastructure to generalize
