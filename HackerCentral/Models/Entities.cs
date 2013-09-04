@@ -189,6 +189,8 @@ namespace HackerCentral.Models
                     //System.Diagnostics.Debug.WriteLine("[{0}], [{1}]", string.Join(",", names), string.Join(",", names.Where(n => entry.Collection(n).CurrentValue != null).Select(n => entry.Collection(n).CurrentValue.GetType().Name)));
 
                     EntityTrack entityTrack = null;
+                    // Each one of the loops in this switch statement looks through and entity and creates
+                    // FieldTracks to remember the changes to any attributes that changed
                     switch (entry.State)
                     {
                         case System.Data.EntityState.Added:
@@ -257,6 +259,7 @@ namespace HackerCentral.Models
 
                 returnValue = base.SaveChanges();
 
+				// This code ties the ActionTracks, SaveTracks, FieldTracks, and EntityTracks together.
                 if (entityTrackList.Any())
                 {
                     EntityTrack userEntityTrack = null;
@@ -386,6 +389,18 @@ namespace HackerCentral.Models
         public Message Message { get; set; }
     }
 
+	/// <summary>
+    /// The <c>ActionTrack</c> table and class record every single HTTP request that the server receives.
+    /// They record the controller and action that handled the request, the parameters that were sent with
+    /// the request the server's response, and when the request was received.
+    ///
+    /// An <c>ActionTrack</c> has a collection of <c>SaveTrack</c>s, which keep track of all of the changes
+    /// made to the database as a result of the request associated with the <c>ActionTrack</c>.
+    /// </summary>
+    /// <remarks>
+    /// An <c>ActionTrack</c> has many <c>SaveTrack</c>s.
+    /// A <c>SaveTrack</c> belongs to one <c>ActionTrack</c>.
+    /// </remarks>
     [Readonly]
     [Table("ActionTrack")]
     public class ActionTrack
@@ -403,6 +418,20 @@ namespace HackerCentral.Models
         public ICollection<SaveTrack> SaveTracks { get; set; }
     }
 
+	/// <summary>
+    /// The <c>SaveTrack</c> table and class keep track of individual transactions to the database
+    /// that updated, created, or deleted entries in the database. They keep track of which entities
+    /// were changed during the transaction as well as what values those entities had after the save.
+    /// They also keep track of the user who sent the request that resulted in the database transaction.
+    /// <summary>
+    /// <remarks>
+    /// - A <c>SaveTrack</c> belongs to one <c>ActionTrack</c>.
+    /// - A <c>SaveTrack</c> has many <c>EntityTrack</c>s, including one special <c>EntityTrack</c> for the user
+    ///   who made the request that resulted in the database transaction.
+    /// - A <c>SaveTrack</c> has many <c>FieldTrack</c>s.
+    /// - A <c>FieldTrack</c> belongs to one <c>SaveTrack</c>.
+    /// - An <c>EntityTrack</c> belongs to one <c>SaveTrack</c>.
+    /// </remarks>
     [Readonly]
     [Table("SaveTrack")]
     public class SaveTrack
@@ -418,6 +447,18 @@ namespace HackerCentral.Models
         public ICollection<FieldTrack> FieldTracks { get; set; }
     }
 
+    /// <summary>
+    /// The <c>EntityTrack</c> table and class keep track of entities in the database. They provide
+    /// enough information to uniquely look up any entity in the entire database. If the entity was
+    /// deleted, they will indicate when it was deleted. They don't let you look up a previous state
+    /// of an entity, though - they only point to the most recent state of the entity.
+    /// </summary>
+    /// <remarks>
+    /// A <c>SaveTrack</c> has many <c>EntityTrack</c>s, including one special <c>EntityTrack</c> for the user
+    /// who made the request that resulted in the database transaction.
+    /// A <c>FieldTrack</c> has one <c>EntityTrack</c>.
+    /// An <c>EntityTrack</c> belongs to one <c>FieldTrack</c> and to one <c>SaveTrack</c>.
+    /// </remarks>
     [Readonly]
     [Table("EntityTrack")]
     public class EntityTrack
@@ -434,6 +475,18 @@ namespace HackerCentral.Models
         public DateTime? TimeRemoved { get; set; }
     }
 
+    /// <summary>
+    /// The <c>FieldTrack</c> table and class keep track of changes to entities' attributes. Every time
+    /// any entity has one of its values change, the <c>FieldTrack</c> keeps track of a key/value pair
+    /// allowing the change to be identified and, if necessary, rolled back. The values are stored as
+    /// JSON strings.
+    /// </summary>
+    /// <remarks>
+    /// - A <c>SaveTrack</c> has many <c>FieldTrack</c>s.
+    /// - A <c>FieldTrack</c> belongs to one <c>SaveTrack</c>.
+    /// - A <c>FieldTrack</c> has one <c>EntityTrack</c>.
+    /// - An <c>EntityTrack</c> belongs to one <c>FieldTrack</c>.
+    /// </remarks>
     [Readonly]
     [Table("FieldTrack")]
     public class FieldTrack
