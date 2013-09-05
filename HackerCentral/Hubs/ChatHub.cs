@@ -153,7 +153,15 @@ namespace SignalRChat
                         if (userSet.Any(u => u.Equals("+")))
                         {
                             userSet.Remove("+");
-                            Team role = context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.User.UserName == Context.User.Identity.Name).Single().BelongTo;
+                            Team role = Team.Pro;
+                            foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
+                            {
+                                userSet.Add(user.UserName);
+                            }
+                        }
+                        if (userSet.Any(u => u.Equals("-")))
+                        {
+                            Team role = Team.Con;
                             foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
                             {
                                 userSet.Add(user.UserName);

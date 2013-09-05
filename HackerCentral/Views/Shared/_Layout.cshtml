@@ -160,7 +160,8 @@
                 chat.client.listUsers = function (userListJson) {
                     userList = JSON.parse(userListJson);
                     data = { results: [] };
-                    data.results.push({ id: "+", text: "My Team", isOnline: true });
+                    data.results.push({ id: "+", text: "Pro Team", isOnline: true });
+                    data.results.push({ id: "-", text: "Con Team", isOnline: true });
                     for (var index = 0; index < userList.length; index++) {
                         data.results.push({ id: userList[index].userName, text: userList[index].userName, isOnline: userList[index].isOnline });
                     }

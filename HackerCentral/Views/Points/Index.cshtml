@@ -33,7 +33,7 @@
             <div class ="tab-pane" id ="tab2">
                  @foreach (var n in Model.topPoints)
                 {
-                    @PrintPoints(n);
+                    @PrintPoints(n, isAdminRole);
                 }
             </div>
         </div>
@@ -88,17 +88,19 @@
     </script>
 }
 
-@helper PrintPoints(HackerCentral.Models.Point point)
+@helper PrintPoints(HackerCentral.Models.Point point, Boolean isAdminRole)
 {
     string color;
     color = (point.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
     <div class="point" style="background: @color ">
             <h4>#@point.id: @point.summary</h4>
             <p>@point.full_text (@point.category.ToString())</p>
-@*            <div class="actions">
-                @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
-            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null)
-            </div>*@
+@if(isAdminRole){
+                 <div class="actions">
+                @Ajax.ActionLink("Edit", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
+            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @point.id }, null)
+            </div>
+            }
         </div>
 }
 
