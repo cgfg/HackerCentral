@@ -1,11 +1,11 @@
 ﻿@using HackerCentral.Models
 @{
     var menus = new[] {
-        new { LinkText="Discussion", ActionName="Discussion",ControllerName="Home",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString()  },
+        new { LinkText="Discussion", ActionName="Discussion",ControllerName="Home",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.User.ToString()},
         new { LinkText="Manage Discussions", ActionName="ManageDiscussion",ControllerName="Administration",Roles=UserRole.Administrator.ToString()  },
         new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.User.ToString()},
-        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() },
+        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Generate Token", ActionName="GenerateToken",ControllerName="Token",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
         //new { LinkText="Sign Up", ActionName="Register",ControllerName="Account",Roles="Anonymous" }
@@ -93,7 +93,7 @@
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-15px;"><strong>' + name + ': </strong>' + message + '</div>');
+                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong>' + message + '</div>');
                         element.scrollTop(element[0].scrollHeight);
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
                         $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
@@ -124,6 +124,7 @@
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<form id="msgForm">'
                                                     + '<p>Recipients: ' + groupId + '<\p>'
+                                                    + '<button class="btn btn-mini">Load Chat History</button>'
                                                     + '<div class="controls">'
                                                         + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 400px; resize: vertical;"></textarea>'
                                                     + '</div>'

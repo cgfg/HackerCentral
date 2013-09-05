@@ -5,7 +5,7 @@
 
 
 
-<div class="container" id ="nest">
+<div class="container" id="nest">
     @if (ViewBag.Message != "")
     {
         <div class="alert alert-info">
@@ -16,31 +16,72 @@
     {
         string[] roles = Roles.GetRolesForUser();
         Boolean isAdminRole = roles.Any(u => u.Equals("Administrator") || u.Equals("Hacker"));
-    <h2> </h2>
-    <div class ="tabbable tabs-left">
-        <ul class ="nav nav-tabs">
-            <li><a href ="#tab1" data-toggle="tab"><h3>Nested Points</h3></a></li>
-            <li><a href ="#tab2" data-toggle="tab"><h3>Top Ten Points</h3></a></li>
-        </ul>
-        <div class ="tab-content">
-            <div class ="tab-pane active" id ="tab1">
-                <a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>
-                @foreach (var n in Model.nestedPoints)
-                {
-                    @PrintNest(n, isAdminRole);
-                }
-            </div>
-            <div class ="tab-pane" id ="tab2">
-                 @foreach (var n in Model.topPoints)
-                {
-                    @PrintPoints(n, isAdminRole);
-                }
+        <h2></h2>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+                <li><a href="#tab1" data-toggle="tab">
+                    <h3>Nested Points</h3>
+                </a></li>
+                <li><a href="#tab2" data-toggle="tab">
+                    <h3>High Quality Points</h3>
+                </a></li>
+                <li><a href="#tab3" data-toggle="tab">
+                    <h3>Low Quality Points</h3>
+                </a></li>
+                <li><a href="#tab4" data-toggle="tab">
+                    <h3>Polular Points</h3>
+                </a></li>
+                <li><a href="#tab5" data-toggle="tab">
+                    <h3>Unpopular Points</h3>
+                </a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab1">
+                    <div class="well">
+                        <a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>
+                        @foreach (var n in Model.nestedPoints)
+                        {
+                            @PrintNest(n, isAdminRole);
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab2">
+                    <div class="well">
+                        @foreach (var n in Model.topRatedPoints)
+                        {
+                            @PrintPoints(n, isAdminRole);
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab3">
+                    <div class="well well-large">
+                    @foreach (var n in Model.lowRatedPoints)
+                    {
+                        @PrintPoints(n, isAdminRole);
+                    }
+                </div>
+                    <div class="tab-pane" id="tab4">
+                        <div class="well">
+                            @foreach (var n in Model.mostViewedPoints)
+                            {
+                                @PrintPoints(n, isAdminRole);
+                        }
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab5">
+                    <div class="well well-large">
+                        @foreach (var n in Model.leastViewedPoints)
+                        {
+                            @PrintPoints(n, isAdminRole);
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
     }
 
-   
+
 
     @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest, Boolean isAdminRole)
 {
@@ -50,13 +91,14 @@
         <div class="point" style="background: @color ">
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
-
-            @if(isAdminRole){
-                 <div class="actions">
-                @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
+            <p>Quality: @nest.Parent.quality</p>
+            @if (isAdminRole)
+            {
+                <div class="actions">
+                    @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
             @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null)
-            </div>
-            }          
+                </div>
+            }
         </div>
     if (nest.HasChildren())
     {
@@ -93,15 +135,17 @@
     string color;
     color = (point.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
     <div class="point" style="background: @color ">
-            <h4>#@point.id: @point.summary</h4>
-            <p>@point.full_text (@point.category.ToString())</p>
-@if(isAdminRole){
-                 <div class="actions">
+        <h4>#@point.id: @point.summary</h4>
+        <p>@point.full_text (@point.category.ToString())</p>
+        <p>Quality: @point.quality</p>
+        @if (isAdminRole)
+        {
+            <div class="actions">
                 @Ajax.ActionLink("Edit", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
             @Html.ActionLink("Delete", "Destroy", "Points", new { id = @point.id }, null)
             </div>
-            }
-        </div>
+        }
+    </div>
 }
 
 

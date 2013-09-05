@@ -13,8 +13,10 @@ namespace HackerCentral.ViewModels
         public Point point; // Passed to _CreatePoint partial view so validation works
         public List<NestItem> nestedPoints;
         public List<Point> visiblePoints;
-        public List<Point> topPoints;
-
+        public List<Point> topRatedPoints;
+        public List<Point> lowRatedPoints;
+        public List<Point> mostViewedPoints;
+        public List<Point> leastViewedPoints;
         public PointsViewModel(List<Point> points)
         {
             visiblePoints = new List<Point>();
@@ -44,7 +46,10 @@ namespace HackerCentral.ViewModels
             }
 
             nestedPoints = nestedPoints.OrderBy(n => n.Parent.id).ToList();
-            topPoints = visiblePoints.OrderByDescending(p => p.quality).Take(10).ToList();
+            topRatedPoints = visiblePoints.OrderByDescending(p => p.quality).Take(10).ToList();
+            lowRatedPoints = visiblePoints.OrderBy(p => p.quality).Take(10).ToList();
+            mostViewedPoints = visiblePoints.OrderByDescending(p => p.views).Take(10).ToList();
+            leastViewedPoints = visiblePoints.OrderBy(p => p.views).Take(10).ToList();
         }
 
         private List<NestItem> GetChildren(Point parent, List<Point> allPoints)
