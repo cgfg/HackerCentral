@@ -13,10 +13,6 @@ namespace HackerCentral.ViewModels
         public Point point; // Passed to _CreatePoint partial view so validation works
         public List<NestItem> nestedPoints;
         public List<Point> visiblePoints;
-        public List<Point> topRatedPoints;
-        public List<Point> lowRatedPoints;
-        public List<Point> mostViewedPoints;
-        public List<Point> leastViewedPoints;
         public PointsViewModel(List<Point> points)
         {
             visiblePoints = new List<Point>();
@@ -44,12 +40,7 @@ namespace HackerCentral.ViewModels
                     Children = GetChildren(top, points)               
                 });
             }
-
             nestedPoints = nestedPoints.OrderBy(n => n.Parent.id).ToList();
-            topRatedPoints = visiblePoints.OrderByDescending(p => p.quality).Take(10).ToList();
-            lowRatedPoints = visiblePoints.OrderBy(p => p.quality).Take(10).ToList();
-            mostViewedPoints = visiblePoints.OrderByDescending(p => p.views).Take(10).ToList();
-            leastViewedPoints = visiblePoints.OrderBy(p => p.views).Take(10).ToList();
         }
 
         private List<NestItem> GetChildren(Point parent, List<Point> allPoints)
@@ -113,5 +104,35 @@ namespace HackerCentral.ViewModels
             public bool HasChildren() { return Children.Count > 0; }
         }
 
+        public List<Point> getTopRatedPoints()
+        {
+            List<Point> topRatedPoints = visiblePoints.Where(u => u.quality >= 2.5).OrderByDescending(p => p.quality).Take(10).ToList();
+            return topRatedPoints;
+        }
+
+        public List<Point> getLowRatedPoints()
+        {
+            List<Point> lowRatedPoints = visiblePoints.Where(u => u.quality < 2.5 && u.quality > 0).OrderBy(p => p.quality).Take(10).ToList();
+            return lowRatedPoints;
+        }
+
+        public List<Point> getMostViewedPoints()
+        {
+            List<Point> mostViewedPoints = visiblePoints.OrderByDescending(p => p.views).Take(10).ToList();
+            return mostViewedPoints;
+        }
+
+        public List<Point> getLeastViewedPoints()
+        {
+            List<Point> leastViewedPoints = visiblePoints.Where(p => p.views > 0).OrderBy(p => p.views).Take(10).ToList();
+            return leastViewedPoints;
+        }
+
+        public List<Point> getUnratedPoints()
+        {
+            List<Point> unratedPoints = visiblePoints.Where(p => p.validity_ratings_count == 0).Take(10).ToList();
+            return unratedPoints;
+        }
     }
+
 }

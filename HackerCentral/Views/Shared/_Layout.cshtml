@@ -112,26 +112,26 @@
                         }
 
                         $('#msgTabs').append('<li id="' + key + tabLabelToken + '">'
-                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #86D0F7">' + "Chat " + count
+                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #0094ff">Chat ' + count
                                                     + '<button class="close" '
                                                             + 'style="margin-left: 10px;font-size: 11px;float:none;" '
                                                             + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'
-                                                            + '<b>X</b>'
-                                                    + '</button>'
+                                                            + '<b>x</b>'
+                                                    + '</button>' + '</div>'
                                                 + '</a>'
                                             + '</li>');
 
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
-                                                + '<form id="msgForm">'
-                                                    + '<p>Recipients: ' + groupId + '<\p>'
-                                                    + '<button class="btn btn-mini">Load Chat History</button>'
+                                                + '<div><form id="msgForm">'
+                                                    + '<p><b>Recipients</b>: ' + groupId + '<\p>'
+                                                    + '<button class="btn btn-mini">Chat History</button>'
                                                     + '<div class="controls">'
                                                         + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 400px; resize: vertical;"></textarea>'
                                                     + '</div>'
                                                     + '<div class="controls">'
                                                         + '<button type="submit" class="btn">Send</button>'
                                                     + '</div>'
-                                                + '</form>'
+                                                + '</form></div>'
                                                 + '<div id="msgBoard" style="max-height: 200px; overflow-y: auto;">'
                                                     + '<div class="alert alert-info" style="word-wrap:break-word;">'
                                                         + '<strong>' + name + ': </strong>' + message
@@ -300,30 +300,31 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div class="dropdown-menu pull-right" style="padding: 5px; padding-bottom: 10px; max-width:500px; width: 380px;" >
-                                        <a class="btn btn-mini btn-inverse dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b>x</b></a>
-
-                                        <div id="msgTabContent" class="tab-content">
-                                            <ul id="msgTabs" class="nav nav-tabs">
-                                                <li id="startNewChatTab" class="active"><a href="#startNewChatContent" data-toggle="tab" style = "background-color: #86D0F7"><b>+</b></a></li>
-                                            </ul>
-                                            <div style="min-height:50px">
-                                            </div>
-                                            <div class="tab-pane active" id="startNewChatContent">
-                                                <div class="content">
-                                                    <form id="msgForm">
-                                                        <div class="controls">
-                                                            <input  id="msgRecipients" type="hidden" style="width:355px; max-width: 400px;" />
-                                                        </div>
-                                                        <div style="min-height:10px"></div>
-                                                        <div class="controls">
-                                                            <textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 340px; resize: vertical;"></textarea>
-                                                        </div>
-                                                        <div class="controls">
-                                                            <button type="submit" class="btn">Send</button>
-                                                        </div>
-                                                    </form>
-                                                    <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                    <div class="dropdown-menu pull-right" style="padding: 5px; padding-bottom: 10px; max-width: 500px; width: 380px;">
+                                        <div>
+                                            <a class="btn btn-mini dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b style ="color: #0094ff">x</b></a>
+                                            <div id="msgTabContent" class="tab-content">
+                                                <ul id="msgTabs" class="nav nav-tabs">                                                  
+                                                    <li><a href="#startNewChatContent" data-toggle="tab" style = "background-color: #FFFFFF"><b style ="color: #0094ff">+</b></a></li>
+                                                </ul>
+                                                <div style="min-height: 50px">
+                                                </div>
+                                                <div class="tab-pane active" id="startNewChatContent">
+                                                    <div class="content">
+                                                        <form id="msgForm">
+                                                            <div class="controls">
+                                                                <input id="msgRecipients" type="hidden" style="width: 355px; max-width: 400px;" />
+                                                            </div>
+                                                            <div style="min-height: 10px"></div>
+                                                            <div class="controls">
+                                                                <textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 340px; resize: vertical;"></textarea>
+                                                            </div>
+                                                            <div class="controls">
+                                                                <button type="submit" class="btn">Send</button>
+                                                            </div>
+                                                        </form>
+                                                        <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
