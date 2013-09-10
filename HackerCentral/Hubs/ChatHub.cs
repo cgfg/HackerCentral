@@ -71,7 +71,7 @@ namespace SignalRChat
                         delivery.TimeDelivered = DateTime.UtcNow;
                         //foreach (string connection in connections)
                         //{
-                        Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, usernameList, delivery.Message.Text);
+                        Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, usernameList, delivery.Message.Text,delivery.Message.TimeStamp);
                         //}
                     }
                     context.SaveChanges();
@@ -235,6 +235,13 @@ namespace SignalRChat
             {
                 Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Where(u => !u.UserName.Equals(Context.User.Identity.Name)).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
             }
+        }
+
+        public void getOldMessage(String userListJson, String time)
+        {
+            HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+            DateTime timeStamp = DateTime.Parse(time);
+
         }
     }
 }

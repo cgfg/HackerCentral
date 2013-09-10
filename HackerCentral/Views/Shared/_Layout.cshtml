@@ -65,7 +65,7 @@
 
             var tabKeys = {};
             var count = 0;
-
+            var chatTimeStamp = {};
             $(function () {
                 //$('.dropdown-menu').click(function (event) {
                 //    alert("Hello");
@@ -82,18 +82,21 @@
                 // Reference the auto-generated proxy for the hub.  
                 var chat = $.connection.chatHub;
                 // Create a function that the hub can call back to display messages.
-                chat.client.addNewMessageToPage = function (name, list, message) {
+                chat.client.addNewMessageToPage = function (name, list, message, timeStamp) {
                     //if ($('#msgRecipients').val()) {
                     //} else {
                     //    //alert("false");
                     //    $('#msgRecipients').val(name);
                     //}
-                   
+                    
                     var groupId = list.join(", ");
+                    if (!groupId in chatTimeStamp) {
+                        chatTimeStamp[groupId] = timeStamp;
+                    }
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong>' + message + '</div>');
+                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
                         element.scrollTop(element[0].scrollHeight);
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
                         $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
@@ -111,7 +114,7 @@
                             userFrd = groupId;
                         }
 
-                        $('#msgTabs').append('<li id="' + key + tabLabelToken + '">'
+                        $('#msgTabs').prepend('<li id="' + key + tabLabelToken + '">'
                                                 + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #0094ff">Chat ' + count
                                                     + '<button class="close" '
                                                             + 'style="margin-left: 10px;font-size: 11px;float:none;" '
@@ -124,7 +127,9 @@
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
                                                     + '<p><b>Recipients</b>: ' + groupId + '<\p>'
-                                                    + '<button class="btn btn-mini">Chat History</button>'
+                                                    + '<div class="controls">'
+                                                    + '<button type="button" class="btn btn-mini" id="chat_history">Chat History</button>'
+                                                    + '</div>'
                                                     + '<div class="controls">'
                                                         + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 400px; resize: vertical;"></textarea>'
                                                     + '</div>'
@@ -134,7 +139,7 @@
                                                 + '</form></div>'
                                                 + '<div id="msgBoard" style="max-height: 200px; overflow-y: auto;">'
                                                     + '<div class="alert alert-info" style="word-wrap:break-word;">'
-                                                        + '<strong>' + name + ': </strong>' + message
+                                                        + '<strong>' + name + ': </strong><br>' + message
                                                     + '</div>'
                                                 + '</div>'
                                             + '</div>');
@@ -148,6 +153,14 @@
                             $('#msgTabContent #' + key + tabContentToken + ' #msgForm #msgText').val('').focus();
                             return false;
                         });
+                        //[TODO]
+                        //$('#msgTabContent #' + key + tabContentToken + ' #msgForm #chat_history').click(function () {
+                        //    alert('called');
+                        //    var jsonList = JSON.stringify(list);
+                        //    var time = chatTimeStamp;
+                        //    chat.server.getOldMessage(jsonList, time);
+                        //    return false;
+                        //});
                     }
 
                     if (!$('#msgDropDown').hasClass('open')) {
@@ -304,7 +317,7 @@
                                         <div>
                                             <a class="btn btn-mini dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b style ="color: #0094ff">x</b></a>
                                             <div id="msgTabContent" class="tab-content">
-                                                <ul id="msgTabs" class="nav nav-tabs">                                                  
+                                                <ul id="msgTabs" class="nav nav-pills">                                                  
                                                     <li><a href="#startNewChatContent" data-toggle="tab" style = "background-color: #FFFFFF"><b style ="color: #0094ff">+</b></a></li>
                                                 </ul>
                                                 <div style="min-height: 50px">
