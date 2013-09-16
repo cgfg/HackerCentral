@@ -17,7 +17,6 @@ namespace SignalRChat
     public class ChatHub : Hub
     {
         private static readonly ConcurrentDictionary<string, HashSet<string>> ActiveUsers = new ConcurrentDictionary<string, HashSet<string>>();
-
         public override Task OnConnected()
         {
             //bool isNewActiveUser = !ActiveUsers.ContainsKey(Context.User.Identity.Name);
@@ -237,11 +236,21 @@ namespace SignalRChat
             }
         }
 
-        public void getOldMessage(String userListJson, String time)
-        {
-            HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
-            DateTime timeStamp = DateTime.Parse(time);
+        //public String GetUserName()
+        //{
+        //    return Context.User.Identity.Name;
+        //}
 
-        }
+        //[TODO]
+        //public void getOldMessage(String userListJson, String time)
+        //{
+        //    HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+        //    DateTime timeStamp = DateTime.Parse(time);
+        //    using (var context = new SimpleContext()){
+        //    foreach(Message m in context.Messages.Include(u => u.Deliveries).Select(u => u.Deliveries).Where(d => d.Select(r => r.Reciever).ToArray().) ){
+
+        //    }
+        //}
+        //}
     }
 }

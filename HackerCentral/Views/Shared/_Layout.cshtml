@@ -21,11 +21,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
+   
+    
 
     @if (Request.IsAuthenticated)
     {
-        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jquery", "~/bundles/jqueryui")
+        @Styles.Render("~/Content/themes/base/css")
         <script>
             var preempt = false;
             $(document).on('click.dropdown.data-api', function (event) {
@@ -38,6 +40,7 @@
         @Scripts.Render("~/bundles/modernizr", "~/bundles/bootstrap")
         @Scripts.Render("~/bundles/signalr", "~/signalr/hubs", "~/bundles/select2")
         @Styles.Render("~/Content/select2")
+        
         
         <script>
             var queryCallback = null;
@@ -66,7 +69,12 @@
             var tabKeys = {};
             var count = 0;
             var chatTimeStamp = {};
+
             $(function () {
+               
+                
+
+                $('#chatWindow').draggable({ handle: "#dragHandle", containment: "#maincontent" });
                 //$('.dropdown-menu').click(function (event) {
                 //    alert("Hello");
                 //    event.stopPropagation();
@@ -82,6 +90,8 @@
                 // Reference the auto-generated proxy for the hub.  
                 var chat = $.connection.chatHub;
                 // Create a function that the hub can call back to display messages.
+                //var myName = chat.server.GetUserName();
+                               
                 chat.client.addNewMessageToPage = function (name, list, message, timeStamp) {
                     //if ($('#msgRecipients').val()) {
                     //} else {
@@ -96,7 +106,15 @@
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-                        element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
+                     
+                        //if(myName == name){
+                        //    element.append('<p class="triangle-right" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        //}else{
+                        //    element.append('<p class="triangle-isosceles" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        //}
+                        
+                        //element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
+                        element.append('<p class="triangle-border left" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
                         element.scrollTop(element[0].scrollHeight);
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
                         $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
@@ -109,13 +127,13 @@
                             for (i = 0; i < list.length; i++) {
                                 userFrd += list[i].substr(0, 5) + ", ";
                             }
-                            userFrd = userFrd.substr(0, 12) + "...";
+                            userFrd = userFrd.substr(0, 20) + "...";
                         } else {
                             userFrd = groupId;
                         }
 
                         $('#msgTabs').prepend('<li id="' + key + tabLabelToken + '">'
-                                                + '<a href="#' + key + tabContentToken + '" data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #0094ff">Chat ' + count
+                                                + '<a href="#' + key + tabContentToken + '" title="Recipients: ' + groupId + '" " data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #363636">' + userFrd
                                                     + '<button class="close" '
                                                             + 'style="margin-left: 10px;font-size: 11px;float:none;" '
                                                             + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'
@@ -123,25 +141,27 @@
                                                     + '</button>' + '</div>'
                                                 + '</a>'
                                             + '</li>');
-
+                        
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
-                                                    + '<p><b>Recipients</b>: ' + groupId + '<\p>'
+                                                    //+ '<p><b>Recipients</b>: ' + groupId + '<\p>'
+                                                    //+ '<div class="controls">'
+                                                    //+ '<button type="button" class="btn btn-mini" id="chat_history">Chat History</button>'
+                                                    //+ '</div>'
+                                                    + '<div id="msgBoard" style="height: 300px; overflow-y: auto;">'
+                                                    //+ '<div class="alert alert-info" style="word-wrap:break-word;">'
+                                                    //    + '<strong>' + name + ': </strong><br>' + message
+                                                    //+ '</div>'
+                                                    + '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>'
+                                                + '</div><br>'
                                                     + '<div class="controls">'
-                                                    + '<button type="button" class="btn btn-mini" id="chat_history">Chat History</button>'
+                                                        + '<textarea id="msgText" placeholder="Message" rows="2" style="width: 340px; max-width: 400px; resize: none;"></textarea>'
                                                     + '</div>'
                                                     + '<div class="controls">'
-                                                        + '<textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 400px; resize: vertical;"></textarea>'
-                                                    + '</div>'
-                                                    + '<div class="controls">'
-                                                        + '<button type="submit" class="btn">Send</button>'
+                                                        + '<button type="submit" class="btn pull-right" style="margin-right:25px">Send</button>'
                                                     + '</div>'
                                                 + '</form></div>'
-                                                + '<div id="msgBoard" style="max-height: 200px; overflow-y: auto;">'
-                                                    + '<div class="alert alert-info" style="word-wrap:break-word;">'
-                                                        + '<strong>' + name + ': </strong><br>' + message
-                                                    + '</div>'
-                                                + '</div>'
+                                                
                                             + '</div>');
                         $('#msgTabContent #' + key + tabContentToken + ' #msgForm').submit(function () {
                             // Call the Send method on the hub.
@@ -161,6 +181,8 @@
                         //    chat.server.getOldMessage(jsonList, time);
                         //    return false;
                         //});
+
+                       
                     }
 
                     if (!$('#msgDropDown').hasClass('open')) {
@@ -238,18 +260,22 @@
                     });
                 });
             });
+
+            $(document).tooltip({placement:"top"});
         </script>
     }
     else
     {
         @Scripts.Render("~/bundles/jquery", "~/bundles/modernizr", "~/bundles/bootstrap")
+         @Scripts.Render("~/bundles/jquery", "~/bundles/jqueryui")
+        @Styles.Render("~/Content/themes/base/css")
     }
 
     @Styles.Render("~/Content/bootstrap")
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom" id ="bar">
         <div class="navbar-inner">
             <div class="container">
                 <a class="btn btn-inverse btn-navbar" data-toggle="collapse" data-target=".nav-collapse" href="#">
@@ -313,12 +339,15 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div class="dropdown-menu pull-right" style="padding: 5px; padding-bottom: 10px; max-width: 500px; width: 380px;">
-                                        <div>
-                                            <a class="btn btn-mini dropdown-toggle pull-right" data-toggle="dropdown" href="#"><b style ="color: #0094ff">x</b></a>
+                                    <div id="chatWindow" class="dropdown-menu pull-right" style="padding: 5px; padding-bottom: 10px; max-width: 500px; width: 380px;height:480px" >
+                                       <div class="pull-right" style= "position:absolute;right:5px; ">
+                                           <i class="icon-move" id="dragHandle"></i>
+                                           <i class="icon-remove"  data-toggle="dropdown"></i>                                    
+                                       </div>
+                                         <div>                                      
                                             <div id="msgTabContent" class="tab-content">
                                                 <ul id="msgTabs" class="nav nav-pills">                                                  
-                                                    <li><a href="#startNewChatContent" data-toggle="tab" style = "background-color: #FFFFFF"><b style ="color: #0094ff">+</b></a></li>
+                                                    <li><a href="#startNewChatContent" title="Creat a new chat" data-toggle="tab" style = "background-color: #FFFFFF"><b style ="color: #363636">+</b></a></li>
                                                 </ul>
                                                 <div style="min-height: 50px">
                                                 </div>
@@ -330,13 +359,13 @@
                                                             </div>
                                                             <div style="min-height: 10px"></div>
                                                             <div class="controls">
-                                                                <textarea id="msgText" placeholder="Message" rows="3" style="width: 340px; max-width: 340px; resize: vertical;"></textarea>
+                                                                <textarea id="msgText"  placeholder="Message" rows="2" style="width: 340px; max-width: 340px; resize: none;"></textarea>
                                                             </div>
                                                             <div class="controls">
                                                                 <button type="submit" class="btn">Send</button>
                                                             </div>
                                                         </form>
-                                                        <div id="msgBoard" style="max-height: 200px; overflow-y: auto;"></div>
+                                                        @*<div id="msgBoard" style="height: 200px; overflow-y: auto;"></div>*@
                                                     </div>
                                                 </div>
                                             </div>
