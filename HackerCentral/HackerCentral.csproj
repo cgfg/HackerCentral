@@ -409,6 +409,7 @@
     <Content Include="Views\Administration\ManageDiscussion.cshtml" />
     <Content Include="Views\Administration\_EditDiscussionForm.cshtml" />
     <Content Include="Views\Tracking\Data.cshtml" />
+    <Content Include="Views\Tracking\TouchDatabase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

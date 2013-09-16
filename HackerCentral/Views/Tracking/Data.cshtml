@@ -49,12 +49,12 @@ Showing @(Model.NumActionsShown) tracked actions
                                 <h4>User</h4>
                                 <div class="entity">
                                     <ul>
-                                        <li>EntityTrack ID: @(saveTrack.UserEntityTrack.Id)</li>
-                                        <li>User ID: @(saveTrack.UserEntityTrack.EntityId)</li>
-                                        <li>User Type: @(saveTrack.UserEntityTrack.EntityType)</li>
+                                        <li>EntityTrack ID: @(saveTrack.UserEntity.Id)</li>
+                                        <li>User ID: @(saveTrack.UserEntity.EntityId)</li>
+                                        <li>User Type: @(saveTrack.UserEntity.EntityType)</li>
                                         <li>
-                                            Deleted At: @(saveTrack.UserEntityTrack.TimeRemoved.HasValue
-                                                          ? saveTrack.UserEntityTrack.TimeRemoved.Value.ToLongDateString()
+                                            Deleted At: @(saveTrack.UserEntity.WasDeleted
+                                                          ? saveTrack.UserEntity.TimeRemoved.Value.ToLongDateString()
                                                           : "Never deleted")
                                         </li>
                                     </ul>

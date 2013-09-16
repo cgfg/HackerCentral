@@ -14,6 +14,17 @@ namespace HackerCentral.Controllers
     /// </summary>
     public class TrackingController : TrackedController
     {
+        [HttpPost, HttpGet]
+        public ActionResult TouchDatabase()
+        {
+            using (SimpleContext dbContext = new HackerCentralContext(this))
+            {
+                dbContext.Messages.Add(new Message());
+
+                return View();
+            }
+        }
+
         [HttpGet]
         public ActionResult Data(bool isLimited = true, int numToShow = 10)
         {
@@ -38,12 +49,16 @@ namespace HackerCentral.Controllers
                 {
                     IsLimited = isLimited,
                     NumActionsShown = actionTracks.Count(),
-                    ActionTracks = actionTracks
+                    ActionTracks = new List<ActionTrackViewModel>(actionTracks.Count)
                 };
+
+                foreach (var actionTrack in actionTracks)
+                {
+                    model.ActionTracks.Add(new ActionTrackViewModel(actionTrack));
+                }
 
                 return View(model);
             }
         }
-
     }
 }
