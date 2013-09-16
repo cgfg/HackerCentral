@@ -9,23 +9,65 @@ Showing @(Model.NumActionsShown) tracked actions
 
 <div id="tracking-data" class="accordion">
     @{bool firstAction = true;}
-    @foreach (var actionTrack in Model.ActionTracks) {
-        <div class="action accordion-group">
-            <div class="accordion-heading">
-                <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#action-@(actionTrack.Id)">
-                    @(actionTrack.ControllerName)/@(actionTrack.ActionName)
-                </a>
-            </div>
-            <div id="action-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
-                <div class="accordion-inner">
-                    <ul>
-                        <li>Controller: @(actionTrack.ControllerName)</li>
-                        <li>Action: @(actionTrack.ActionName)</li>
-                        <li>Parameters: @(actionTrack.Parameters)</li>
-                    </ul>
+    @foreach (var actionTrack in Model.ActionTracks)
+    {
+    <div class="action accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#action-@(actionTrack.Id)">
+                @(actionTrack.ControllerName)/@(actionTrack.ActionName)
+            </a>
+        </div>
+        <div id="action-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
+            <div class="accordion-inner">
+                <ul>
+                    <li>Controller: @(actionTrack.ControllerName)</li>
+                    <li>Action: @(actionTrack.ActionName)</li>
+                    <li>Parameters: @(actionTrack.Parameters)</li>
+                    <li>ID: @(actionTrack.Id)</li>
+                </ul>
+                <h4>Save Transactions</h4>
+                @if (actionTrack.SaveTracks == null || actionTrack.SaveTracks.Count == 0)
+                {
+                    <p>No save transactions for this action.</p>
+                }
+                else
+                {
+                <div id="saves-@(actionTrack.Id)" class="accordion">
+                    @foreach (var saveTrack in actionTrack.SaveTracks)
+                    {
+                    <div class="save accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#save-@(saveTrack.Id)">
+                                Save @(saveTrack.Id)
+                            </a>
+                        </div>
+                        <div id="save-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
+                            <div class="accordion-inner">
+                                <ul>
+                                    <li>ID: @(saveTrack.Id)</li>
+                                </ul>
+                                <h4>User</h4>
+                                <div class="entity">
+                                    <ul>
+                                        <li>EntityTrack ID: @(saveTrack.UserEntityTrack.Id)</li>
+                                        <li>User ID: @(saveTrack.UserEntityTrack.EntityId)</li>
+                                        <li>User Type: @(saveTrack.UserEntityTrack.EntityType)</li>
+                                        <li>
+                                            Deleted At: @(saveTrack.UserEntityTrack.TimeRemoved.HasValue
+                                                          ? saveTrack.UserEntityTrack.TimeRemoved.Value.ToLongDateString()
+                                                          : "Never deleted")
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
                 </div>
+                }
             </div>
         </div>
-        firstAction = false;
+    </div>
+    firstAction = false;
     }
 </div>
