@@ -236,10 +236,10 @@ namespace SignalRChat
             }
         }
 
-        //public String GetUserName()
-        //{
-        //    return Context.User.Identity.Name;
-        //}
+        public String GetUserName()
+        {
+            return Context.User.Identity.Name;
+        }
 
         //[TODO]
         //public void getOldMessage(String userListJson, String time)

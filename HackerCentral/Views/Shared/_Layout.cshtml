@@ -90,7 +90,7 @@
                 // Reference the auto-generated proxy for the hub.  
                 var chat = $.connection.chatHub;
                 // Create a function that the hub can call back to display messages.
-                //var myName = chat.server.GetUserName();
+                var myName = "@User.Identity.Name";
                                
                 chat.client.addNewMessageToPage = function (name, list, message, timeStamp) {
                     //if ($('#msgRecipients').val()) {
@@ -107,14 +107,14 @@
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
                      
-                        //if(myName == name){
-                        //    element.append('<p class="triangle-right" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
-                        //}else{
-                        //    element.append('<p class="triangle-isosceles" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
-                        //}
+                        if(myName == name){
+                            element.append('<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        }else{
+                            element.append('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        }
                         
                         //element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
-                        element.append('<p class="triangle-border left" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        //element.append('<p class="triangle-border left" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
                         element.scrollTop(element[0].scrollHeight);
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
                         $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
@@ -141,24 +141,30 @@
                                                     + '</button>' + '</div>'
                                                 + '</a>'
                                             + '</li>');
-                        
+                        var firstMessage;
+                        if (myName == name) {
+                           firstMessage = '<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                        } else {
+                           firstMessage = '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                        }
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
                                                     //+ '<p><b>Recipients</b>: ' + groupId + '<\p>'
                                                     //+ '<div class="controls">'
                                                     //+ '<button type="button" class="btn btn-mini" id="chat_history">Chat History</button>'
                                                     //+ '</div>'
-                                                    + '<div id="msgBoard" style="height: 300px; overflow-y: auto;">'
+                                                    + '<div id="msgBoard" style="height: 300px; overflow-y: auto; border-style: dashed; border-width:1px; border-color: #7FAAF6"">'
                                                     //+ '<div class="alert alert-info" style="word-wrap:break-word;">'
                                                     //    + '<strong>' + name + ': </strong><br>' + message
                                                     //+ '</div>'
-                                                    + '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>'
+                                                    + firstMessage
+                                                //    + '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>'
                                                 + '</div><br>'
                                                     + '<div class="controls">'
                                                         + '<textarea id="msgText" placeholder="Message" rows="2" style="width: 340px; max-width: 400px; resize: none;"></textarea>'
                                                     + '</div>'
                                                     + '<div class="controls">'
-                                                        + '<button type="submit" class="btn pull-right" style="margin-right:25px">Send</button>'
+                                                        + '<button type="submit" class="btn pull-right" style="margin-right:26px; margin-top:-5px">Send</button>'
                                                     + '</div>'
                                                 + '</form></div>'
                                                 
@@ -359,7 +365,7 @@
                                                             </div>
                                                             <div style="min-height: 10px"></div>
                                                             <div class="controls">
-                                                                <textarea id="msgText"  placeholder="Message" rows="2" style="width: 340px; max-width: 340px; resize: none;"></textarea>
+                                                                <textarea id="msgText"  placeholder="Message"  rows="2" style="width: 340px; max-width: 340px; resize: none;"></textarea>
                                                             </div>
                                                             <div class="controls">
                                                                 <button type="submit" class="btn">Send</button>
