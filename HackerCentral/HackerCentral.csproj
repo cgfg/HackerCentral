@@ -211,6 +211,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdministrationController.cs" />
+    <Compile Include="Controllers\TrackingController.cs" />
     <Compile Include="ViewModels\InternalDiscussionEditViewModel.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="ViewModels\DiscussionViewModel.cs" />
     <Compile Include="ViewModels\InternalUserViewModel.cs" />
     <Compile Include="ViewModels\PointsViewModel.cs" />
+    <Compile Include="ViewModels\TrackingViewModel.cs" />
     <Compile Include="ViewModels\UsersViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -406,6 +408,7 @@
     <Content Include="Views\Home\Discussion.cshtml" />
     <Content Include="Views\Administration\ManageDiscussion.cshtml" />
     <Content Include="Views\Administration\_EditDiscussionForm.cshtml" />
+    <Content Include="Views\Tracking\Data.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,31 @@
+﻿@model HackerCentral.ViewModels.TrackingViewModel
+
+@{
+    ViewBag.Title = "Tracking Data";
+}
+
+<h2>Tracking Data</h2>
+Showing @(Model.NumActionsShown) tracked actions
+
+<div id="tracking-data" class="accordion">
+    @{bool firstAction = true;}
+    @foreach (var actionTrack in Model.ActionTracks) {
+        <div class="action accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#action-@(actionTrack.Id)">
+                    @(actionTrack.ControllerName)/@(actionTrack.ActionName)
+                </a>
+            </div>
+            <div id="#action-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
+                <div class="accordion-inner">
+                    <ul>
+                        <li>Controller: @(actionTrack.ControllerName)</li>
+                        <li>Action: @(actionTrack.ActionName)</li>
+                        <li>Parameters: @(actionTrack.Parameters)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        firstAction = false;
+    }
+</div>
