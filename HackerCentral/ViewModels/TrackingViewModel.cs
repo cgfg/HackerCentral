@@ -8,9 +8,15 @@ namespace HackerCentral.ViewModels
 {
     public class TrackingViewModel
     {
-        public List<ActionTrackViewModel> ActionTracks;
-        public bool IsLimited;
-        public int NumActionsShown;
+        public List<ActionTrackViewModel> ActionTracks { get; set; }
+        public bool IsLimited { get; set; }
+        public int NumActionsShown
+        {
+            get
+            {
+                return ActionTracks.Count;
+            }
+        }
     }
 
     public class ActionTrackViewModel

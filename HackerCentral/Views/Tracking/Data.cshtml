@@ -14,14 +14,15 @@ Showing @(Model.NumActionsShown) tracked actions
     <div class="action accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#action-@(actionTrack.Id)">
-                @(actionTrack.ControllerName)/@(actionTrack.ActionName)
-            </a>
+                @(actionTrack.ControllerName)/@(actionTrack.ActionName)            </a>
         </div>
         <div id="action-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
             <div class="accordion-inner">
                 <ul>
                     <li>Controller: @(actionTrack.ControllerName)</li>
                     <li>Action: @(actionTrack.ActionName)</li>
+                    <li>Date: @(actionTrack.TimeStamp.ToShortDateString())</li>
+                    <li>Time: @(actionTrack.TimeStamp.ToShortTimeString())</li>
                     <li>Parameters: @(actionTrack.Parameters)</li>
                     <li>ID: @(actionTrack.Id)</li>
                 </ul>
@@ -154,3 +155,4 @@ Showing @(Model.NumActionsShown) tracked actions
     firstAction = false;
     }
 </div>
+<p style="margin-bottom:10em" />

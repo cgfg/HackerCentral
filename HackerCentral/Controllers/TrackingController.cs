@@ -12,19 +12,9 @@ namespace HackerCentral.Controllers
     /// <summary>
     /// Show information stored by the tracking system
     /// </summary>
+    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Administrator })]
     public class TrackingController : TrackedController
     {
-        [HttpGet]
-        public ActionResult Touch()
-        {
-            using (SimpleContext dbContext = new HackerCentralContext(this))
-            {
-                dbContext.Messages.Add(new Message());
-
-                return View();
-            }
-        }
-
         [HttpGet]
         public ActionResult Data(bool isLimited = true, int numToShow = 10)
         {
@@ -54,7 +44,6 @@ namespace HackerCentral.Controllers
                 var model = new TrackingViewModel()
                 {
                     IsLimited = isLimited,
-                    NumActionsShown = actionTracks.Count(),
                     ActionTracks = new List<ActionTrackViewModel>(actionTracks.Count)
                 };
 
