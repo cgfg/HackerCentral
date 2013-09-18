@@ -137,7 +137,7 @@ namespace SignalRChat
             {
                 HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));               
                 userSet.Add(Context.User.Identity.Name);
-                String groupId = String.Join(",", userSet.OrderBy(u => u).ToArray());
+                
                 using (var context = new HackerCentralContext(null))
                 { 
                     if (userSet.Any(u => u.Equals("*")))
@@ -178,13 +178,14 @@ namespace SignalRChat
                         if (userSet.Any(u => u.Equals("@")))
                         {
                             userSet.Remove("@");
-                            foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
+                            foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
                             {
                                 userSet.Add(userName);
                             }
                         }
                     }
 
+                    String groupId = String.Join(",", userSet.OrderBy(u => u).ToArray());
                     Message message = new Message
                     {
                         TimeStamp = DateTime.UtcNow,
@@ -248,6 +249,50 @@ namespace SignalRChat
         { 
             using (var context = new SimpleContext()){
                 HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+                if (userSet.Any(u => u.Equals("*")))
+                {
+                    userSet.Remove("*");
+                    foreach (UserProfile user in context.UserProfiles)
+                    {
+                        userSet.Add(user.UserName);
+                    }
+                }
+                else
+                {
+                    if (userSet.Any(u => u.Equals("+")))
+                    {
+                        userSet.Remove("+");
+                        Team role = Team.Pro;
+                        foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
+                        {
+                            userSet.Add(user.UserName);
+                        }
+                    }
+                    if (userSet.Any(u => u.Equals("-")))
+                    {
+                        Team role = Team.Con;
+                        foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
+                        {
+                            userSet.Add(user.UserName);
+                        }
+                    }
+                    if (userSet.Any(u => u.Equals("!")))
+                    {
+                        userSet.Remove("!");
+                        foreach (string userName in ActiveUsers.Keys)
+                        {
+                            userSet.Add(userName);
+                        }
+                    }
+                    if (userSet.Any(u => u.Equals("@")))
+                    {
+                        userSet.Remove("@");
+                        foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
+                        {
+                            userSet.Add(userName);
+                        }
+                    }
+                }
                 var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
                 string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
                 string groupId = string.Join(",", userSet.OrderBy(u => u).ToArray());
