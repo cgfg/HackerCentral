@@ -32,32 +32,115 @@ Showing @(Model.NumActionsShown) tracked actions
                 }
                 else
                 {
-                <div id="saves-@(actionTrack.Id)" class="accordion">
+                <div id="action-@(actionTrack.Id)-saves" class="accordion">
                     @foreach (var saveTrack in actionTrack.SaveTracks)
                     {
                     <div class="save accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#tracking-data" href="#save-@(saveTrack.Id)">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#action-@(actionTrack.Id)-saves" href="#save-@(saveTrack.Id)">
                                 Save @(saveTrack.Id)
                             </a>
                         </div>
-                        <div id="save-@(actionTrack.Id)" class="accordion-body collapse @(firstAction ? "in" : "")">
+                        <div id="save-@(saveTrack.Id)" class="accordion-body collapse">
                             <div class="accordion-inner">
                                 <ul>
                                     <li>ID: @(saveTrack.Id)</li>
                                 </ul>
-                                <h4>User</h4>
-                                <div class="entity">
-                                    <ul>
-                                        <li>EntityTrack ID: @(saveTrack.UserEntity.Id)</li>
-                                        <li>User ID: @(saveTrack.UserEntity.EntityId)</li>
-                                        <li>User Type: @(saveTrack.UserEntity.EntityType)</li>
-                                        <li>
-                                            Deleted At: @(saveTrack.UserEntity.WasDeleted
-                                                          ? saveTrack.UserEntity.TimeRemoved.Value.ToLongDateString()
-                                                          : "Never deleted")
-                                        </li>
-                                    </ul>
+                                <div id="save-@(saveTrack.Id)-user" class="accordion">
+                                    <div class="save-child accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parents="#save-@(saveTrack.Id)-user" href="#save-@(saveTrack.Id)-user-info">
+                                                User
+                                            </a>
+                                        </div>
+                                        <div id="save-@(saveTrack.Id)-user-info" class="accordion-body collapse">
+                                            <div class="accordion-inner">
+                                                <ul>
+                                                    <li>EntityTrack ID: @(saveTrack.UserEntity.Id)</li>
+                                                    <li>User ID: @(saveTrack.UserEntity.EntityId)</li>
+                                                    <li>User Type: @(saveTrack.UserEntity.EntityType)</li>
+                                                    <li>
+                                                        Deleted At: @(saveTrack.UserEntity.WasDeleted
+                                                                      ? saveTrack.UserEntity.TimeRemoved.Value.ToLongDateString()
+                                                                      : "Never deleted")
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                <h5>Entities</h5>
+                                <div id="save-@(saveTrack.Id)-entities" class="accordion">
+                                    @foreach (var entityTrack in saveTrack.EntityTracks)
+                                    {
+                                    <div class="save-child accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parents="#save-@(saveTrack.Id)-entities" href="#entity-@(entityTrack.Id)">
+                                                @(entityTrack.EntityType) @(entityTrack.EntityId)
+                                            </a>
+                                        </div>
+                                        <div id="entity-@(entityTrack.Id)" class="accordion-body collapse">
+                                            <div class="accordion-inner">
+                                                <ul>
+                                                    <li>EntityTrack ID: @(entityTrack.Id)</li>
+                                                    <li>Entity ID: @(entityTrack.EntityId)</li>
+                                                    <li>Entity Type: @(entityTrack.EntityType)</li>
+                                                    <li>
+                                                        Deleted At: @(entityTrack.WasDeleted
+                                                                      ? entityTrack.TimeRemoved.Value.ToLongDateString()
+                                                                      : "Never deleted")
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                                <h5>Fields Changed</h5>
+                                <div id="save-@(saveTrack.Id)-fields" class="accordion">
+                                    @foreach (var fieldTrack in saveTrack.FieldTracks)
+                                    {
+                                    <div class="save-child accordion-group">
+                                        <div class="accordion-heading">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parents="#save-@(saveTrack.Id)-fields" href="#field-@(fieldTrack.Id)">
+                                                @(fieldTrack.Field) = @(fieldTrack.Value)
+                                            </a>
+                                        </div>
+                                        <div id="field-@(fieldTrack.Id)" class="accordion-body collapse">
+                                            <div class="accordion-inner">
+                                                <ul>
+                                                    <li>ID: @(fieldTrack.Id)</li>
+                                                    <li>Field: @(fieldTrack.Field)</li>
+                                                    <li>New Value: @(fieldTrack.Value)</li>
+                                                </ul>
+                                                <h5>Entity</h5>
+                                                <div id="field-@(fieldTrack.Id)-entity" class="accordion">
+                                                    <div class="field-child accordion-group">
+                                                        <div class="accordion-heading">
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parents="#field-@(fieldTrack.Id)-entity" href="#field-@(fieldTrack.Id)-entity-info">
+                                                                @(fieldTrack.Entity.EntityType) @(fieldTrack.Entity.EntityId)
+                                                            </a>
+                                                        </div>
+                                                        <div id="field-@(fieldTrack.Id)-entity-info" class="accordion-body collapse">
+                                                            <div class="accordion-inner">
+                                                                <ul>
+                                                                    <li>EntityTrack ID: @(fieldTrack.Entity.Id)</li>
+                                                                    <li>Entity ID: @(fieldTrack.Entity.EntityId)</li>
+                                                                    <li>Entity Type: @(fieldTrack.Entity.EntityType)</li>
+                                                                    <li>
+                                                                        Deleted At: @(fieldTrack.Entity.WasDeleted
+                                                                                      ? fieldTrack.Entity.TimeRemoved.Value.ToLongDateString()
+                                                                                      : "Never deleted")
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
                                 </div>
                             </div>
                         </div>

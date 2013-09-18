@@ -14,8 +14,8 @@ namespace HackerCentral.Controllers
     /// </summary>
     public class TrackingController : TrackedController
     {
-        [HttpPost, HttpGet]
-        public ActionResult TouchDatabase()
+        [HttpGet]
+        public ActionResult Touch()
         {
             using (SimpleContext dbContext = new HackerCentralContext(this))
             {
@@ -36,12 +36,18 @@ namespace HackerCentral.Controllers
                 {
                     actionTracks = dbContext.ActionTracks
                         .OrderByDescending(a => a.TimeStamp)
+                        .Include(a => a.SaveTracks.Select(s => s.EntityTracks))
+                        .Include(a => a.SaveTracks.Select(s => s.UserEntityTrack))
+                        .Include(a => a.SaveTracks.Select(s => s.FieldTracks.Select(f => f.Entity)))
                         .Take(numToShow).ToList();
                 }
                 else
                 {
                     actionTracks = dbContext.ActionTracks
                         .OrderByDescending(a => a.TimeStamp)
+                        .Include(a => a.SaveTracks.Select(s => s.EntityTracks))
+                        .Include(a => a.SaveTracks.Select(s => s.UserEntityTrack))
+                        .Include(a => a.SaveTracks.Select(s => s.FieldTracks.Select(f => f.Entity)))
                         .ToList();
                 }
 
