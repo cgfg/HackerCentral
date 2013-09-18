@@ -135,8 +135,9 @@ namespace SignalRChat
         {
             lock (ActiveUsers)
             {
-                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));               
                 userSet.Add(Context.User.Identity.Name);
+                String groupId = String.Join(",", userSet.OrderBy(u => u).ToArray());
                 using (var context = new HackerCentralContext(null))
                 { 
                     if (userSet.Any(u => u.Equals("*")))
@@ -189,7 +190,8 @@ namespace SignalRChat
                         TimeStamp = DateTime.UtcNow,
                         Sender = context.UserProfiles.Find(WebSecurity.CurrentUserId),
                         Text = text,
-                        Deliveries = new List<Delivery>()
+                        Deliveries = new List<Delivery>(),
+                        GroupId = groupId
                     };
 
                     System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), text);
@@ -216,7 +218,7 @@ namespace SignalRChat
                         {
                             foreach (string connection in connections)
                             {
-                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text);
+                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text, message.TimeStamp.ToString());
                                 //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
                             }
                         }
@@ -242,15 +244,25 @@ namespace SignalRChat
         }
 
         //[TODO]
-        //public void getOldMessage(String userListJson, String time)
-        //{
-        //    HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
-        //    DateTime timeStamp = DateTime.Parse(time);
-        //    using (var context = new SimpleContext()){
-        //    foreach(Message m in context.Messages.Include(u => u.Deliveries).Select(u => u.Deliveries).Where(d => d.Select(r => r.Reciever).ToArray().) ){
-
-        //    }
-        //}
-        //}
+        public void GetOldMessage(string userListJson, string time)
+        { 
+            using (var context = new SimpleContext()){
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+                var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
+                string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
+                string groupId = string.Join(",", userSet.OrderBy(u => u).ToArray());
+                DateTime timeStamp = DateTime.Parse(time);
+                foreach (Message m in context.Messages
+                    .Include(m => m.Sender)
+                    .Where(m => m.GroupId == groupId)
+                    .Where(m => m.TimeStamp < timeStamp)
+                    .OrderByDescending(m => m.TimeStamp).Take(30)
+                    .OrderByDescending(m => m.TimeStamp))
+                {
+                    //Delivery delivery = m.Deliveries.SingleOrDefault((d => d.Reciever.UserName == Context.User.Identity.Name));
+                    Clients.Client(Context.ConnectionId).addOldMessageToPage(m.Sender.UserName, usernameList, m.Text, m.TimeStamp.ToString());
+                }
+            }
+        }
     }
 }

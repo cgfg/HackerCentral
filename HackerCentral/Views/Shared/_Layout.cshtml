@@ -87,11 +87,11 @@
                     $('#msgNavButton').popover('hide');
                 });
 
+                var myName = "@User.Identity.Name";
+
                 // Reference the auto-generated proxy for the hub.  
                 var chat = $.connection.chatHub;
-                // Create a function that the hub can call back to display messages.
-                var myName = "@User.Identity.Name";
-                               
+                // Create a function that the hub can call back to display messages.                             
                 chat.client.addNewMessageToPage = function (name, list, message, timeStamp) {
                     //if ($('#msgRecipients').val()) {
                     //} else {
@@ -100,9 +100,9 @@
                     //}
                     
                     var groupId = list.join(", ");
-                    if (!groupId in chatTimeStamp) {
-                        chatTimeStamp[groupId] = timeStamp;
-                    }
+                    //if (!groupId in chatTimeStamp) {
+                    //    chatTimeStamp[groupId] = timeStamp;
+                    //}
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
@@ -122,6 +122,7 @@
                         var key = createKey();
                         tabKeys[groupId] = key;
                         count++;
+                        chatTimeStamp[groupId] = timeStamp;
                         var userFrd = "";
                         if (groupId.length > 15) {
                             for (i = 0; i < list.length; i++) {
@@ -143,16 +144,14 @@
                                             + '</li>');
                         var firstMessage;
                         if (myName == name) {
-                           firstMessage = '<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                            firstMessage = '<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
                         } else {
-                           firstMessage = '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                            firstMessage = '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
                         }
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
                                                     //+ '<p><b>Recipients</b>: ' + groupId + '<\p>'
-                                                    //+ '<div class="controls">'
-                                                    //+ '<button type="button" class="btn btn-mini" id="chat_history">Chat History</button>'
-                                                    //+ '</div>'
+                                                    
                                                     + '<div id="msgBoard" style="height: 300px; overflow-y: auto; border-style: dashed; border-width:1px; border-color: #7FAAF6"">'
                                                     //+ '<div class="alert alert-info" style="word-wrap:break-word;">'
                                                     //    + '<strong>' + name + ': </strong><br>' + message
@@ -164,11 +163,15 @@
                                                         + '<textarea id="msgText" placeholder="Message" rows="2" style="width: 340px; max-width: 400px; resize: none;"></textarea>'
                                                     + '</div>'
                                                     + '<div class="controls">'
+                                                    + '<button type="button" class="btn btn-mini pull-left" id="chatHistory" style="margin-top:-5px">Chat History</button>'
+                                                    + '</div>'
+                                                    + '<div class="controls">'
                                                         + '<button type="submit" class="btn pull-right" style="margin-right:26px; margin-top:-5px">Send</button>'
                                                     + '</div>'
                                                 + '</form></div>'
                                                 
                                             + '</div>');
+
                         $('#msgTabContent #' + key + tabContentToken + ' #msgForm').submit(function () {
                             // Call the Send method on the hub.
                             var jsonList = JSON.stringify(list);
@@ -179,14 +182,17 @@
                             $('#msgTabContent #' + key + tabContentToken + ' #msgForm #msgText').val('').focus();
                             return false;
                         });
-                        //[TODO]
-                        //$('#msgTabContent #' + key + tabContentToken + ' #msgForm #chat_history').click(function () {
-                        //    alert('called');
-                        //    var jsonList = JSON.stringify(list);
-                        //    var time = chatTimeStamp;
-                        //    chat.server.getOldMessage(jsonList, time);
-                        //    return false;
-                        //});
+                       
+                        $('#msgTabContent #' + key + tabContentToken + ' #msgForm #chatHistory').click(function () {
+                            var jsonList = JSON.stringify(list);
+                            var groupId = list.join(", ")
+                            var time = chatTimeStamp[groupId];
+                            
+                            chat.server.getOldMessage(jsonList, time);
+                            
+                            //alert(groupId + " : " + time);
+                            return false;
+                        });
 
                        
                     }
@@ -198,6 +204,24 @@
                         $('#msgNavButton').popover('show');
                     }
                 };
+
+                chat.client.addOldMessageToPage = function (name, list, message, timeStamp)
+                {
+                    var groupId = list.join(", ");
+                    chatTimeStamp[groupId] = timeStamp;
+                    var key = tabKeys[groupId];
+                    var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
+
+                    if (myName == name) {
+                        element.prepend('<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                    } else {
+                        element.prepend('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                    }
+                    //element.scrollTop(element[0].scrollHeight);                
+                    $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');      
+                }
+
+
 
                 chat.client.listUsers = function (userListJson) {
                     userList = JSON.parse(userListJson);
@@ -239,6 +263,13 @@
                         $('#msgText').val('').focus();
                         return false;
                     });
+
+                    //$('#chatHistory').button(function(){
+                    //    var groupId = list.join(", ")
+                    //    var time = chatTimeStamp[groupId];
+                    //    chat.server.GetOldMessage(jsonList, time);
+                    //    return false;s
+                    //});
 
                     $("#msgRecipients").select2({
                         multiple: true,

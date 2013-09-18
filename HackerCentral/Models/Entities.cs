@@ -384,6 +384,7 @@ namespace HackerCentral.Models
         public int Id { get; set; }
         public DateTime TimeStamp { get; set; }
         public UserProfile Sender { get; set; }
+        public String GroupId { get; set; }
         public string Text { get; set; }
         public ICollection<Delivery> Deliveries { get; set; }
     }
