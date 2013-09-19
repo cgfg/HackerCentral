@@ -12,19 +12,9 @@ namespace HackerCentral.Controllers
     /// <summary>
     /// Show information stored by the tracking system
     /// </summary>
+    [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Administrator })]
     public class TrackingController : TrackedController
     {
-        [HttpPost, HttpGet]
-        public ActionResult TouchDatabase()
-        {
-            using (SimpleContext dbContext = new HackerCentralContext(this))
-            {
-                dbContext.Messages.Add(new Message());
-
-                return View();
-            }
-        }
-
         [HttpGet]
         public ActionResult Data(bool isLimited = true, int numToShow = 10)
         {
@@ -36,19 +26,24 @@ namespace HackerCentral.Controllers
                 {
                     actionTracks = dbContext.ActionTracks
                         .OrderByDescending(a => a.TimeStamp)
+                        .Include(a => a.SaveTracks.Select(s => s.EntityTracks))
+                        .Include(a => a.SaveTracks.Select(s => s.UserEntityTrack))
+                        .Include(a => a.SaveTracks.Select(s => s.FieldTracks.Select(f => f.Entity)))
                         .Take(numToShow).ToList();
                 }
                 else
                 {
                     actionTracks = dbContext.ActionTracks
                         .OrderByDescending(a => a.TimeStamp)
+                        .Include(a => a.SaveTracks.Select(s => s.EntityTracks))
+                        .Include(a => a.SaveTracks.Select(s => s.UserEntityTrack))
+                        .Include(a => a.SaveTracks.Select(s => s.FieldTracks.Select(f => f.Entity)))
                         .ToList();
                 }
 
                 var model = new TrackingViewModel()
                 {
                     IsLimited = isLimited,
-                    NumActionsShown = actionTracks.Count(),
                     ActionTracks = new List<ActionTrackViewModel>(actionTracks.Count)
                 };
 

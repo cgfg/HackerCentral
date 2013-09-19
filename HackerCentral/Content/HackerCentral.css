@@ -223,18 +223,19 @@ THE SOFTWARE.
 
 /* Tracking Data
    ------------------------------------------------- */
-/*#tracking-data .action {
-    border: medium solid black;
+#tracking-data .action {
+    border: 2px solid black;
+    margin: 2px;
 }
 
 #tracking-data .save {
     border: 1px solid black;
 }
 
-#tracking-data .entity {
+#tracking-data .save-child {
     border: 1px solid grey;
 }
 
-#tracking-data .field {
+#tracking-data .field-child {
     border: 1px dashed grey;
-}*/
+}
