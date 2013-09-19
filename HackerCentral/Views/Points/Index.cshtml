@@ -17,7 +17,7 @@
         string[] roles = Roles.GetRolesForUser();
         Boolean isAdminRole = roles.Any(u => u.Equals("Administrator") || u.Equals("Hacker"));
         <h2>POINTS</h2>
-        <div class="tabbable">
+        <div class="tabbable" id="page">
             <ul class="nav nav-pills">
                 <li><a href="#nestedPoints" data-toggle="tab">
                     <h4>Nested Points</h4>
@@ -100,16 +100,22 @@
     color = (nest.Parent.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
     
         <div class="point" style="background: @color ">
+            @*<div class="actions">
+                    @Ajax.ActionLink(@nest.Parent.id + ":" + @nest.Parent.summary, "LinkForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" })            
+            </div>*@
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
             <p>Quality: @nest.Parent.quality</p>
+            <div class="actions">
+                @Ajax.ActionLink("View", "ViewPoint", "Points", new { id = @nest.Parent.id },  new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "page" }, new {@class= "viewLink"})
             @if (isAdminRole)
             {
-                <div class="actions">
-                    @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
+                
+                    @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
             @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null)
-                </div>
+                
             }
+             </div>
         </div>
     if (nest.HasChildren())
     {
@@ -126,6 +132,9 @@
     <div id="editModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div id="editForm"></div>
     </div>
+   @* <div id="viewModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="viewForm"></div>
+    </div>*@
 
     <div id="createModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         @Html.Partial("_CreatePoint", Model)
@@ -139,6 +148,10 @@
         $(".editLink").on("click", function () {
             $('#editModal').modal('show');
         });
+
+        //$(".viewLink").on("click", function () {
+        //    $('#viewModal').modal('show');
+        //});
     </script>
 }
 

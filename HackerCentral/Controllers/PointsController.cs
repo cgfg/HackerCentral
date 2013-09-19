@@ -60,5 +60,17 @@ namespace HackerCentral.Controllers
             var pa = new PointAccessor();
             return PartialView("_EditPoint", pa.GetPoint(id));
         }
+
+        public PartialViewResult LinkForm(long id)
+        {
+            var pa = new PointAccessor();
+            return PartialView("_LinkPoint", pa.GetPoint(id));
+        }
+
+        public ActionResult ViewPoint(long id)
+        {
+            ViewBag.IFrame = string.Format("http://athenabridge.com/embedded/77/{0}/true", id);
+            return View("ViewPoint");
+        }
     }
 }
