@@ -25,6 +25,7 @@ namespace HackerCentral.ViewModels
         public string ControllerName { get; set; }
         public int Id { get; set; }
         public string Parameters { get; set; }
+        public string Results { get; set; }
         public DateTime TimeStamp { get; set; }
         public List<SaveTrackViewModel> SaveTracks { get; set; }
 
@@ -35,6 +36,7 @@ namespace HackerCentral.ViewModels
             ControllerName = source.ControllerName;
             Id = source.Id;
             Parameters = source.Parameters;
+            Results = source.Results;
             TimeStamp = source.TimeStamp;
 
             if (source.SaveTracks == null)
@@ -49,6 +51,25 @@ namespace HackerCentral.ViewModels
                     SaveTracks.Add(new SaveTrackViewModel(saveTrack));
                 }
             }
+        }
+
+        public ActionTrack ToDbActionTrack()
+        {
+            var actionTrack = new ActionTrack();
+            actionTrack.ActionName = ActionName;
+            actionTrack.ControllerName = ControllerName;
+            actionTrack.Id = Id;
+            actionTrack.Parameters = Parameters;
+            actionTrack.Results = Results;
+            actionTrack.TimeStamp = TimeStamp;
+
+            actionTrack.SaveTracks = new List<SaveTrack>(SaveTracks.Count);
+            foreach (var saveTrack in SaveTracks)
+            {
+                actionTrack.SaveTracks.Add(saveTrack.ToDbSaveTrack());
+            }
+
+            return actionTrack;
         }
     }
 
@@ -98,6 +119,28 @@ namespace HackerCentral.ViewModels
                 }
             }
         }
+
+        public SaveTrack ToDbSaveTrack()
+        {
+            var saveTrack = new SaveTrack();
+
+            saveTrack.Id = Id;
+            saveTrack.UserEntityTrack = UserEntity.ToDbEntityTrack();
+
+            saveTrack.EntityTracks = new List<EntityTrack>(EntityTracks.Count);
+            foreach (var entityTrack in EntityTracks)
+            {
+                saveTrack.EntityTracks.Add(entityTrack.ToDbEntityTrack());
+            }
+
+            saveTrack.FieldTracks = new List<FieldTrack>(FieldTracks.Count);
+            foreach (var fieldTrack in FieldTracks)
+            {
+                saveTrack.FieldTracks.Add(fieldTrack.ToDbFieldTrack());
+            }
+
+            return saveTrack;
+        }
     }
 
     public class EntityTrackViewModel
@@ -106,6 +149,7 @@ namespace HackerCentral.ViewModels
         public string EntityType { get; set; }
         public string EntityId { get; set; }
         public DateTime? TimeRemoved { get; set; }
+        public Dictionary<string, string> EntityValues { get; set; }
         public bool WasDeleted
         {
             get
@@ -121,6 +165,18 @@ namespace HackerCentral.ViewModels
             EntityType = source.EntityType;
             EntityId = source.EntityId;
             TimeRemoved = source.TimeRemoved;
+        }
+
+        public EntityTrack ToDbEntityTrack()
+        {
+            var entityTrack = new EntityTrack();
+
+            entityTrack.Id = Id;
+            entityTrack.EntityType = EntityType;
+            entityTrack.EntityId = EntityId;
+            entityTrack.TimeRemoved = TimeRemoved;
+
+            return entityTrack;
         }
     }
 
@@ -155,6 +211,18 @@ namespace HackerCentral.ViewModels
             {
                 Entity = matchedEntity;
             }
+        }
+
+        public FieldTrack ToDbFieldTrack()
+        {
+            var fieldTrack = new FieldTrack();
+
+            fieldTrack.Id = Id;
+            fieldTrack.Field = Field;
+            fieldTrack.Value = Value;
+            fieldTrack.Entity = Entity.ToDbEntityTrack();
+
+            return fieldTrack;
         }
     }
 }

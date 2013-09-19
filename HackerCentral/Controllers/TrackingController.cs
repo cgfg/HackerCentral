@@ -1,4 +1,5 @@
-﻿using HackerCentral.Models;
+﻿using HackerCentral.Infrastructure.Tracking;
+using HackerCentral.Models;
 using HackerCentral.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,17 @@ namespace HackerCentral.Controllers
 
                 return View(model);
             }
+        }
+
+        /// <summary>
+        /// Looks up 
+        /// </summary>
+        /// <param name="entityTrack"></param>
+        private void GetCorrespondingEntity(ref EntityTrackViewModel entityTrack)
+        {
+            var converter = new EntityConverter();
+            var dbEntityTrack = entityTrack.ToDbEntityTrack();
+            entityTrack.EntityValues = converter.GetEntityValues(dbEntityTrack);
         }
     }
 }

@@ -212,6 +212,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdministrationController.cs" />
     <Compile Include="Controllers\TrackingController.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\IConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\UserProfileConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategyFactory.cs" />
+    <Compile Include="Infrastructure\Tracking\EntityConverter.cs" />
     <Compile Include="ViewModels\InternalDiscussionEditViewModel.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
@@ -415,7 +419,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
