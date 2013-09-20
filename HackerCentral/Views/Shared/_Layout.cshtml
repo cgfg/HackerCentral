@@ -72,10 +72,10 @@
             var chatTimeStamp = {};
 
             $(function () {
-               
-                
 
-                $('#chatWindow').draggable({ handle: "#dragHandle", containment: "#maincontent" });
+
+                //handle: "#dragHandle",
+                //$('#chatWindow').draggable({  containment: "#maincontent" });
                 //$('.dropdown-menu').click(function (event) {
                 //    alert("Hello");
                 //    event.stopPropagation();
@@ -99,7 +99,7 @@
                     //    //alert("false");
                     //    $('#msgRecipients').val(name);
                     //}
-                    
+
                     var groupId = list.join(", ");
                     //if (!groupId in chatTimeStamp) {
                     //    chatTimeStamp[groupId] = timeStamp;
@@ -107,13 +107,13 @@
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-                     
-                        if(myName == name){
+
+                        if (myName == name) {
                             element.append('<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
-                        }else{
+                        } else {
                             element.append('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
                         }
-                        
+
                         //element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
                         //element.append('<p class="triangle-border left" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
                         element.scrollTop(element[0].scrollHeight);
@@ -125,21 +125,26 @@
                         count++;
                         chatTimeStamp[groupId] = timeStamp;
                         var userFrd = "";
-                        if (groupId.length > 15) {
-                            for (i = 0; i < list.length; i++) {
-                                userFrd += list[i].substr(0, 5) + ", ";
+                        if (groupId.length > 17) {
+                            var length = list.length
+                            var tokenLength = 14 / length;
+                            if (tokenLength < 3) {
+                                tokenLength = 3;
                             }
-                            userFrd = userFrd.substr(0, 20) + "...";
+                            for (i = 0; i < length; i++) {
+                                userFrd += list[i].substr(0, tokenLength) + ", ";
+                            }
+                            userFrd = userFrd.substr(0, 17) + "...";
                         } else {
                             userFrd = groupId;
                         }
 
-                        $('#msgTabs').prepend('<li id="' + key + tabLabelToken + '">'
+                        $('#msgTabs').prepend('<li id="' + key + tabLabelToken + '" style="width:175px;">'
                                                 + '<a href="#' + key + tabContentToken + '" title="Recipients: ' + groupId + '" " data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #363636">' + userFrd
-                                                    + '<button class="close" '
-                                                            + 'style="margin-left: 10px;font-size: 11px;float:none;" '
+                                                    + '<button class="close pull-right" '
+                                                            + 'style="font-size: 11px;float:none;" '
                                                             + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'
-                                                            + '<b>x</b>'
+                                                            + '<b>X</b>'
                                                     + '</button>' + '</div>'
                                                 + '</a>'
                                             + '</li>');
@@ -152,7 +157,7 @@
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
                                                     //+ '<p><b>Recipients</b>: ' + groupId + '<\p>'
-                                                    
+
                                                     + '<div id="msgBoard" style="height: 300px; overflow-y: auto; border-style: dashed; border-width:1px; border-color: #7FAAF6"">'
                                                     //+ '<div class="alert alert-info" style="word-wrap:break-word;">'
                                                     //    + '<strong>' + name + ': </strong><br>' + message
@@ -170,7 +175,7 @@
                                                         + '<button type="submit" class="btn pull-right" style="margin-right:26px; margin-top:-5px">Send</button>'
                                                     + '</div>'
                                                 + '</form></div>'
-                                                
+
                                             + '</div>');
 
                         $('#msgTabContent #' + key + tabContentToken + ' #msgForm').submit(function () {
@@ -183,19 +188,19 @@
                             $('#msgTabContent #' + key + tabContentToken + ' #msgForm #msgText').val('').focus();
                             return false;
                         });
-                       
+
                         $('#msgTabContent #' + key + tabContentToken + ' #msgForm #chatHistory').click(function () {
                             var jsonList = JSON.stringify(list);
                             var groupId = list.join(", ")
                             var time = chatTimeStamp[groupId];
-                            
+
                             chat.server.getOldMessage(jsonList, time);
-                            
+
                             //alert(groupId + " : " + time);
                             return false;
                         });
 
-                       
+
                     }
 
                     if (!$('#msgDropDown').hasClass('open')) {
@@ -206,8 +211,7 @@
                     }
                 };
 
-                chat.client.addOldMessageToPage = function (name, list, message, timeStamp)
-                {
+                chat.client.addOldMessageToPage = function (name, list, message, timeStamp) {
                     var groupId = list.join(", ");
                     chatTimeStamp[groupId] = timeStamp;
                     var key = tabKeys[groupId];
@@ -219,7 +223,7 @@
                         element.prepend('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
                     }
                     //element.scrollTop(element[0].scrollHeight);                
-                    $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');      
+                    $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
                 }
 
 
@@ -299,7 +303,7 @@
                 });
             });
 
-            $(document).tooltip({placement:"top"});
+            $(document).tooltip({ placement: "top" });
         </script>
     }
     else
@@ -377,18 +381,18 @@
                                     <a id="msgNavButton" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#" style="margin-left: 20px;">
                                         <i class="icon-comment icon-white"></i>
                                     </a>
-                                    <div id="chatWindow" class="dropdown-menu pull-right" style="padding: 5px; padding-bottom: 10px; max-width: 500px; width: 380px;height:480px" >
+                                    <div id="chatWindow" class="dropdown-menu pull-left" style="padding: 5px; padding-bottom: 10px; max-width: 500px; width: 380px;min-height:480px; resize:vertical; right:-175px" >
                                        <div class="pull-right" style= "position:absolute;right:5px; ">
-                                           <i class="icon-move" id="dragHandle"></i>
+                                          @* <i class="icon-move" id="dragHandle"></i>*@
                                            <i class="icon-remove"  data-toggle="dropdown"></i>                                    
                                        </div>
                                          <div>                                      
                                             <div id="msgTabContent" class="tab-content">
-                                                <ul id="msgTabs" class="nav nav-pills">                                                  
+                                                <ul id="msgTabs" class="nav nav-pills" style="float:none">                                                  
                                                     <li><a href="#startNewChatContent" title="Creat a new chat" data-toggle="tab" style = "background-color: #FFFFFF"><b style ="color: #363636">+</b></a></li>
                                                 </ul>
-                                                <div style="min-height: 50px">
-                                                </div>
+                                                @*<div style="min-height: 50px">
+                                                </div>*@
                                                 <div class="tab-pane active" id="startNewChatContent">
                                                     <div class="content">
                                                         <form id="msgForm">
