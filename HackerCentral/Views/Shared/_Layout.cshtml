@@ -5,7 +5,7 @@
         new { LinkText="Manage Discussions", ActionName="ManageDiscussion",ControllerName="Administration",Roles=UserRole.Administrator.ToString()  },
         new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.User.ToString()},
-        new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Administrator.ToString() },
+        //new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Generate Token", ActionName="GenerateToken",ControllerName="Token",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Tracking Data", ActionName="Data",ControllerName="Tracking",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
@@ -340,13 +340,13 @@
                                 @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
 
-                    using (var context = new HackerCentralContext(null))
+                   @* using (var context = new HackerCentralContext(null))
                     {
                         if (context.UserProfiles.Find(WebSecurity.CurrentUserId).AuthProvider == AuthProvider.Local)
                         {
                                 @:<li class="">@Html.ActionLink("Change Password", "Manage", "Account")</li>
                                     }
-                    }
+                    }*@
                             }
                         </ul>
                     </div>
