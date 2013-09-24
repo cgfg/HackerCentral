@@ -374,7 +374,7 @@
 
                         <ul class="nav pull-right">
                             <li class="">
-                                <p class="navbar-text">Welcome, @User.Identity.Name</p>
+                                <p class="navbar-text">Hi, @User.Identity.Name</p>
                             </li>
                             <li class="">
                                 @* the chat box is rendered for all users *@
@@ -419,7 +419,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout IDEASPERE</a></li>
+                            <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout</a></li>
                         </ul>
 
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))

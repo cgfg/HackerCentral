@@ -106,16 +106,20 @@
             <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
             <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
             <p>Quality: @nest.Parent.quality</p>
+
             <div class="actions">
-                @Ajax.ActionLink("View", "ViewPoint", "Points", new { id = @nest.Parent.id },  new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "page" }, new {@class= "viewLink"})
-            @if (isAdminRole)
-            {
-                
+                <i class="icon-thumbs-up"> </i>
+                <a href="http://athenabridge.com/embedded/77/@nest.Parent.id/true" target="_blank">Rate It!</a>
+                @*@Ajax.ActionLink("View", "ViewPoint", "Points", new { id = @nest.Parent.id },  new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "page" }, new {@class= "viewLink"})*@
+                @if (isAdminRole)
+                {
+                    <i class="icon-pencil"> </i>
                     @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
-            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @nest.Parent.id }, null)
+                    <i class="icon-trash"> </i>
+                    @Html.ActionLink("Delete ", "Destroy", "Points", new { id = @nest.Parent.id }, null)
                 
             }
-             </div>
+            </div>
         </div>
     if (nest.HasChildren())
     {
@@ -163,13 +167,18 @@
         <h4>#@point.id: @point.summary</h4>
         <p>@point.full_text (@point.category.ToString())</p>
         <p>@infoString</p>
+        
+        <div class="actions">
+            <i class="icon-thumbs-up"> </i>
+            <a href="http://athenabridge.com/embedded/77/@point.id/true" target="_blank">Rate it! </a>
         @if (isAdminRole)
         {
-            <div class="actions">
-                @Ajax.ActionLink("Edit", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) | 
-            @Html.ActionLink("Delete", "Destroy", "Points", new { id = @point.id }, null)
-            </div>
+            <i class="icon-pencil"> </i>
+            @Ajax.ActionLink(" Edit ", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
+            <i class="icon-trash"> </i>
+            @Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, null)   
         }
+        </div>
     </div>
 }
 
