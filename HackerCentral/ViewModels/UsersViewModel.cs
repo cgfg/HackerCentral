@@ -8,8 +8,8 @@ namespace HackerCentral.ViewModels
 {
     public class UsersViewModel
     {
-        public List<User> Users { get; set; }
-
+        public List<User> RankedUsers { get; set; }
+        public UserProfile User { get; set; }
         public UsersViewModel()
         {
         }

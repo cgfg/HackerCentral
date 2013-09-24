@@ -5,9 +5,30 @@
 
 <div class="container">
     <h2>Users</h2>
+    <div>
+        
+    </div>
+    <div>
+        <h4>Rank of Users</h4>
+    <table class="table table-striped">
+        <tr>
+            <td>User Name</td>
+            <td>Credibility</td>
+            <td>Highly Rated Points Count</td>
+        </tr>
+        @foreach (var u in Model.RankedUsers)
+        {
+            <tr>
+                <td>@u.username</td>
+                <td>@u.local_credibility</td>
+                <td>@u.highly_rated_points_count</td>
+            </tr>
+            
+        }
+    </table>
+</div>
+    
 
-    @foreach (var u in Model.Users)
-    {
-        <div>@u.username (@u.id)</div>
-    }
+
+   
 </div>

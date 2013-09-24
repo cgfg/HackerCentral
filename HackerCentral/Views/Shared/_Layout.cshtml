@@ -6,6 +6,7 @@
         new { LinkText="Manage Users", ActionName="ManageUsers",ControllerName="Administration",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Points", ActionName="Index",ControllerName="Points",Roles=UserRole.Hacker.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.User.ToString()},
         //new { LinkText="View Users", ActionName="Index",ControllerName="Users",Roles=UserRole.Administrator.ToString() },
+        new { LinkText="Users", ActionName="Index", ControllerName ="Users", Roles=UserRole.User.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.Hacker.ToString()},
         new { LinkText="Generate Token", ActionName="GenerateToken",ControllerName="Token",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Tracking Data", ActionName="Data",ControllerName="Tracking",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
@@ -142,9 +143,9 @@
                         $('#msgTabs').prepend('<li id="' + key + tabLabelToken + '" style="width:175px;">'
                                                 + '<a href="#' + key + tabContentToken + '" title="Recipients: ' + groupId + '" " data-toggle="tab" style = "background-color: #FFFFFF">' + '<div style ="color: #363636">' + userFrd
                                                     + '<button class="close pull-right" '
-                                                            + 'style="font-size: 11px;float:none;" '
+                                                            + 'style="font-size: 11px;float:auto;" '
                                                             + 'onClick="closeTab(&quot;' + groupId + '&quot;)"'
-                                                            + '<b>X</b>'
+                                                            + '<b>x</b>'
                                                     + '</button>' + '</div>'
                                                 + '</a>'
                                             + '</li>');
@@ -231,14 +232,14 @@
                 chat.client.listUsers = function (userListJson) {
                     userList = JSON.parse(userListJson);
                     data = { results: [] };
-                    data.results.push({ id: "+", text: "Pro Team", isOnline: true });
-                    data.results.push({ id: "-", text: "Con Team", isOnline: true });
+                    data.results.push({ id: "Pro Team", text: "Pro Team", isOnline: true });
+                    data.results.push({ id: "Con Team", text: "Con Team", isOnline: true });
                     for (var index = 0; index < userList.length; index++) {
                         data.results.push({ id: userList[index].userName, text: userList[index].userName, isOnline: userList[index].isOnline });
                     }
-                    data.results.push({ id: "*", text: "Everyone", isOnline: true });
-                    data.results.push({ id: "!", text: "Everyone Online", isOnline: true });
-                    data.results.push({ id: "@("@")", text: "Everyone Offline", isOnline: false });
+                    data.results.push({ id: "Everyone", text: "Everyone", isOnline: true });
+                    data.results.push({ id: "Everyone Online", text: "Everyone Online", isOnline: true });
+                    data.results.push({ id: "Everyone Offline", text: "Everyone Offline", isOnline: false });
                     queryCallback(data);
                 };
 
@@ -418,7 +419,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout</a></li>
+                            <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout IDEASPERE</a></li>
                         </ul>
 
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))

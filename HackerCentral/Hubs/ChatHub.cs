@@ -63,15 +63,17 @@ namespace SignalRChat
                     //foreach (Delivery delivery in recentDeliveries.Concat(undelievered).OrderBy(d => d.Message.TimeStamp))
                     foreach (Delivery delivery in recentDeliveries.OrderBy(d => d.Message.TimeStamp))
                     {
-                        string[] usernameList = context.Deliveries.Include(d => d.Message).Include(d => d.Reciever).Where(d => d.Message.Id == delivery.Message.Id).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
+                        //string[] usernameList = context.Deliveries.Include(d => d.Message).Include(d => d.Reciever).Where(d => d.Message.Id == delivery.Message.Id).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
                         //string[] usernameList = delivery.Message.Deliveries.Where(d => d.Reciever.UserId != delivery.Reciever.UserId).OrderBy(d => d.Reciever.UserName).Select(d => d.Reciever.UserName).ToArray();
-                        System.Diagnostics.Debug.WriteLine(string.Join(", ", usernameList));
+                        char[] charSeparators = new char[] { ',' };
+                        string[] usernameList = delivery.Message.GroupId.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries).ToArray();
+                        //System.Diagnostics.Debug.WriteLine(string.Join(", ", usernameList));
                         //string usernameListJson = JsonConvert.SerializeObject(usernameList);
                         delivery.TimeDelivered = DateTime.UtcNow;
                         //foreach (string connection in connections)
                         //{
                         Clients.Client(Context.ConnectionId).addNewMessageToPage(delivery.Message.Sender.UserName, usernameList, delivery.Message.Text,delivery.Message.TimeStamp);
-                        //}
+                        //}   
                     }
                     context.SaveChanges();
                 }
@@ -135,57 +137,73 @@ namespace SignalRChat
         {
             lock (ActiveUsers)
             {
-                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));               
+                //HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u));
                 userSet.Add(Context.User.Identity.Name);
+                HashSet<string> groupSet = new HashSet<string>(userSet);
+                
                 
                 using (var context = new HackerCentralContext(null))
                 { 
-                    if (userSet.Any(u => u.Equals("*")))
+                    if (userSet.Any(u => u.Equals("Everyone")))
                     {
-                        userSet.Remove("*");
+                        userSet.Remove("Everyone");
                         foreach (UserProfile user in context.UserProfiles)
                         {
                             userSet.Add(user.UserName);
+                            groupSet.Clear();
+                            groupSet.Add("Everyone");
                         }
                     }
                     else
                     {
-                        if (userSet.Any(u => u.Equals("+")))
+                        if (userSet.Any(u => u.Equals("Everyone Online")))
                         {
-                            userSet.Remove("+");
+                            userSet.Remove("Everyone Online");
+                            groupSet.Add("Everyone Online");
+                            foreach (string userName in ActiveUsers.Keys)
+                            {
+                                userSet.Add(userName);
+                                groupSet.Remove(userName);
+                            }
+                        }
+                        if (userSet.Any(u => u.Equals("Everyone Offline")))
+                        {
+                            userSet.Remove("Everyone Offline");
+                            groupSet.Add("Everyone Offline");
+                            foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
+                            {
+                                userSet.Add(userName);
+                                groupSet.Remove(userName);
+                            }
+                        }
+                        if (userSet.Any(u => u.Equals("Pro Team")))
+                        {
+                            groupSet.Add("Pro Team");
+                            userSet.Remove("Pro team");
                             Team role = Team.Pro;
                             foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
                             {
                                 userSet.Add(user.UserName);
+                                groupSet.Remove(user.UserName);
                             }
+                            
                         }
-                        if (userSet.Any(u => u.Equals("-")))
+                        if (userSet.Any(u => u.Equals("Con Team")))
                         {
+                            groupSet.Add("Con Team");
+                            userSet.Remove("Con Team");
                             Team role = Team.Con;
                             foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
                             {
                                 userSet.Add(user.UserName);
+                                groupSet.Remove(user.UserName);
                             }
                         }
-                        if (userSet.Any(u => u.Equals("!")))
-                        {
-                            userSet.Remove("!");
-                            foreach (string userName in ActiveUsers.Keys)
-                            {
-                                userSet.Add(userName);
-                            }
-                        }
-                        if (userSet.Any(u => u.Equals("@")))
-                        {
-                            userSet.Remove("@");
-                            foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
-                            {
-                                userSet.Add(userName);
-                            }
-                        }
+                        
                     }
 
-                    String groupId = String.Join(",", userSet.OrderBy(u => u).ToArray());
+                    String groupId = String.Join(",", groupSet.OrderBy(u => u).ToArray());
                     Message message = new Message
                     {
                         TimeStamp = DateTime.UtcNow,
@@ -199,7 +217,8 @@ namespace SignalRChat
 
                     HashSet<string> connections;
                     var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
-                    string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
+                    //string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
+                    string[] usernameList = groupSet.OrderBy(u => u).ToArray();
                     //string usernameListJson = JsonConvert.SerializeObject(usernameList);
                     foreach (UserProfile user in userList)
                     {
@@ -248,54 +267,67 @@ namespace SignalRChat
         public void GetOldMessage(string userListJson, string time)
         { 
             using (var context = new SimpleContext()){
-                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u.ToLowerInvariant()));
-                if (userSet.Any(u => u.Equals("*")))
+                HashSet<string> userSet = new HashSet<string>(JsonConvert.DeserializeObject<string[]>(userListJson).Select(u => u));
+                HashSet<string> groupSet = new HashSet<string>(userSet);
+                if (userSet.Any(u => u.Equals("Everyone")))
                 {
-                    userSet.Remove("*");
+                    userSet.Remove("Everone");
+                    groupSet.Clear();
+                    groupSet.Add("Everyone");
                     foreach (UserProfile user in context.UserProfiles)
                     {
-                        userSet.Add(user.UserName);
+                        userSet.Add(user.UserName);    
                     }
                 }
                 else
                 {
-                    if (userSet.Any(u => u.Equals("+")))
+                    if (userSet.Any(u => u.Equals("Everyone Online")))
                     {
-                        userSet.Remove("+");
+                        userSet.Remove("Everyone Online");
+                        groupSet.Add("Everyone Online");
+                        foreach (string userName in ActiveUsers.Keys)
+                        {
+                            userSet.Add(userName);
+                            groupSet.Remove(userName);
+                        }
+                    }
+                    if (userSet.Any(u => u.Equals("Everyone Offline")))
+                    {
+                        userSet.Remove("Everyone Offline");
+                        groupSet.Add("Everyone Offline");
+                        foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
+                        {
+                            userSet.Add(userName);
+                            groupSet.Remove(userName);
+                        }
+                    }
+                    if (userSet.Any(u => u.Equals("Pro Team")))
+                    {
+                        groupSet.Add("Pro Team");
+                        userSet.Remove("Pro Team");
                         Team role = Team.Pro;
                         foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
                         {
                             userSet.Add(user.UserName);
+                            groupSet.Remove(user.UserName);
                         }
+
                     }
-                    if (userSet.Any(u => u.Equals("-")))
+                    if (userSet.Any(u => u.Equals("Con Team")))
                     {
+                        groupSet.Add("Con Team");
+                        userSet.Remove("Con Team");
                         Team role = Team.Con;
                         foreach (UserProfile user in context.UserProfileDiscussions.Where(u => u.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID).Where(u => u.BelongTo == role).Select(u => u.User).ToArray())
                         {
                             userSet.Add(user.UserName);
+                            groupSet.Remove(user.UserName);
                         }
-                    }
-                    if (userSet.Any(u => u.Equals("!")))
-                    {
-                        userSet.Remove("!");
-                        foreach (string userName in ActiveUsers.Keys)
-                        {
-                            userSet.Add(userName);
-                        }
-                    }
-                    if (userSet.Any(u => u.Equals("@")))
-                    {
-                        userSet.Remove("@");
-                        foreach (string userName in context.UserProfiles.AsEnumerable().Where(u => !ActiveUsers.ContainsKey(u.UserName)).Select(u => u.UserName))
-                        {
-                            userSet.Add(userName);
-                        }
-                    }
+                    }                  
                 }
                 var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
-                string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
-                string groupId = string.Join(",", userSet.OrderBy(u => u).ToArray());
+                string[] usernameList = groupSet.OrderBy(u => u).ToArray(); ;
+                string groupId = string.Join(",", groupSet.OrderBy(u => u).ToArray());
                 DateTime timeStamp = DateTime.Parse(time);
                 foreach (Message m in context.Messages
                     .Include(m => m.Sender)
