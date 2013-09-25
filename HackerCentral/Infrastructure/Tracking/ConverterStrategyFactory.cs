@@ -11,15 +11,18 @@ namespace HackerCentral.Infrastructure.Tracking
     {
         public IConverterStrategy GetConverterStrategy(EntityTrack entityTrack)
         {
-            string type = entityTrack.EntityType;
+            return GetConverterStrategy(entityTrack.EntityType);
+        }
 
+        public IConverterStrategy GetConverterStrategy(String type)
+        {
             if (type == "UserProfile")
             {
                 return new UserProfileConverterStrategy();
             }
             else
             {
-                throw new NotImplementedException("There is no IConverterStrategy for an entity track with EntityType == " + entityType);
+                throw new NotImplementedException("There is no IConverterStrategy for an entity track with EntityType == " + type);
             }
         }
     }

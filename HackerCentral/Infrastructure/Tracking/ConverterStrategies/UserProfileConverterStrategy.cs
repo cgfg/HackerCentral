@@ -17,15 +17,37 @@ namespace HackerCentral.Infrastructure.Tracking.ConverterStrategies
         public Dictionary<string, string> GetEntityValues(EntityTrack entityTrack)
         {
             var userProfile = FetchUserProfile(entityTrack);
-            var dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>(6);
 
-            dictionary.Add("AuthProvider", userProfile.AuthProvider.ToString());
-            dictionary.Add("FullName", userProfile.FullName);
-            dictionary.Add("UserId", userProfile.UserId.ToString());
-            
-            var tokenIds = userProfile.RegisteredTokens.Select<HackerToken, int>(token => token.Id);
-            var tokenString = tokenIds.Join(", ");
+            dictionary.Add("Auth Provider", userProfile.AuthProvider.ToString());
+            dictionary.Add("Full Name", userProfile.FullName);
+            dictionary.Add("User Id", userProfile.UserId.ToString());
+            dictionary.Add("User Name", userProfile.UserName);
 
+            if (userProfile.RegisteredTokens == null)
+            {
+                dictionary.Add("Registered Tokens", "[null]");
+            }
+            else
+            {
+                var tokenIds = userProfile.RegisteredTokens.Select<HackerToken, int>(token => token.Id);
+                var tokenString = String.Join(", ", tokenIds);
+                dictionary.Add("Registered Tokens", tokenString);
+            }
+
+            if (userProfile.UserDiscussion == null)
+            {
+                dictionary.Add("User Discussions", "[null]");
+            }
+            else
+            {
+                var discussionIds = userProfile.UserDiscussion.Select
+                    <UserProfileDiscussions, string>(d => d.discussionId + "-" + d.userProfileId);
+                var discussionString = String.Join(", ", discussionIds);
+                dictionary.Add("User Discussions", discussionString);
+            }
+
+            return dictionary;
         }
 
         private UserProfile FetchUserProfile(EntityTrack entityTrack)

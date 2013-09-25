@@ -9,7 +9,7 @@ namespace HackerCentral.Infrastructure.Tracking.ConverterStrategies
 {
     public interface IConverterStrategy
     {
-        public Object ConvertEntityTrack(EntityTrack entityTrack);
-        public Dictionary<string, string> GetEntityValues(EntityTrack entityTrack);
+        Object ConvertEntityTrack(EntityTrack entityTrack);
+        Dictionary<string, string> GetEntityValues(EntityTrack entityTrack);
     }
 }

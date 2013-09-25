@@ -56,6 +56,14 @@ Showing @(Model.NumActionsShown) tracked actions
                                         </div>
                                         <div id="save-@(saveTrack.Id)-user-info" class="accordion-body collapse">
                                             <div class="accordion-inner">
+                                                User Information
+                                                <ul>
+                                                    @foreach (string key in saveTrack.UserEntity.EntityValues.Keys)
+                                                    {
+                                                        <li>@(key): @(saveTrack.UserEntity.EntityValues[key])</li>
+                                                    }
+                                                </ul>
+                                                Entity Track Information
                                                 <ul>
                                                     <li>EntityTrack ID: @(saveTrack.UserEntity.Id)</li>
                                                     <li>User ID: @(saveTrack.UserEntity.EntityId)</li>
@@ -82,6 +90,14 @@ Showing @(Model.NumActionsShown) tracked actions
                                         </div>
                                         <div id="entity-@(entityTrack.Id)" class="accordion-body collapse">
                                             <div class="accordion-inner">
+                                                @(entityTrack.EntityType) Information
+                                                <ul>
+                                                    @foreach (string key in entityTrack.EntityValues.Keys)
+                                                    {
+                                                        <li>@(key): @(entityTrack.EntityValues[key])</li>
+                                                    }
+                                                </ul>
+                                                Entity Track Information
                                                 <ul>
                                                     <li>EntityTrack ID: @(entityTrack.Id)</li>
                                                     <li>Entity ID: @(entityTrack.EntityId)</li>
@@ -124,6 +140,14 @@ Showing @(Model.NumActionsShown) tracked actions
                                                         </div>
                                                         <div id="field-@(fieldTrack.Id)-entity-info" class="accordion-body collapse">
                                                             <div class="accordion-inner">
+                                                                @(fieldTrack.Entity.EntityType) Information
+                                                                <ul>
+                                                                    @foreach (string key in fieldTrack.Entity.EntityValues.Keys)
+                                                                    {
+                                                                        <li>@(key): @(fieldTrack.Entity.EntityValues[key])</li>
+                                                                    }
+                                                                </ul>
+                                                                Entity Track Information
                                                                 <ul>
                                                                     <li>EntityTrack ID: @(fieldTrack.Entity.Id)</li>
                                                                     <li>Entity ID: @(fieldTrack.Entity.EntityId)</li>

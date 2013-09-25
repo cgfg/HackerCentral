@@ -19,7 +19,16 @@ namespace HackerCentral.Infrastructure.Tracking
     {
         public Object ConvertEntityTrack(EntityTrack entityTrack)
         {
-            throw new NotImplementedException();
+            if (entityTrack.TimeRemoved.HasValue)
+            {
+                return (Object) null;
+            }
+            else
+            {
+                var factory = new ConverterStrategyFactory();
+                var converterStrategy = factory.GetConverterStrategy(entityTrack);
+                return converterStrategy.ConvertEntityTrack(entityTrack);
+            }
         }
 
         public Dictionary<string, string> GetEntityValues(EntityTrack entityTrack)
@@ -32,6 +41,7 @@ namespace HackerCentral.Infrastructure.Tracking
             {
                 var factory = new ConverterStrategyFactory();
                 var converterStrategy = factory.GetConverterStrategy(entityTrack);
+                return converterStrategy.GetEntityValues(entityTrack);
             }
         }
     }
