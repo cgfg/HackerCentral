@@ -20,6 +20,30 @@ namespace HackerCentral.Infrastructure.Tracking
             {
                 return new UserProfileConverterStrategy();
             }
+            else if (type == "Discussion")
+            {
+                return new DiscussionConverterStrategy();
+            }
+            else if (type == "UserProfileDiscussions")
+            {
+                return new UserProfileDiscussionsConverterStrategy();
+            }
+            else if (type == "HackerToken")
+            {
+                return new HackerTokenConverterStrategy();
+            }
+            else if (type == "Message")
+            {
+                return new MessageConverterStrategy();
+            }
+            else if (type == "Delivery")
+            {
+                return new DeliveryConverterStrategy();
+            }
+            else if (type == null)
+            {
+                throw new ArgumentNullException("Cannot pass a null argument to ConverterStrategyFactory.GetConverterStrategy()");
+            }
             else
             {
                 throw new NotImplementedException("There is no IConverterStrategy for an entity track with EntityType == " + type);

@@ -212,8 +212,13 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdministrationController.cs" />
     <Compile Include="Controllers\TrackingController.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\DeliveryConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\DiscussionConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\HackerTokenConverterStrategy.cs" />
     <Compile Include="Infrastructure\Tracking\ConverterStrategies\IConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\MessageConverterStrategy.cs" />
     <Compile Include="Infrastructure\Tracking\ConverterStrategies\UserProfileConverterStrategy.cs" />
+    <Compile Include="Infrastructure\Tracking\ConverterStrategies\UserProfileDiscussionsConverterStrategy.cs" />
     <Compile Include="Infrastructure\Tracking\ConverterStrategyFactory.cs" />
     <Compile Include="Infrastructure\Tracking\EntityConverter.cs" />
     <Compile Include="ViewModels\InternalDiscussionEditViewModel.cs" />

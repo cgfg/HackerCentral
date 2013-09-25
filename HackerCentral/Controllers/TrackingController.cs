@@ -61,22 +61,38 @@ namespace HackerCentral.Controllers
                     foreach (var saveTrackVM in actionTrackVM.SaveTracks)
                     {
                         var userEntity = saveTrackVM.UserEntity;
-                        GetCorrespondingEntity(ref userEntity);
+                        if (userEntity != null)
+                        {
+                            if (userEntity.EntityType == null)
+                            {
+                                //This can happen when a new user registers for the first time. The SaveTrack needs
+                                //to record that a user intiated a save, but the user doesn't exist yet, so all
+                                //of its EntityTrack's values are null.
+                                userEntity.EntityValues = new Dictionary<string, string>(1);
+                                userEntity.EntityValues.Add("User ID", "[unregistered user]");
+                            }
+                            else
+                            {
+                                GetCorrespondingEntity(ref userEntity);
+                            }
+                        }
 
                         foreach (var entityTrackVM in saveTrackVM.EntityTracks)
                         {
-                            //it's a compile-time error to directly pass variables used in foreach loops by reference
-                            var refEntityTrackVM = entityTrackVM;
-                            GetCorrespondingEntity(ref refEntityTrackVM);
-                        }
-
-                        foreach (var fieldTrackVM in saveTrackVM.FieldTracks)
-                        {
-                            foreach (var entityTrackVM in saveTrackVM.EntityTracks)
+                            if (entityTrackVM != null)
                             {
                                 //it's a compile-time error to directly pass variables used in foreach loops by reference
                                 var refEntityTrackVM = entityTrackVM;
                                 GetCorrespondingEntity(ref refEntityTrackVM);
+                            }
+                        }
+
+                        foreach (var fieldTrackVM in saveTrackVM.FieldTracks)
+                        {
+                            if ((fieldTrackVM != null) && (fieldTrackVM.Entity!= null))
+                            {
+                                var entity = fieldTrackVM.Entity;
+                                GetCorrespondingEntity(ref entity);
                             }
                         }
                     }
@@ -96,18 +112,16 @@ namespace HackerCentral.Controllers
         /// <param name="entityTrack">The EntityTrackViewModel to look up in the databse</param>
         private void GetCorrespondingEntity(ref EntityTrackViewModel entityTrack)
         {
+            if (entityTrack == null)
+            {
+                throw new NullReferenceException("Can't pass null to GetCorrespondingEntity()");
+            }
+
             if (entityTrack.EntityValues == null)
             {
-                if (entityTrack.EntityType == "UserProfile")
-                {
-                    var converter = new EntityConverter();
-                    var dbEntityTrack = entityTrack.ToDbEntityTrack();
-                    entityTrack.EntityValues = converter.GetEntityValues(dbEntityTrack);
-                }
-                else
-                {
-                    entityTrack.EntityValues = new Dictionary<string, string>();
-                }
+                var converter = new EntityConverter();
+                var dbEntityTrack = entityTrack.ToDbEntityTrack();
+                entityTrack.EntityValues = converter.GetEntityValues(dbEntityTrack);
             }
         }
     }
