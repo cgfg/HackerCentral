@@ -27,7 +27,7 @@ namespace HackerCentral.Models
             count_of_average_points_by_participant = long.Parse(members[3]);
             lowly_rated_points_count = long.Parse(members[4]);
             local_credibility = double.Parse(members[5]);
-            local_credibility = double.Parse(members[6]);
+            global_credibility = double.Parse(members[6]);
             all_ratings_by_participant_count = long.Parse(members[7]);
         }
     }

@@ -4,31 +4,161 @@
 }
 
 <div class="container">
-    <h2>Users</h2>
+    @*<h2>Users</h2>*@
     <div>
         
     </div>
     <div>
-        <h4>User Ranking</h4>
-    <table class="table table-striped">
-        <tr>
-            <td>User Name</td>
-            <td>Credibility</td>
-            <td>Highly Rated Points Count</td>
-        </tr>
-        @foreach (var u in Model.RankedUsers)
-        {
-            <tr>
-                <td>@u.username</td>
-                <td>@u.local_credibility</td>
-                <td>@u.highly_rated_points_count</td>
-            </tr>
+        
+        <div id="tableContainer">
+            <table id="table" class="table table-hover">
+                <caption><h3 style="color:darkslateblue">User Ranking</h3></caption>
+                <thead>
+                <tr>
+                    <td id="col1"><b style="color:cornflowerblue">User Name</b></td>
+                    <td id="col2"><b style="color:cornflowerblue">Credibility</b></td>
+                    <td id="col3"><b style="color:cornflowerblue">Highly Rated Points Count</b></td>
+                    <td id="col4"><b style="color:cornflowerblue">Count of Average Points by Participant</b></td>
+                    <td id="col5"><b style="color:cornflowerblue">All Rating by Participant</b></td>
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                @foreach (var u in Model.RankedUsers.OrderBy(u => u.username))
+                {
+                    <tr>
+                        <td>@u.username</td>
+                        <td>@u.local_credibility</td>
+                        <td>@u.highly_rated_points_count</td>
+                        <td>@u.count_of_average_points_by_participant</td>
+                        <td>@u.all_ratings_by_participant_count</td>
+                    </tr>
             
         }
-    </table>
-</div>
+            </tbody>
+            </table>
+        </div>
+    </div>
     
+    <script>
+        var sortByName = function () {
+            var table = $("#tableBody");
+            var container = $("#table");
+            table.remove();
+            container.append('<tbody id="tableBody">'
 
+            @foreach (var u in Model.RankedUsers.OrderBy(u => u.username))
+        {
+
+            <text>
+               + ('<tr>'
+               + '<td>@u.username</td>'
+               + '<td>@u.local_credibility</td>'
+               + '<td>@u.highly_rated_points_count</td>'
+               + '<td>@u.count_of_average_points_by_participant</td>'
+               + '<td>@u.all_ratings_by_participant_count</td>'
+               + '</tr>')
+            </text>
+        }
+            + '</tbody>');
+        }
+
+        var sortByCredit = function () {
+            var table = $("#tableBody");
+            var container = $("#table");
+            table.remove();
+            container.append('<tbody id="tableBody">'
+
+            @foreach (var u in Model.RankedUsers.OrderByDescending(u => u.local_credibility))
+        {
+
+            <text>
+               + ('<tr>'
+               + '<td>@u.username</td>'
+               + '<td>@u.local_credibility</td>'
+               + '<td>@u.highly_rated_points_count</td>'
+               + '<td>@u.count_of_average_points_by_participant</td>'
+               + '<td>@u.all_ratings_by_participant_count</td>'
+               + '</tr>')
+            </text>
+        }
+            + '</tbody>');
+        }
+
+        var sortByHighlyRatedPointsCount = function () {
+            var table = $("#tableBody");
+            var container = $("#table");
+            table.remove();
+            container.append('<tbody id="tableBody">'
+
+            @foreach (var u in Model.RankedUsers.OrderByDescending(u => u.highly_rated_points_count))
+        {
+
+            <text>
+               + ('<tr>'
+               + '<td>@u.username</td>'
+               + '<td>@u.local_credibility</td>'
+               + '<td>@u.highly_rated_points_count</td>'
+               + '<td>@u.count_of_average_points_by_participant</td>'
+               + '<td>@u.all_ratings_by_participant_count</td>'
+               + '</tr>')
+            </text>
+        }
+            + '</tbody>');
+        }
+
+        var sortByAveragePointsCount = function () {
+            var table = $("#tableBody");
+            var container = $("#table");
+            table.remove();
+            container.append('<tbody id="tableBody">'
+
+            @foreach (var u in Model.RankedUsers.OrderByDescending(u => u.count_of_average_points_by_participant))
+        {
+
+            <text>
+               + ('<tr>'
+               + '<td>@u.username</td>'
+               + '<td>@u.local_credibility</td>'
+               + '<td>@u.highly_rated_points_count</td>'
+               + '<td>@u.count_of_average_points_by_participant</td>'
+               + '<td>@u.all_ratings_by_participant_count</td>'
+               + '</tr>')
+            </text>
+        }
+            
+            + '</tbody>');
+         
+        }
+
+        var sortByAllRatingCount = function () {
+            var table = $("#tableBody");
+            var container = $("#table");
+            table.remove();
+            container.append('<tbody id="tableBody">'
+
+            @foreach (var u in Model.RankedUsers.OrderByDescending(u => u.all_ratings_by_participant_count))
+        {
+
+            <text>
+               + ('<tr>'
+               + '<td>@u.username</td>'
+               + '<td>@u.local_credibility</td>'
+               + '<td>@u.highly_rated_points_count</td>'
+               + '<td>@u.count_of_average_points_by_participant</td>'
+               + '<td>@u.all_ratings_by_participant_count</td>'
+               + '</tr>')
+            </text>
+        }
+            + '</tbody>');
+        }
+
+        $('#col1').click(sortByName);
+        $('#col2').click(sortByCredit);
+        $('#col3').click(sortByHighlyRatedPointsCount);
+        $('#col4').click(sortByAveragePointsCount);
+        $('#col5').click(sortByAllRatingCount);
+
+    </script>
 
    
 </div>
