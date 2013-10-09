@@ -116,7 +116,7 @@
                     <i class="icon-pencil"> </i>
                     @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
                     <i class="icon-trash"> </i>
-                    @Html.ActionLink("Delete ", "Destroy", "Points", new { id = @nest.Parent.id }, null)
+                    @Html.ActionLink("Delete ", "Destroy", "Points", new { id = @nest.Parent.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + nest.Parent.id.ToString() + "?');"})
                 
             }
             </div>
@@ -176,7 +176,7 @@
             <i class="icon-pencil"> </i>
             @Ajax.ActionLink(" Edit ", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
             <i class="icon-trash"> </i>
-            @Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, null)   
+            @Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + point.id.ToString() + "?');"})   
         }
         </div>
     </div>
