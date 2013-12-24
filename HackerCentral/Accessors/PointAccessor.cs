@@ -27,7 +27,7 @@ namespace HackerCentral.Accessors
 
         public List<Point> GetAllPoints()
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points", apiKey, conversationId);
 
             using (var w = new WebClient())
             {
@@ -50,7 +50,7 @@ namespace HackerCentral.Accessors
 
         public Point GetPoint(long id)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/{2}/show", apiKey, conversationId, id);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points/{2}/show", apiKey, conversationId, id);
 
             using (var w = new WebClient())
             {
@@ -69,7 +69,7 @@ namespace HackerCentral.Accessors
 
         public bool DestroyPoint(long id)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/{2}/destroy", apiKey, conversationId, id);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points/{2}/destroy", apiKey, conversationId, id);
 
             try
             {
@@ -88,7 +88,7 @@ namespace HackerCentral.Accessors
 
         public bool UpdatePoint(Point update)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/{2}/update", apiKey, conversationId, update.id);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points/{2}/update", apiKey, conversationId, update.id);
 
             try
             {
@@ -111,7 +111,7 @@ namespace HackerCentral.Accessors
 
         public bool CreatePoint(Point create)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/points/create", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points/create", apiKey, conversationId);
             
             try
             {

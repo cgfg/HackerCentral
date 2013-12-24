@@ -27,7 +27,7 @@ namespace HackerCentral.Accessors
 
         public List<Comment> GetAllComments()
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments", apiKey, conversationId);
 
             using (var w = new WebClient())
             {
@@ -50,7 +50,7 @@ namespace HackerCentral.Accessors
 
         public Comment GetComment(long id)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments/{2}/show", apiKey, conversationId, id);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments/{2}/show", apiKey, conversationId, id);
 
             using (var w = new WebClient())
             {
@@ -69,7 +69,7 @@ namespace HackerCentral.Accessors
 
         public List<Comment> GetCommentsByPoint(long pointID)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments/point/{2}", apiKey, conversationId, pointID);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments/point/{2}", apiKey, conversationId, pointID);
 
             using (var w = new WebClient())
             {
@@ -88,7 +88,7 @@ namespace HackerCentral.Accessors
 
         public bool DestroyComment(long id)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments/{2}/destroy", apiKey, conversationId, id);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments/{2}/destroy", apiKey, conversationId, id);
 
             try
             {
@@ -108,7 +108,7 @@ namespace HackerCentral.Accessors
         public bool UpdateComment(Comment update)
         {
             // Notice: API is the same for Create Comment
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments/create", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments/create", apiKey, conversationId);
 
             try
             {
@@ -129,7 +129,7 @@ namespace HackerCentral.Accessors
 
         public bool CreateComment(Comment update)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comments/create", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comments/create", apiKey, conversationId);
 
             try
             {

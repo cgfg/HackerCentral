@@ -69,7 +69,7 @@ namespace HackerCentral.Controllers
 
         public ActionResult ViewPoint(long id)
         {
-            ViewBag.IFrame = string.Format("http://athenabridge.com/embedded/77/{0}/true", id);
+            ViewBag.IFrame = string.Format("http://129.93.238.144/embedded/77/{0}/true", id);
             return View("ViewPoint");
         }
     }

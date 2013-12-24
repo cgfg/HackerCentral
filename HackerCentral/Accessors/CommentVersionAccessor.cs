@@ -23,7 +23,7 @@ namespace HackerCentral.Accessors
 
         public List<CommentVersion> GetAllCommentVersions()
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comment_versions", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comment_versions", apiKey, conversationId);
 
             using (var w = new WebClient())
             {
@@ -46,7 +46,7 @@ namespace HackerCentral.Accessors
 
         public List<CommentVersion> GetCommentVersionsByPoint(long pointId)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comment_versions/point/{2}", apiKey, conversationId, pointId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comment_versions/point/{2}", apiKey, conversationId, pointId);
 
             using (var w = new WebClient())
             {
@@ -69,7 +69,7 @@ namespace HackerCentral.Accessors
 
         public List<CommentVersion> GetCommentVersionsByComment(long commentId)
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/comment_versions/comment/{2}", apiKey, conversationId, commentId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/comment_versions/comment/{2}", apiKey, conversationId, commentId);
 
             using (var w = new WebClient())
             {

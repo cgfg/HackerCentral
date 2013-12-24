@@ -23,7 +23,7 @@ namespace HackerCentral.Accessors
         // TODO: Test this...API seems to be down
         public List<User> GetAllUsers()
         {
-            string api_url = String.Format("http://athenabridge.com/api/{0}/{1}/leaderboard", apiKey, conversationId);
+            string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/leaderboard", apiKey, conversationId);
 
             using (var w = new WebClient())
             {

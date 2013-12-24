@@ -41,7 +41,7 @@ namespace HackerCentral.Controllers
 
         public ActionResult Discussion()
         {
-            ViewBag.IFrame = string.Format("http://athenabridge.com/{0}", ConfigurationManager.AppSettings["ConversationId"]);
+            ViewBag.IFrame = string.Format("http://129.93.238.144/{0}", ConfigurationManager.AppSettings["ConversationId"]);
             return View("Discussion");
         }
     }
