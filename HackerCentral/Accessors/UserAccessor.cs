@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using RestSharp;
 
 namespace HackerCentral.Accessors
 {
@@ -61,6 +62,49 @@ namespace HackerCentral.Accessors
             catch (Exception e)
             {
                 return null;
+            }
+        }
+
+        public Boolean login(string username, string password)
+        {
+            string api_url = String.Format("http://129.93.238.144/api/{0}/login/{1}/{2}", apiKey, username, password);
+            try
+            {
+                var client = new RestClient();
+                var request = new RestRequest(api_url);
+                var response = client.Execute(request);
+                var content = response.Content;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        public void logoff(string username) 
+        { 
+        
+        }
+
+        public Boolean register(string username, string password)
+        {
+            string api_url = String.Format("http://129.93.238.144/api/{0}/register", apiKey);
+            try
+            {
+                var client = new RestClient();
+                var request = new RestRequest(api_url, Method.POST);
+                request.AddParameter("api_key", apiKey);
+                request.AddParameter("username", username);
+                request.AddParameter("password", password);
+               // request.AddParameter("email", email);
+                var response = client.Execute(request);
+                var content = response.Content;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
     }

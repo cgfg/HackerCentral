@@ -16,6 +16,11 @@ Engagement, Research, and Education">
             IDEASPERE</abbr>
             research project you must log in with any of the following supported services. These services are used for your convienience so you don't have to make new accounts and jugle passwords; our system cannot and does not access any information from any of these services.
         </p>
+        @*<button type="submit" class="btn btn-primary" name="login" value="login" title="">Login</button>
+        <button type="submit" class="btn btn-primary" name="register" value="register" title="">Regsister</button>*@
+        @Html.ActionLink("Login", "Login", "Account")
+        @Html.ActionLink("Register", "Register", "Account")
         @Html.Action("ExternalLoginsList", "Account")
+        
     </div>
 </div>

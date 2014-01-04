@@ -7,19 +7,20 @@
 {
     @Html.AntiForgeryToken()
 
-    
+    <div id="register">
     <h2 class="form-signin-heading">Create a new account</h2>
-    @Html.TextBoxFor(m => m.UserName, new { placeholder = "User name", @class = "input-block-level", type = "text" })
-
-    @Html.PasswordFor(m => m.Password, new { placeholder = "Password", @class = "input-block-level", type = "password" })
-    @Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "input-block-level", type = "password" })
+    
+    <p>@Html.TextBoxFor(m => m.UserName, new { placeholder = "Username", @class = "input-block-level", type = "text" })</p>
+    @*<p>@Html.TextBoxFor(m => m.Email, new { placeholder = "Email", @class = "input-block-level", type = "text" })</p>*@
+    <p>@Html.PasswordFor(m => m.Password, new { placeholder = "Password", @class = "input-block-level", type = "password" })</p>
+    <p>@Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "input-block-level", type = "password" })</p>
     
     @Html.ValidationSummary(true)
 
-    <button class="btn btn-large btn-primary" type="submit">Register</button>
-    
+    <button class="btn btn-large btn-primary" id ="submitButton" type="submit">Register</button>
+    </div>
 }
-
+    
 @section Styles {
     <style type="text/css">
         .form-signin {

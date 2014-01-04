@@ -11,6 +11,7 @@ using WebMatrix.WebData;
 using HackerCentral.Models;
 using HackerCentral.Filters;
 using System.Data.Entity;
+using HackerCentral.Accessors;
 
 using HackerCentral.Extensions;
 
@@ -91,9 +92,14 @@ namespace HackerCentral.Controllers
                 try
                 {
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { AuthProvider = AuthProvider.Local });
-                    Roles.AddUserToRole(model.UserName, UserRole.Administrator.ToString());
-                    WebSecurity.Login(model.UserName, model.Password);
-                    return RedirectToAction("Index", "Home");
+                    Roles.AddUserToRole(model.UserName, UserRole.User.ToString());
+                    //WebSecurity.Login(model.UserName, model.Password);
+                    var ua = new UserAccessor();
+                    ua.register(model.UserName, model.Password);
+                    //ua.login(model.UserName, model.Password);
+                    //return RedirectToAction("Index", "Home");
+                    //System.Threading.Thread.Sleep(2000);
+                    return RedirectToAction("Login", "Account");                  
                 }
                 catch (MembershipCreateUserException e)
                 {
