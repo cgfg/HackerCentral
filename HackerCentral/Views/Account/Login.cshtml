@@ -16,12 +16,21 @@
     <label class="checkbox">
         @Html.CheckBoxFor(m => m.RememberMe) Remember me
     </label>
-    <button class="btn btn-primary" id="submitButton" type="submit">Sign in</button>
+        var ua = new HackerCentral.Accessors.UserAccessor();
+        if (ua.serverStatus())
+        {
+            <button class="btn btn-primary" id="submitButton" type="submit">Sign in</button>
+        }
+        else
+        {
+            <div class="alert alert-info" style="word-wrap:break-word; margin-top:12px;">Server is off duty...You cannot login right now.</div>
+        }
+    
     
 }
 </div>
 <script>
-    $("#submitButton").hover(function () {
+    $("#submitButton").click(function () {
         //var Username = $('#UserName').val();
         //var Password = $('#Password').val();
         //var url = "http://129.93.238.144/api/login/local";

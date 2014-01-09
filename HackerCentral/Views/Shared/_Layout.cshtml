@@ -9,7 +9,7 @@
         new { LinkText="Users", ActionName="Index", ControllerName ="Users", Roles=UserRole.User.ToString() + "," + UserRole.Administrator.ToString() + "," + UserRole.Hacker.ToString()},
         new { LinkText="Generate Token", ActionName="GenerateToken",ControllerName="Token",Roles=UserRole.Administrator.ToString() },
         new { LinkText="Tracking Data", ActionName="Data",ControllerName="Tracking",Roles=UserRole.Administrator.ToString() },
-        new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
+        //new { LinkText="Administrative Access", ActionName="Login",ControllerName="Account",Roles="Anonymous" }
         //new { LinkText="Sign Up", ActionName="Register",ControllerName="Account",Roles="Anonymous" }
     };
 }
@@ -425,7 +425,28 @@
 
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
                         {
+                            <script>
+                                $.ajax({
+                                    type: 'GET',
+                                    url: 'http://129.93.238.144/logout',
+                                    dataType: "json",
+                                    crossDomain: true,
+                                    xhrFields: {
+                                        withCredentials: true
+                                    },
+                                    headers: {
+
+                                    },
+                                    success: function () {
+
+                                    },
+                                    error: function () {
+
+                                    }
+                                });
+                            </script>
                             @Html.AntiForgeryToken()
+                            
                         }
                     </div>
                 }

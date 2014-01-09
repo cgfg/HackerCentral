@@ -95,11 +95,15 @@ namespace HackerCentral.Controllers
                     Roles.AddUserToRole(model.UserName, UserRole.User.ToString());
                     //WebSecurity.Login(model.UserName, model.Password);
                     var ua = new UserAccessor();
-                    ua.register(model.UserName, model.Password);
-                    //ua.login(model.UserName, model.Password);
-                    //return RedirectToAction("Index", "Home");
-                    //System.Threading.Thread.Sleep(2000);
-                    return RedirectToAction("Login", "Account");                  
+                    //only registe users when  'AB' is available
+                    //if (ua.serverStatus())
+                    //{
+                        ua.register(model.UserName, model.Password);
+                        //ua.login(model.UserName, model.Password);
+                        //return RedirectToAction("Index", "Home");
+                        //System.Threading.Thread.Sleep(2000);
+                        return RedirectToAction("Login", "Account");   
+                    //}                                 
                 }
                 catch (MembershipCreateUserException e)
                 {

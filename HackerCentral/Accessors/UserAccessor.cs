@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using RestSharp;
+using System.Net.Sockets;
 
 namespace HackerCentral.Accessors
 {
@@ -82,7 +83,7 @@ namespace HackerCentral.Accessors
             }
         }
 
-        public void logoff(string username) 
+        public void logOff(string username) 
         { 
         
         }
@@ -106,6 +107,20 @@ namespace HackerCentral.Accessors
             {
                 return false;
             }
+        }
+
+        public Boolean serverStatus(){
+            TcpClient client = null;
+            try
+            {
+                client = new TcpClient("129.93.238.144", 80);
+            }
+            catch (SocketException e)
+            {
+                return false;
+            }
+            client.Close();
+            return true;
         }
     }
 }

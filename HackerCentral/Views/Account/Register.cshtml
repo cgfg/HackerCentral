@@ -16,8 +16,17 @@
     <p>@Html.PasswordFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "input-block-level", type = "password" })</p>
     
     @Html.ValidationSummary(true)
-
-    <button class="btn btn-large btn-primary" id ="submitButton" type="submit">Register</button>
+    @{
+        var ua = new HackerCentral.Accessors.UserAccessor();
+        if (ua.serverStatus())
+        {
+            <button class="btn btn-large btn-primary" id="submitButton" type="submit">Register</button>
+        }
+        else
+        {
+            <div class="alert alert-info" style="word-wrap:break-word; margin-top:12px;">Server is off duty...You cannot register new account right now.</div>
+        }
+        }
     </div>
 }
     
