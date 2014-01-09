@@ -425,26 +425,6 @@
 
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
                         {
-                            <script>
-                                $.ajax({
-                                    type: 'GET',
-                                    url: 'http://129.93.238.144/logout',
-                                    dataType: "json",
-                                    crossDomain: true,
-                                    xhrFields: {
-                                        withCredentials: true
-                                    },
-                                    headers: {
-
-                                    },
-                                    success: function () {
-
-                                    },
-                                    error: function () {
-
-                                    }
-                                });
-                            </script>
                             @Html.AntiForgeryToken()
                             
                         }
