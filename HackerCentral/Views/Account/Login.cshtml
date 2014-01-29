@@ -10,7 +10,7 @@
     @Html.AntiForgeryToken()
 
     <h2>Please sign in</h2>
-    @Html.TextBoxFor(m => m.UserName, new { placeholder = "Email address", type = "text" })
+    @Html.TextBoxFor(m => m.UserName, new { placeholder = "User Name", type = "text" })
     @Html.PasswordFor(m => m.Password, new { placeholder = "Password", type = "password" })
     @Html.ValidationSummary(true)
     <label class="checkbox">
@@ -56,7 +56,9 @@
             }
         });
     })
-
+    $(document).keypress(function (e) {
+        if (e.which == 13) return false;
+    });
     
 
 </script>

@@ -48,7 +48,7 @@ namespace HackerCentral.Controllers
         public ActionResult Edit(Point p)
         {
             var pa = new PointAccessor();
-            if (pa.UpdatePoint(p))
+            if (pa.UpdatePoint(p, User.Identity.Name))
                 return Index("Point successfully updated");
             else
                 return Index("Point was not successfully updated");

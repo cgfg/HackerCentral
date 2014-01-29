@@ -86,7 +86,7 @@ namespace HackerCentral.Accessors
 
         }
 
-        public bool UpdatePoint(Point update)
+        public bool UpdatePoint(Point update, String hackerName)
         {
             string api_url = String.Format("http://129.93.238.144/api/{0}/{1}/points/{2}/update", apiKey, conversationId, update.id);
 
@@ -99,6 +99,7 @@ namespace HackerCentral.Accessors
                 request.AddParameter("category", (int)update.category);
                 request.AddParameter("summary", update.summary);
                 request.AddParameter("full_text", update.full_text);
+                request.AddParameter("username", hackerName);
                 var response = client.Execute(request);
                 var content = response.Content;
                 return true;

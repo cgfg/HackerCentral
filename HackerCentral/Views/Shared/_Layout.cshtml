@@ -342,13 +342,13 @@
                                 @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
 
-                   @* using (var context = new HackerCentralContext(null))
+                    using (var context = new HackerCentralContext(null))
                     {
                         if (context.UserProfiles.Find(WebSecurity.CurrentUserId).AuthProvider == AuthProvider.Local)
                         {
                                 @:<li class="">@Html.ActionLink("Change Password", "Manage", "Account")</li>
                                     }
-                    }*@
+                    }
                             }
                         </ul>
                     </div>
