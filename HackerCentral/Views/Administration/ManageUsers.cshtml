@@ -36,7 +36,13 @@
                 <td>@Ajax.ActionLink("Edit", "UserEditForm",
                 new { id = @user.UserId },
                 new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editUserForm" },
-                new { @class = "btn btn-link edit-user-link" }) </td>
+                new { @class = "btn btn-link edit-user-link" })
+
+                @Ajax.ActionLink("Set Password", "UserEditPasswordForm",
+                new { id = @user.UserId },
+                new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editUserForm" },
+                new { @class = "btn btn-link edit-user-link" })
+                </td>
             </tr>
         }
     </table>

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Data.Entity;
+using WebMatrix.WebData;
 namespace HackerCentral.Controllers
 {
     [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Administrator })]
@@ -116,6 +117,79 @@ namespace HackerCentral.Controllers
                         UserName = user.UserName
                     };
                     return PartialView("_EditUserForm", model);
+                }
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditUserPassword(UserPasswordViewModel model)
+        {
+            using (var context = new HackerCentralContext(this))
+            {
+                UserProfile user = context.UserProfiles.Find(model.UserId);
+                if (user == null)
+                {
+                    ViewBag.Style = "alert-error";
+                    ViewBag.Message = string.Format("Modifications failed. The username: {0} does not exist.", model.UserName);
+                    return View("ManageUsers", createUserEditList(context));
+                }
+                else if(!model.ArePasswordsValid())
+                {
+                    ViewBag.Style = "alert-error";
+                    ViewBag.Message = string.Format("The new passwords didn't match or were black. The password for {0} was not changed.", model.UserName);
+                    return View("ManageUsers", createUserEditList(context));
+                }
+                else
+                {
+                    // ChangePassword will throw an exception rather than return false in certain failure scenarios.
+                    bool changePasswordSucceeded;
+                    try
+                    {
+                        var resetPasswordToken = WebSecurity.GeneratePasswordResetToken(model.UserName);
+                        changePasswordSucceeded = WebSecurity.ResetPassword(resetPasswordToken, model.Password);
+                    }
+                    catch (Exception)
+                    {
+                        changePasswordSucceeded = false;
+                    }
+
+                    if (changePasswordSucceeded)
+                    {
+                        ViewBag.Style = "alert-success";
+                        ViewBag.Message = string.Format("Password changed for {0}.", user.UserName);
+                        return View("ManageUsers", createUserEditList(context));
+                    }
+                    else
+                    {
+                        ViewBag.Style = "alert-error";
+                        ViewBag.Message = string.Format("There was an error changing the password for {0}.", model.UserName);
+                        return View("ManageUsers", createUserEditList(context));
+                    }
+                }
+            }
+        }
+
+        public PartialViewResult UserEditPasswordForm(int id)
+        {
+            using (var context = new HackerCentralContext(this))
+            {
+                UserProfile user = context.UserProfiles.Find(id);
+                if (user == null)
+                {
+                    ViewBag.Message = string.Format("The user with id: {0} does not exist.", id);
+                    return PartialView("_Error");
+                }
+                else
+                {
+                    UserPasswordViewModel model = new UserPasswordViewModel
+                    {
+                        UserId = user.UserId,
+                        UserName = user.UserName,
+                        Password = "",
+                        PasswordConfirmation = ""
+                    };
+                    return PartialView("_EditUserPasswordForm", model);
                 }
             }
         }

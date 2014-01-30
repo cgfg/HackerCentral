@@ -15,4 +15,19 @@ namespace HackerCentral.ViewModels
         public UserRole Role { get; set; }
         public bool IsBlocked { get; set; }
     }
+
+    public class UserPasswordViewModel
+    {
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string PasswordConfirmation { get; set; }
+
+        public bool ArePasswordsValid()
+        {
+            return Password == PasswordConfirmation
+                && !String.IsNullOrEmpty(Password)
+                && !String.IsNullOrEmpty(PasswordConfirmation);
+        }
+    }
 }
