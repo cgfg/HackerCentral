@@ -89,10 +89,21 @@ namespace HackerCentral.Controllers
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
+                using (HackerCentralContext context = new HackerCentralContext(this)) {
                 try
                 {
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { AuthProvider = AuthProvider.Local });
                     Roles.AddUserToRole(model.UserName, UserRole.User.ToString());
+                    UserProfile newUser = context.UserProfiles.SingleOrDefault(u => u.UserName == model.UserName);
+                    newUser.UserDiscussion = new HashSet<UserProfileDiscussions>();
+                    newUser.FullName = model.FullName;
+                    Discussion defaultDiscussion = context.Discussions.Include(d => d.UserDiscussion).SingleOrDefault(d => d.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID);
+                    UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Observer };
+                    newUser.UserDiscussion.Add(newUserDiscussionRelation);
+                    defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);
+                    context.UserProfiles.Add(newUser);
+                    context.UserProfileDiscussions.Add(newUserDiscussionRelation);
+                    context.SaveChanges();
                     //WebSecurity.Login(model.UserName, model.Password);
                     var ua = new UserAccessor();
                     //only registe users when  'AB' is available
@@ -109,6 +120,7 @@ namespace HackerCentral.Controllers
                 {
                     ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
                 }
+            }
             }
 
             // If we got this far, something failed, redisplay form
@@ -267,7 +279,7 @@ namespace HackerCentral.Controllers
                     // Insert name into the profile table
                     AuthProvider authProvider;
                     UserProfile newUser = new UserProfile { UserName = result.UserName.ToLowerInvariant(), FullName = result.GetFullName(), AuthProvider = (Enum.TryParse<AuthProvider>(result.Provider, true, out authProvider) ? authProvider : AuthProvider.Local) , UserDiscussion = new HashSet<UserProfileDiscussions>()};
-                    Discussion defaultDiscussion = context.Discussions.Include(d => d.UserDiscussion).SingleOrDefault(d => d.ConversationId == 77);
+                    Discussion defaultDiscussion = context.Discussions.Include(d => d.UserDiscussion).SingleOrDefault(d => d.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID);
                     UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Observer };
                     newUser.UserDiscussion.Add(newUserDiscussionRelation);
                     defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);

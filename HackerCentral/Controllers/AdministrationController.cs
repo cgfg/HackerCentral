@@ -33,7 +33,7 @@ namespace HackerCentral.Controllers
             {
                 ViewBag.Style = style;
                 ViewBag.Message = message;
-                int discussionId = context.Discussions.SingleOrDefault(d => d.ConversationId == 77).DiscussionId;
+                int discussionId = context.Discussions.SingleOrDefault(d => d.ConversationId == 2).DiscussionId;
                 return View(createDiscussionEditList(context, discussionId));
             }
         }
