@@ -5,5 +5,13 @@
 }
 
 <div id="maincontent">
-    <iframe id="externalcontent" src="@System.Configuration.ConfigurationManager.AppSettings[Model.UserProfile.AuthProvider.ToString()]"></iframe>
+    @if (@Model.UserProfile.AuthProvider.ToString().CompareTo("Local") == 0)
+    {
+        <iframe id="externalcontent" src="@System.Configuration.ConfigurationManager.AppSettings[Model.UserProfile.AuthProvider.ToString()]/@System.Configuration.ConfigurationManager.AppSettings["ConversationId"]"></iframe>
+    }
+    else
+    {
+        <iframe id="externalcontent" src="@System.Configuration.ConfigurationManager.AppSettings[Model.UserProfile.AuthProvider.ToString()]"></iframe>
+    }
+    
 </div>

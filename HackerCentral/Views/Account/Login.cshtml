@@ -25,7 +25,9 @@
         {
             <div class="alert alert-info" style="word-wrap:break-word; margin-top:12px;">Server is off duty...You cannot login right now.</div>
         }
-    
+    <div>
+        <iframe id="externalcontent" src="http://129.93.238.144/" style="visibility:hidden;display:none"></iframe>
+    </div>
     
 }
 </div>
@@ -39,7 +41,7 @@
             type: 'POST',
             url: 'http://129.93.238.144/api/login/local',
             data: { 'username': $('#UserName').val(), 'password': $('#Password').val() },
-
+           //async: false,
             dataType: "json",
             crossDomain: true,
             xhrFields: {

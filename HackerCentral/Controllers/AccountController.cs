@@ -101,7 +101,6 @@ namespace HackerCentral.Controllers
                     UserProfileDiscussions newUserDiscussionRelation = new UserProfileDiscussions { User = newUser, RegisteredDiscussion = defaultDiscussion, BelongTo = Team.Observer };
                     newUser.UserDiscussion.Add(newUserDiscussionRelation);
                     defaultDiscussion.UserDiscussion.Add(newUserDiscussionRelation);
-                    context.UserProfiles.Add(newUser);
                     context.UserProfileDiscussions.Add(newUserDiscussionRelation);
                     context.SaveChanges();
                     //WebSecurity.Login(model.UserName, model.Password);
