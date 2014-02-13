@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace HackerCentral.ViewModels
 {
     public class PointsViewModel
@@ -13,9 +14,12 @@ namespace HackerCentral.ViewModels
         public Point point; // Passed to _CreatePoint partial view so validation works
         public List<NestItem> nestedPoints;
         public List<Point> visiblePoints;
-        public PointsViewModel(List<Point> points)
+        public string username;
+
+        public PointsViewModel(List<Point> points, string username)
         {
             visiblePoints = new List<Point>();
+            this.username = username;
             this.points = points.OrderBy(p => p.id).ToList();
             //this.topPoints = points.Where(p => p.).OrderByDescending(p => p.quality).Take(10).ToList();
             // Create a blank (but not null) point
@@ -29,7 +33,7 @@ namespace HackerCentral.ViewModels
 
             // Create nestedPoints list
             nestedPoints = new List<NestItem>();
-
+            
             // Find all points with parent id of 0 and make a nest item.  For each, recursively add children that match
             foreach(var top in points.Where(p=>p.parent_id == 0) )
             {
@@ -41,6 +45,11 @@ namespace HackerCentral.ViewModels
                 });
             }
             nestedPoints = nestedPoints.OrderBy(n => n.Parent.id).ToList();
+
+            using (var context = new HackerCentralContext(null))
+            {
+                
+            }
         }
 
         private List<NestItem> GetChildren(Point parent, List<Point> allPoints)

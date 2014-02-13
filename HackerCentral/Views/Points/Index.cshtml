@@ -17,31 +17,31 @@
         string[] roles = Roles.GetRolesForUser();
         Boolean isAdminRole = roles.Any(u => u.Equals("Administrator") || u.Equals("Hacker"));
         <h2>POINTS</h2>
-        <div class="tabbable" id="page">
+        <div class="tabbable" id="tabs">
             <ul class="nav nav-pills">
-                <li><a href="#nestedPoints" data-toggle="tab">
+                <li><a id="NestedPoints" href="#nestedPoints" data-toggle="tab">
                     <h4>Nested Points</h4>
                 </a></li>
-                <li><a href="#topQualityPoints" data-toggle="tab">
+                <li><a id ="TopQualityPoints" href="#topQualityPoints" data-toggle="tab">
                     <h4>High Quality Points</h4>
                 </a></li>
-                <li><a href="#lowQualityPoints" data-toggle="tab">
+                <li><a id="LowQualityPoints" href="#lowQualityPoints" data-toggle="tab">
                     <h4>Low Quality Points</h4>
                 </a></li>              
-                <li><a href="#popularPoints" data-toggle="tab">
+                <li><a id="PopularPoints"href="#popularPoints" data-toggle="tab">
                     <h4>Popular Points</h4>
                 </a></li>
-                <li><a href="#unpopularPoints" data-toggle="tab">
+                <li><a id="UnPopularPoint"href="#unpopularPoints" data-toggle="tab">
                     <h4>Unpopular Points</h4>
                 </a></li>  
-                <li><a href="#unratedPoints" data-toggle="tab">
-                    <h4>Unrated Points</h4>
-                </a></li>           
+                <li><a id="UnratedPoints" href="#unratedPoints" data-toggle="tab">
+    <h4>Unrated Points</h4>
+</a></li>           
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="nestedPoints">
                     <div class="well">
-                        <a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>
+                        @*<a href="#createModal" role="button" class="btn btn-primary" data-toggle="modal">Add a Point</a>*@
                         @foreach (var n in Model.nestedPoints)
                         {
                             @PrintNest(n, isAdminRole);
@@ -99,27 +99,32 @@
     string color;
     color = (nest.Parent.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
     
-        <div class="point" style="background: @color ">
+        <div id=@nest.Parent.id class="point" style="background: @color ">
             @*<div class="actions">
                     @Ajax.ActionLink(@nest.Parent.id + ":" + @nest.Parent.summary, "LinkForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" })            
             </div>*@
-            <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
-            <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
-            <p>Quality: @nest.Parent.quality</p>
+            <div class="collapse-group">
+                <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
+                <div class="collapse">
+                    <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
+                    <p>Quality: @nest.Parent.quality</p>
+                    <div class="actions">
+                        <i class="icon-thumbs-up"> </i>
+                        <a href="http://129.93.238.144/embedded/2/@nest.Parent.id/true" target="_blank">Rate It!</a>
+                        @*@Ajax.ActionLink("View", "ViewPoint", "Points", new { id = @nest.Parent.id },  new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "page" }, new {@class= "viewLink"})*@
+                        @if (isAdminRole)
+                        {
+                            <i class="icon-pencil"> </i>
+                            @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" })
+                            @*<i class="icon-trash"> </i>*@
+                            @*@Html.ActionLink("Delete ", "Destroy", "Points", new { id = @nest.Parent.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + nest.Parent.id.ToString() + "?');"})*@
 
-            <div class="actions">
-                <i class="icon-thumbs-up"> </i>
-                <a href="http://129.93.238.144/embedded/2/@nest.Parent.id/true" target="_blank">Rate It!</a>
-                @*@Ajax.ActionLink("View", "ViewPoint", "Points", new { id = @nest.Parent.id },  new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "page" }, new {@class= "viewLink"})*@
-                @if (isAdminRole)
-                {
-                    <i class="icon-pencil"> </i>
-                    @Ajax.ActionLink("Edit", "EditForm", new { id = @nest.Parent.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
-                    <i class="icon-trash"> </i>
-                    @Html.ActionLink("Delete ", "Destroy", "Points", new { id = @nest.Parent.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + nest.Parent.id.ToString() + "?');"})
-                
-            }
-            </div>
+                        }
+                    </div>
+                </div>
+                <br />
+                <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">View</button></p>
+            </div>      
         </div>
     if (nest.HasChildren())
     {
@@ -145,6 +150,33 @@
     </div>
 </div>
 
+@helper PrintPoints(HackerCentral.Models.Point point, Boolean isAdminRole, String infoString)
+{
+    string color;
+    color = (point.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
+    <div id=@point.id class="point" style="background: @color ">
+        <div class="collapse-group">
+            <h4>#@point.id: @point.summary</h4>
+            <div class="collapse">
+                <p>@point.full_text (@point.category.ToString())</p>
+                <p>@infoString</p>
+                <div class="actions">
+                    <i class="icon-thumbs-up"> </i>
+                    <a href="http://129.93.238.144/embedded/2/@point.id/true" target="_blank">Rate it! </a>
+                    @if (isAdminRole)
+                    {
+                        <i class="icon-pencil"> </i>
+                        @Ajax.ActionLink(" Edit ", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" })
+                        @*<i class="icon-trash"> </i>*@
+                        @*@Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + point.id.ToString() + "?');"})*@
+                    }
+                </div>
+            </div>
+            <br />
+            <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">View</button></p>
+        </div>
+    </div>
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
@@ -153,33 +185,33 @@
             $('#editModal').modal('show');
         });
 
+        $('.point .btn').on('click', function (e) {
+            e.preventDefault();
+            var $this = $(this);
+            var $collapse = $this.closest('.collapse-group').find('.collapse');
+            var $tabName = $this.closest('.tab-pane').attr('id');
+            $collapse.collapse('toggle');
+            if ($this.text() == "View") {
+                $this.text("Hide");
+            }
+            else {
+                $this.text('View');
+            }
+ 
+            var $pointId = $this.closest('.point').attr('id');
+            @*alert("Point id = " + $pointId + "\nUsername: @Model.username" + "\ntabname: " + $tabName);*@
+        });
         //$(".viewLink").on("click", function () {
         //    $('#viewModal').modal('show');
         //});
-    </script>
+        $(function () {
+            $('a[data-toggle="tab"]').on('shown', function (e) {
+                e.preventDefault();
+                $id = String(e.target.getAttribute('href')).replace(/#/, ""); // activated tab
+                //e.relatedTarget // previous tab
+                @*alert("Tab Name: " + $id + "\nUserName:  @Model.username");*@
+            })
+        });
+</script>
 }
-
-@helper PrintPoints(HackerCentral.Models.Point point, Boolean isAdminRole, String infoString)
-{
-    string color;
-    color = (point.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
-    <div class="point" style="background: @color ">
-        <h4>#@point.id: @point.summary</h4>
-        <p>@point.full_text (@point.category.ToString())</p>
-        <p>@infoString</p>
-        
-        <div class="actions">
-            <i class="icon-thumbs-up"> </i>
-            <a href="http://129.93.238.144/embedded/77/@point.id/true" target="_blank">Rate it! </a>
-        @if (isAdminRole)
-        {
-            <i class="icon-pencil"> </i>
-            @Ajax.ActionLink(" Edit ", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" }) 
-            <i class="icon-trash"> </i>
-            @Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + point.id.ToString() + "?');"})   
-        }
-        </div>
-    </div>
-}
-
 

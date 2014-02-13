@@ -31,17 +31,13 @@
     
 }
 </div>
+
 <script>
     $("#submitButton").hover(function () {
-        //var Username = $('#UserName').val();
-        //var Password = $('#Password').val();
-        //var url = "http://129.93.238.144/api/login/local";
-        //$.post(url, { username: Username, password: Password });
         $.ajax({
             type: 'POST',
             url: 'http://129.93.238.144/api/login/local',
             data: { 'username': $('#UserName').val(), 'password': $('#Password').val() },
-           //async: false,
             dataType: "json",
             crossDomain: true,
             xhrFields: {

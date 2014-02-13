@@ -16,8 +16,8 @@ namespace HackerCentral.Controllers
         public ActionResult Index(string message = "")
         {
             var pa = new PointAccessor();
-            var model = new PointsViewModel(pa.GetAllPoints());
-
+            var model = new PointsViewModel(pa.GetAllPoints(), User.Identity.Name);
+            
             ViewBag.Message = message;
             return View("Index", model);
         }

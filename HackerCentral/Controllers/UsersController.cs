@@ -29,7 +29,7 @@ namespace HackerCentral.Controllers
         [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator, UserRole.User })]
         public ActionResult Index()
         {
-            using(var context = new SimpleContext()){
+            using(var context = new HackerCentralContext(this)){
              var ua = new UserAccessor();
             //var users = ua.GetAllUsers();
             //var userRank = users.OrderByDescending(u => u.local_credibility);
