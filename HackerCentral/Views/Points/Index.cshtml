@@ -190,15 +190,35 @@
             var $this = $(this);
             var $collapse = $this.closest('.collapse-group').find('.collapse');
             var $tabName = $this.closest('.tab-pane').attr('id');
+            var $pointId = $this.closest('.point').attr('id');
             $collapse.collapse('toggle');
             if ($this.text() == "View") {
                 $this.text("Hide");
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://129.93.238.144/log_point_view',
+                    data: { 'point_id': $pointId, 'username': '@Model.username'},
+                    dataType: "json",
+                    crossDomain: true,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    headers: {
+
+                    },
+                    success: function () {
+
+                    },
+                    error: function () {
+
+                    }
+                });
             }
             else {
                 $this.text('View');
             }
- 
-            var $pointId = $this.closest('.point').attr('id');
+            
+
             @*alert("Point id = " + $pointId + "\nUsername: @Model.username" + "\ntabname: " + $tabName);*@
         });
         //$(".viewLink").on("click", function () {
