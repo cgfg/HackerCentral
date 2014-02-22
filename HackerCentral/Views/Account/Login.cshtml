@@ -13,12 +13,13 @@
     @Html.TextBoxFor(m => m.UserName, new { placeholder = "User Name", type = "text" })
     @Html.PasswordFor(m => m.Password, new { placeholder = "Password", type = "password" })
     @Html.ValidationSummary(true)
-    <label class="checkbox">
+    <label class="checkbox" style="visibility:hidden;display:none">
         @Html.CheckBoxFor(m => m.RememberMe) Remember me
     </label>
-        var ua = new HackerCentral.Accessors.UserAccessor();
-        if (ua.serverStatus())
-        {
+    <br />
+    var ua = new HackerCentral.Accessors.UserAccessor();
+    if (ua.serverStatus())
+    {
             <button class="btn btn-primary" id="submitButton" type="submit">Sign in</button>
         }
         else

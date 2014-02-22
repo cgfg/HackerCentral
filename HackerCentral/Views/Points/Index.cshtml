@@ -97,7 +97,7 @@
     @helper PrintNest(HackerCentral.ViewModels.PointsViewModel.NestItem nest, Boolean isAdminRole)
 {
     string color;
-    color = (nest.Parent.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
+    color = (nest.Parent.side.ToString().Equals("pro")) ? "#2fbfbf" : "#f67d38";
     
         <div id=@nest.Parent.id class="point" style="background: @color ">
             @*<div class="actions">
@@ -106,7 +106,7 @@
             <div class="collapse-group">
                 <h4>#@nest.Parent.id: @nest.Parent.summary</h4>
                 <div class="collapse">
-                    <p>@nest.Parent.full_text (@nest.Parent.category.ToString())</p>
+                    <p>@nest.Parent.full_text (@nest.Parent.side.ToString())</p>
                     <p>Quality: @nest.Parent.quality</p>
                     <div class="actions">
                         <i class="icon-thumbs-up"> </i>
@@ -123,7 +123,7 @@
                     </div>
                 </div>
                 <br />
-                <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">View</button></p>
+                <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">Show</button></p>
             </div>      
         </div>
     if (nest.HasChildren())
@@ -153,12 +153,12 @@
 @helper PrintPoints(HackerCentral.Models.Point point, Boolean isAdminRole, String infoString)
 {
     string color;
-    color = (point.category.ToString().Equals("SUPPORTING")) ? "#2fbfbf" : "#f67d38";
+    color = (point.side.ToString().Equals("pro")) ? "#2fbfbf" : "#f67d38";
     <div id=@point.id class="point" style="background: @color ">
         <div class="collapse-group">
             <h4>#@point.id: @point.summary</h4>
             <div class="collapse">
-                <p>@point.full_text (@point.category.ToString())</p>
+                <p>@point.full_text (@point.side.ToString())</p>
                 <p>@infoString</p>
                 <div class="actions">
                     <i class="icon-thumbs-up"> </i>
@@ -173,7 +173,7 @@
                 </div>
             </div>
             <br />
-            <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">View</button></p>
+            <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">Show</button></p>
         </div>
     </div>
 }
@@ -192,12 +192,12 @@
             var $tabName = $this.closest('.tab-pane').attr('id');
             var $pointId = $this.closest('.point').attr('id');
             $collapse.collapse('toggle');
-            if ($this.text() == "View") {
+            if ($this.text() == "Show") {
                 $this.text("Hide");
                 $.ajax({
                     type: 'POST',
                     url: 'http://129.93.238.144/log_point_view',
-                    data: { 'point_id': $pointId, 'user_name': '@Model.username'},
+                    data: { 'point_id': $pointId, 'user_name': '@Model.username', 'ranked_view': $tabName},
                     dataType: "json",
                     crossDomain: true,
                     xhrFields: {
@@ -215,7 +215,7 @@
                 });
             }
             else {
-                $this.text('View');
+                $this.text('Show');
             }
             
 

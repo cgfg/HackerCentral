@@ -28,7 +28,8 @@ namespace HackerCentral.ViewModels
                 id = 0,
                 summary = "",
                 full_text = "",
-                category = 0
+                category = 0,
+               
             };
 
             // Create nestedPoints list
