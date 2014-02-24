@@ -22,7 +22,7 @@ namespace HackerCentral.Models
             string[] members = data.Split(',');
 
             id = long.Parse(members[0]);
-            username = members[1];
+            username = members[1].Replace("\"", "");
             highly_rated_points_count = long.Parse(members[2]);
             count_of_average_points_by_participant = long.Parse(members[3]);
             lowly_rated_points_count = long.Parse(members[4]);

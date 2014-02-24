@@ -15,12 +15,14 @@ namespace HackerCentral.ViewModels
         public List<NestItem> nestedPoints;
         public List<Point> visiblePoints;
         public string username;
+        public long userId;
 
-        public PointsViewModel(List<Point> points, string username)
+        public PointsViewModel(List<Point> points, string username, long userId)
         {
             visiblePoints = new List<Point>();
             this.username = username;
             this.points = points.OrderBy(p => p.id).ToList();
+            this.userId = userId;
             //this.topPoints = points.Where(p => p.).OrderByDescending(p => p.quality).Take(10).ToList();
             // Create a blank (but not null) point
             point = new Point()
@@ -142,6 +144,12 @@ namespace HackerCentral.ViewModels
         {
             List<Point> unratedPoints = visiblePoints.Where(p => p.validity_ratings_count == 0).Take(10).ToList();
             return unratedPoints;
+        }
+
+        public List<Point> getMyPoints()
+        {
+            List<Point> myPoint = visiblePoints.Where(p => p.user_id.Equals(userId)).ToList();
+            return myPoint;
         }
     }
 

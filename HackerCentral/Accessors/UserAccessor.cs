@@ -66,6 +66,17 @@ namespace HackerCentral.Accessors
             }
         }
 
+        public long getUserId(string username)
+        {
+            var users = GetAllUsers();
+            var user = users.SingleOrDefault(m => m.username.CompareTo(username) == 0);
+            if (user != null)
+            {
+                return (long)user.id;
+            }
+            return -1;
+        }
+
         public Boolean login(string username, string password)
         {
             string api_url = String.Format("http://129.93.238.144/api/{0}/login/{1}/{2}", apiKey, username, password);

@@ -22,6 +22,9 @@
                 <li><a id="NestedPoints" href="#nestedPoints" data-toggle="tab">
                     <h4>Nested Points</h4>
                 </a></li>
+                <li><a id="MyPoints" href="#myPoints" data-toggle="tab">
+                    <h4>My Points</h4>
+                 </a></li>
                 <li><a id ="TopQualityPoints" href="#topQualityPoints" data-toggle="tab">
                     <h4>High Quality Points</h4>
                 </a></li>
@@ -45,6 +48,14 @@
                         @foreach (var n in Model.nestedPoints)
                         {
                             @PrintNest(n, isAdminRole);
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="myPoints">
+                    <div class="well">
+                        @foreach (var n in Model.getMyPoints())
+                        {
+                            @PrintPoints(n, isAdminRole, "Quality: " + n.quality);
                         }
                     </div>
                 </div>
