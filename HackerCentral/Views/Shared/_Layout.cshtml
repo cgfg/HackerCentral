@@ -338,18 +338,20 @@
                                 where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries).Any(x => roles.Contains(x) || x == "All")
                                 select item;
                     foreach (var link in links)
-                    {
+                    { 
                                 @:<li class="">@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
 
-                    using (var context = new HackerCentralContext(null))
+                    @*using (var context = new HackerCentralContext(null))
                     {
                         if (context.UserProfiles.Find(WebSecurity.CurrentUserId).AuthProvider == AuthProvider.Local)
                         {
                                 @:<li class="">@Html.ActionLink("Change Password", "Manage", "Account")</li>
                                     }
-                    }
+                    }*@
                             }
+                            <li><a href="https://drive.google.com/file/d/0BwWJHcgAvOVGc0xOVlpsWmxWVjg/edit?usp=sharing" target="_blank">User Manual</a></li>
+                            <li><a href="mailto:idea_support@cse.unl.edu">Help</a></li>
                         </ul>
                     </div>
                     
@@ -420,6 +422,7 @@
                                     </div>
                                 </div>
                             </li>
+
                             <li class=""><a href="javascript:$.connection.hub.stop();document.getElementById('logoutForm').submit()">Logout</a></li>
                         </ul>
 
@@ -444,7 +447,8 @@
                                 @:<li>@Html.ActionLink(link.LinkText, link.ActionName, link.ControllerName)</li>
                                 }
                             }
-                            <li><a href="http://cse.unl.edu/~lksoh/Classes/RAIK183H_Fall13/IDEASPERE_UserManual.pdf">User Manual</a></li>
+                            <li><a href="https://drive.google.com/file/d/0BwWJHcgAvOVGc0xOVlpsWmxWVjg/edit?usp=sharing" target="_blank">User Manual</a></li>
+                            <li><a href="mailto:idea_support@cse.unl.edu">Help</a></li>
                         </ul>
                     </div>
                     
