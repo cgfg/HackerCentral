@@ -258,7 +258,7 @@ namespace SignalRChat
         {
             using (var context = new SimpleContext())
             {
-                Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Where(u => !u.UserName.Equals(Context.User.Identity.Name)).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
+              Clients.Client(Context.ConnectionId).listUsers(JsonConvert.SerializeObject(context.UserProfiles.Include(u => u.UserDiscussion).Where(u => (!u.UserName.Equals(Context.User.Identity.Name)) && (u.UserDiscussion.Any(ud => ud.RegisteredDiscussion.ConversationId == AthenaBridgeAPISettings.CONVERSATION_ID))).Select(u => new { userName = u.UserName, isOnline = ActiveUsers.Keys.Any(v => v == u.UserName) }).ToArray()));
             }
         }
 
