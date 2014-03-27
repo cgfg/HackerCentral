@@ -208,48 +208,66 @@ namespace SignalRChat
                     }
 
                     String groupId = String.Join(",", groupSet.OrderBy(u => u).ToArray());
-                    Message message = new Message
-                    {
-                        TimeStamp = DateTime.UtcNow,
-                        Sender = context.UserProfiles.Find(WebSecurity.CurrentUserId),
-                        Text = text,
-                        Deliveries = new List<Delivery>(),
-                        GroupId = groupId
-                    };
+                    if(text.Length > 0){
+                        Message message = new Message
+                        {
+                            TimeStamp = DateTime.UtcNow,
+                            Sender = context.UserProfiles.Find(WebSecurity.CurrentUserId),
+                            Text = text,
+                            Deliveries = new List<Delivery>(),
+                            GroupId = groupId
+                        };
 
-                    System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), rawText);
+                        System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), rawText);
 
-                    HashSet<string> connections;
-                    var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
-                    //string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
-                    string[] usernameList = groupSet.OrderBy(u => u).ToArray();
-                    //string usernameListJson = JsonConvert.SerializeObject(usernameList);
-                    foreach (UserProfile user in userList)
-                    {
-                        message.Deliveries.Add(new Delivery
+                        HashSet<string> connections;
+                        var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
+                        //string[] usernameList = userList.OrderBy(u => u.UserName).Select(u => u.UserName).ToArray();
+                        string[] usernameList = groupSet.OrderBy(u => u).ToArray();
+                        //string usernameListJson = JsonConvert.SerializeObject(usernameList);
+                        foreach (UserProfile user in userList)
+                        {
+                            message.Deliveries.Add(new Delivery
                             {
                                 Message = message,
                                 TimeDelivered = ActiveUsers.ContainsKey(user.UserName) ? new Nullable<DateTime>(DateTime.UtcNow) : null,
                                 Reciever = user
                             });
 
-                        connections = null;
+                            connections = null;
+                            ActiveUsers.TryGetValue(user.UserName, out connections);
+
+                            System.Diagnostics.Debug.WriteLine("sender: {0}, rec: {1}, con: [{2}]", Context.User.Identity.Name, user.UserName, connections == null ? "null" : string.Join(",", connections));
+
+                            if (connections != null)
+                            {
+                                foreach (string connection in connections)
+                                {
+                                    Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text, message.TimeStamp.ToString());
+                                    //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
+                                }
+                            }
+                        }
+
+                        context.Messages.Add(message);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        HashSet<string> connections = null;
+                        var user = context.UserProfiles.Find(WebSecurity.CurrentUserId);
                         ActiveUsers.TryGetValue(user.UserName, out connections);
-
-                        System.Diagnostics.Debug.WriteLine("sender: {0}, rec: {1}, con: [{2}]", Context.User.Identity.Name, user.UserName, connections == null ? "null" : string.Join(",", connections));
-
+                        var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
+                        string[] usernameList = groupSet.OrderBy(u => u).ToArray();
+                        var timeStamp = DateTime.UtcNow;
                         if (connections != null)
                         {
                             foreach (string connection in connections)
                             {
-                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text, message.TimeStamp.ToString());
-                                //Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, text);
+                                Clients.Client(connection).addNewMessageToPage(Context.User.Identity.Name, usernameList, text, timeStamp.ToString());
                             }
                         }
                     }
-
-                    context.Messages.Add(message);
-                    context.SaveChanges();
                 }
             }
         }

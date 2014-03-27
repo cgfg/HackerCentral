@@ -38,8 +38,11 @@
                     <h4>Unpopular Points</h4>
                 </a></li>  
                 <li><a id="UnratedPoints" href="#unratedPoints" data-toggle="tab">
-    <h4>Unrated Points</h4>
-</a></li>           
+                <h4>Unrated Points</h4>
+                </a></li>
+                <li><a id="SearchUsername" href="#searchUsername" data-toggle="tab">
+                    <h4>Search Username</h4>
+                </a></li>           
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="nestedPoints">
@@ -96,6 +99,16 @@
                         @foreach (var n in Model.getUnratedPoints())
                         {
                             @PrintPoints(n, isAdminRole, "");
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="searchUsername">
+                    <textarea id="Type_Username" rows="1" placeholder="Type Username"></textarea>
+                    <button id ="Search" class="btn">Search</button>
+                    <div class="well">
+                        @foreach (var n in Model.visiblePoints)
+                        {
+                            @PrintUserPoints(n, isAdminRole, "");
                         }
                     </div>
                 </div>
@@ -189,12 +202,72 @@
     </div>
 }
 
+@helper PrintUserPoints(HackerCentral.Models.Point point, Boolean isAdminRole, String infoString)
+{
+    string color;
+    string pointID = "search" + point.id;
+    color = (point.side.ToString().Equals("pro")) ? "#2fbfbf" : "#f67d38";
+    <div id=@pointID class="point" style="background: @color; display:none">
+        <div class=" collapse-group">
+            <h4>#@point.id: @point.summary</h4>
+            <div class="collapse">
+                <p>@point.full_text (@point.side.ToString())</p>
+                <p>@infoString</p>
+                <div class="actions">
+                    <i class="icon-thumbs-up"> </i>
+                    <a href="http://129.93.238.144/embedded/2/@point.id/true" target="_blank">Rate it! </a>
+                    @if (isAdminRole)
+                    {
+                        <i class="icon-pencil"> </i>
+                        @Ajax.ActionLink(" Edit ", "EditForm", new { id = @point.id }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "editForm" }, new { @class = "editLink" })
+                        @*<i class="icon-trash"> </i>*@
+                        @*@Html.ActionLink(" Delete ", "Destroy", "Points", new { id = @point.id }, new { onclick = "return confirm('Are you sure you want to delete point #" + point.id.ToString() + "?');"})*@
+                    }
+                </div>
+            </div>
+            <br />
+            <p><button type="button" class="btn btn-primary btn-small" data-toggle="button">Show</button></p>
+        </div>
+    </div>
+}
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script>
-        $(".editLink").on("click", function () {
-            $('#editModal').modal('show');
+    $(".editLink").on("click", function () {
+        $('#editModal').modal('show');
+    });
+
+    $("#Search").on('click', function (e) {
+        var $username = document.getElementById("Type_Username").value;
+        var allPointIdList = ('@Model.getAllPointsId()').split(" ");
+       
+        var searchResult = $.ajax({
+            type: 'GET',
+            url: "http://localhost:60632/Points/Search",
+            data: { 'username': $username },
+            async: false,
+            success: function (data) {
+                alert(data);
+                searchResult = data.split(",");
+            },
+            dataType: "String"
         });
+        allPointIdList.forEach(function (entry) {
+            var $element = document.getElementById("search" + entry)
+            if ($element != null) {
+                $element.style.display = "none";
+            }
+        });
+            //var searchResult = userPointIdList.split(",");
+           // alert(searchResult);
+        searchResult.responseText.split(",").forEach(function (entry) {
+            var $element = document.getElementById("search" + entry);
+            if($element != null){
+                $element.style.display = "block";
+            }
+            });
+        })
 
         $('.point .btn').on('click', function (e) {
             e.preventDefault();
@@ -208,41 +281,41 @@
                 $.ajax({
                     type: 'POST',
                     url: 'http://129.93.238.144/log_point_view',
-                    data: { 'point_id': $pointId, 'user_name': '@Model.username', 'ranked_view': $tabName},
-                    dataType: "json",
-                    crossDomain: true,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    headers: {
+                    data: { 'point_id': $pointId, 'user_name': '@Model.username', 'ranked_view': $tabName },
+                dataType: "json",
+                crossDomain: true,
+                xhrFields: {
+                    withCredentials: true
+                },
+                headers: {
 
-                    },
-                    success: function () {
+                },
+                success: function () {
 
-                    },
-                    error: function () {
+                },
+                error: function () {
 
-                    }
-                });
-            }
-            else {
-                $this.text('Show');
-            }
-            
+                }
+            });
+        }
+        else {
+            $this.text('Show');
+        }
 
-            @*alert("Point id = " + $pointId + "\nUsername: @Model.username" + "\ntabname: " + $tabName);*@
-        });
-        //$(".viewLink").on("click", function () {
-        //    $('#viewModal').modal('show');
-        //});
-        $(function () {
-            $('a[data-toggle="tab"]').on('shown', function (e) {
-                e.preventDefault();
-                $id = String(e.target.getAttribute('href')).replace(/#/, ""); // activated tab
-                //e.relatedTarget // previous tab
-                @*alert("Tab Name: " + $id + "\nUserName:  @Model.username");*@
-            })
-        });
+
+        @*alert("Point id = " + $pointId + "\nUsername: @Model.username" + "\ntabname: " + $tabName);*@
+    });
+    //$(".viewLink").on("click", function () {
+    //    $('#viewModal').modal('show');
+    //});
+    $(function () {
+        $('a[data-toggle="tab"]').on('shown', function (e) {
+            e.preventDefault();
+            $id = String(e.target.getAttribute('href')).replace(/#/, ""); // activated tab
+            //e.relatedTarget // previous tab
+            @*alert("Tab Name: " + $id + "\nUserName:  @Model.username");*@
+        })
+    });
 </script>
 }
 

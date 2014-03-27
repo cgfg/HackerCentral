@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using HackerCentral.Accessors;
 
 namespace HackerCentral.ViewModels
 {
@@ -151,6 +151,18 @@ namespace HackerCentral.ViewModels
             List<Point> myPoint = visiblePoints.Where(p => p.user_id.Equals(userId)).ToList();
             return myPoint;
         }
+
+        public string getAllPointsId()
+        {
+            string userPointsId = "";
+            foreach (long pointId in visiblePoints.Select(p => p.id).ToList())
+            {
+                userPointsId = userPointsId + pointId + " ";
+            }
+            return userPointsId;
+        }
+
+      
     }
 
 }

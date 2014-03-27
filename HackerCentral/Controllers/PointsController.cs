@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace HackerCentral.Controllers
 {
@@ -21,6 +22,19 @@ namespace HackerCentral.Controllers
             
             ViewBag.Message = message;
             return View("Index", model);
+        }
+
+        [HttpGet]
+        public string Search(string username)
+        {
+            var pa = new PointAccessor();
+            var ua = new UserAccessor();
+            long id = ua.getUserId(username);
+            string userPointsId = "";
+            foreach (long pointId in pa.GetAllPoints().Where(p => p.user_id == id).Select(p => p.id).ToList()){
+                userPointsId = userPointsId + pointId.ToString() + ",";
+            }
+            return userPointsId;
         }
 
         [HackerCentral.Filters.Authorize(TypedRoles = new UserRole[] { UserRole.Hacker, UserRole.Administrator})]

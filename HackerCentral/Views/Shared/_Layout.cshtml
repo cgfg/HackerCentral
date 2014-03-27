@@ -109,18 +109,22 @@
                     if (groupId in tabKeys) {
                         var key = tabKeys[groupId];
                         var element = $('#msgTabContent #' + key + tabContentToken + ' #msgBoard');
-
-                        if (myName == name) {
-                            element.append('<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
-                        } else {
-                            element.append('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                        if (message.length > 0) {
+                            if (myName == name) {
+                                element.append('<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                            } else {
+                                element.append('<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>');
+                            }
+                            element.scrollTop(element[0].scrollHeight);
+                            $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
                         }
-
+                        else {}
+                       
                         //element.append('<div class="alert alert-info" style="word-wrap:break-word; margin-top:-12px;"><strong>' + name + ': </strong><br>' + message + '</div>');
                         //element.append('<p class="triangle-border left" style="word-wrap:break-word; margin-top:-35px;"><strong>' + name + ':</strong><br>' + message + '</p>');
-                        element.scrollTop(element[0].scrollHeight);
+                        
                         //$('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").show();
-                        $('#msgTabs #' + key + tabLabelToken).find("a[data-toggle='tab']").tab('show');
+                        
                     } else {
                         var key = createKey();
                         tabKeys[groupId] = key;
@@ -151,11 +155,17 @@
                                                 + '</a>'
                                             + '</li>');
                         var firstMessage;
-                        if (myName == name) {
-                            firstMessage = '<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
-                        } else {
-                            firstMessage = '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                        if (message.length > 0) {
+                            if (myName == name) {
+                                firstMessage = '<p class="triangle-border right" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                            } else {
+                                firstMessage = '<p class="triangle-border left" style="word-wrap:break-word;"><strong>' + name + ':</strong><br>' + message + '</p>';
+                            }
                         }
+                        else {
+                            firstMessage = '';
+                        }
+                        
                         $('#msgTabContent').append('<div class="tab-pane" id="' + key + tabContentToken + '">'
                                                 + '<div><form id="msgForm">'
                                                     //+ '<p><b>Recipients</b>: ' + groupId + '<\p>'
@@ -264,7 +274,7 @@
                         // Call the Send method on the hub.
                         var jsonList = JSON.stringify([].concat($('#msgRecipients').select2("val")));
                         var text = $('#msgText').val();
-                        if (text.length > 0)
+                        //if (text.length > 0)
                             chat.server.send(jsonList, text);
                         // Clear text box and reset focus for next comment. 
                         $('#msgText').val('').focus();
@@ -405,11 +415,12 @@
                                                             </div>
                                                             <div style="min-height: 10px"></div>
                                                             <div class="controls">
-                                                                <textarea id="msgText"  placeholder="Message"  rows="2" style="width: 340px; max-width: 340px; resize: none;"></textarea>
+                                                                <textarea readonly id="msgText" placeholder="Message" rows="2" style="width: 340px; max-width: 340px; resize: none;"></textarea>
                                                             </div>
                                                             <div class="controls">
-                                                                <button type="submit" class="btn">Send</button>
+                                                                <button type="submit" class="btn">Chat!</button>
                                                             </div>
+                                                            <br />
                                                             <div>
                                                                 <img src="http://janetfouts.com/wp-content/uploads/2011/08/Fotolia_30732541_XS.jpg" />
                                                             </div>
