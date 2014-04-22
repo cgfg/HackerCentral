@@ -133,11 +133,11 @@ namespace SignalRChat
         //    return Clients.Group("foo").addMessage(message);
         //}
 
-        public void Send(string userListJson, string rawText)
+        public void Send(string userListJson, string text)
         {
-            // Sanitize incoming messages so that people can't inject JS
-            // or mess with page formatting when sending messages to others
-            var text = HttpUtility.HtmlEncode(rawText);
+            // If you want to sanitize the HTML of chat messages, look up
+            // commit 7b90be10e78b7e31badcc8ef099862a7a3896deb in the git
+            // repository.
 
             lock (ActiveUsers)
             {
@@ -218,7 +218,7 @@ namespace SignalRChat
                             GroupId = groupId
                         };
 
-                        System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), rawText);
+                        System.Diagnostics.Debug.WriteLine("sender: {0}, rec: [{1}], mes: {2}", Context.User.Identity.Name, string.Join(",", userSet), text);
 
                         HashSet<string> connections;
                         var userList = context.UserProfiles.Where(u => userSet.Contains(u.UserName));
